@@ -1,0 +1,6 @@
+rootProject.name = 'baobab'
+include 'db'
+include 'receiving'
+include 'users'
+include 'global'
+
