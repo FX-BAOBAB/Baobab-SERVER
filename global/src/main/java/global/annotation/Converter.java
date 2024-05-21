@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.springframework.stereotype.Component;
 
-@Target(ElementType.ANNOTATION_TYPE)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 public @interface Converter {
