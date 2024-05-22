@@ -17,7 +17,7 @@ public enum ReceivingStatus {
     STORAGE("입고 완료","입고가 완료되어 안전하게 보관 중입니다.")
     ;
 
-    private String status;
-    private String description;
+    private final String status;
+    private final String description;
 
 }
