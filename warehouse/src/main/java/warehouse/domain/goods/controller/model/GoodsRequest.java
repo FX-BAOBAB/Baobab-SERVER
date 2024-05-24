@@ -1,4 +1,4 @@
-package warehouse.domain.receiving.controller.model;
+package warehouse.domain.goods.controller.model;
 
 import db.domain.goods.enums.GoodsCategory;
 import java.util.List;

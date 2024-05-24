@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import warehouse.domain.goods.controller.model.GoodsRequest;
 
 @Data
 @NoArgsConstructor
