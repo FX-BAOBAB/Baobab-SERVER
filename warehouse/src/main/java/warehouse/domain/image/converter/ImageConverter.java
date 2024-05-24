@@ -48,7 +48,7 @@ public class ImageConverter {
         return ImageEntity.builder()
             .imageUrl(imageUrl)
             .originalName(originalFileName)
-            .ServerName(serverName)
+            .serverName(serverName)
             .goodsId(request.getGoodsId())
             .kind(request.getKind())
             .caption(request.getCaption())
