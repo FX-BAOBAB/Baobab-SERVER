@@ -25,8 +25,13 @@ public class ReceivingEntity extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime visitDate;
+
+    @Column(nullable = false, length = 50)
+    private String modelName;
+
     @Column(nullable = false, length = 200)
     private String visitAddress;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50,columnDefinition = "VARCHAR(50)")
     private ReceivingStatus status;
@@ -34,5 +39,8 @@ public class ReceivingEntity extends BaseEntity {
     private LocalDateTime guaranteeAt;
 
     private LocalDateTime returnRequestAt;
+
+    @Column(nullable = false)
+    private Long userId;
 
 }
