@@ -1,7 +1,7 @@
 package db.domain.receiving;
 
+import db.common.BaseEntity;
 import db.domain.receiving.enums.ReceivingStatus;
-import global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

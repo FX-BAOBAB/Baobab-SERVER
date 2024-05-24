@@ -1,8 +1,8 @@
 package db.domain.image;
 
 
+import db.common.BaseEntity;
 import db.domain.image.enums.ImageKind;
-import global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

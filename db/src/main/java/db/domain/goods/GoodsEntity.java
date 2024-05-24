@@ -1,8 +1,8 @@
 package db.domain.goods;
 
+import db.common.BaseEntity;
 import db.domain.goods.enums.Category;
 import db.domain.receiving.ReceivingEntity;
-import global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,13 +10,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder.Default;
-import lombok.CustomLog;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.Length;
 
 @Entity
 @Table(name = "goods")
