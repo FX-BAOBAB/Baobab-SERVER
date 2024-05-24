@@ -69,6 +69,7 @@ public class ImageService {
             });
     }
 
+    
     public List<ImageEntity> getImageUrlList(Long goodsId) {
         return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
     }

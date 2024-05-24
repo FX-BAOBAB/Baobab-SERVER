@@ -58,6 +58,48 @@ public class ImageBusiness {
     }
 
 
+    public ImageListResponse getImageUrlList(Long goodsId) {
+
+        List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
+
+        List<ImageResponse> collect = imageEntityList.stream()
+            .map(imageConverter::toResponse)
+            .collect(Collectors.toList());
+
+        return ImageListResponse.builder()
+            .imageResponseList(collect)
+            .build();
+    }
+
+    public byte[] getImageFile(String filepath) {
+
+        String fullPath = imageService.getImageFullPath(filepath);
+
+        File file = new File(fullPath);
+
+        //저장된 이미지파일의 이진데이터 형식을 구함
+        byte[] result = null; //1. data
+        //ResponseEntity<byte[]> entity = null;
+
+        try {
+            result = FileCopyUtils.copyToByteArray(file);
+
+            // TODO header 에 넣어 줄지 byte[] 그대로 내릴지 고민 필요
+        /*HttpHeaders header = new HttpHeaders();
+        header.add("Content-type",
+            Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
+
+        //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
+        } catch (IOException e) {
+            log.info("",e);
+            // TODO Exception 처리 필요
+        }
+
+
+        return result;
+    }
+
+
     private ImageResponse imageUploadBizLogic(ImageRequest request) {
         ImageEntity entity = imageConverter.toEntity(request);
         imageService.uploadImage(request.getFile(), entity);

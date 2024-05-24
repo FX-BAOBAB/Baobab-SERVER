@@ -71,4 +71,22 @@ public class ImageConverter {
             })
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }
+
+    public List<ImageRequest> toImageRequest(ImageListRequest listRequest) {
+
+        List<ImageRequest> requestList = new ArrayList<>();
+        ImageRequest request = new ImageRequest();
+
+        for (int i = 0; i < listRequest.getFiles().size(); i++) {
+            request.setFile(listRequest.getFiles().get(i));
+            request.setKind(listRequest.getKind());
+            request.setGoodsId(listRequest.getGoodsId());
+            request.setCaption(listRequest.getCaptions().get(i));
+
+            requestList.add(request);
+        }
+
+        return requestList;
+    }
+
 }
