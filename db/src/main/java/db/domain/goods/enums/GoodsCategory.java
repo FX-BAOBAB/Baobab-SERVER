@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Category {
+public enum GoodsCategory {
 
     SMALL_FURNITURE("소형 가구"),
     LARGE_FURNITURE("대형 가구"),

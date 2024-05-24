@@ -1,7 +1,7 @@
 package db.domain.goods;
 
 import db.common.BaseEntity;
-import db.domain.goods.enums.Category;
+import db.domain.goods.enums.GoodsCategory;
 import db.domain.receiving.ReceivingEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +29,7 @@ public class GoodsEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
-    private Category category;
+    private GoodsCategory category;
 
     private int quantity;
 
