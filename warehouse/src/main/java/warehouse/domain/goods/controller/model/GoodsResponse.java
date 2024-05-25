@@ -6,21 +6,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+import warehouse.domain.image.controller.model.ImageResponse;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GoodsRequest {
+public class GoodsResponse {
 
-    // TODO List Valid 추가 필요
+    private Long id;
 
     private String name;
-    private String modelName;
+
     private GoodsCategory category;
+
     private int quantity;
-    private List<MultipartFile> basicImages;
-    private List<MultipartFile> faultImages;
+
+    private List<ImageResponse> basicImages;
+
+    private List<ImageResponse> faultImages;
 
 }

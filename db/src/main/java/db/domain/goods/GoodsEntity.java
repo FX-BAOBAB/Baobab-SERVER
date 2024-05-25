@@ -27,6 +27,9 @@ public class GoodsEntity extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String name;
 
+    @Column(nullable = false, length = 50)
+    private String modelName;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
     private GoodsCategory category;

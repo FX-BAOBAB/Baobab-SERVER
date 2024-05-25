@@ -5,4 +5,5 @@ import global.annotation.Converter;
 @Converter
 public class ReceivingConverter {
 
+
 }

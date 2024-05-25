@@ -26,9 +26,6 @@ public class ReceivingEntity extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime visitDate;
 
-    @Column(nullable = false, length = 50)
-    private String modelName;
-
     @Column(nullable = false, length = 200)
     private String visitAddress;
 
