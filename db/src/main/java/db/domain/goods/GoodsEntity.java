@@ -36,8 +36,8 @@ public class GoodsEntity extends BaseEntity {
 
     private int quantity;
 
-    @ManyToOne
-    private ReceivingEntity receivingEntity;
+    @Column(nullable = false)
+    private Long receivingId;
 
     @Column(nullable = false)
     private Long userId;
