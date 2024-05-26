@@ -1,9 +1,10 @@
 package db.domain.address;
 
 import db.common.BaseEntity;
-import db.domain.account.AccountEntity;
+import db.domain.users.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,6 @@ public class AddressEntity extends BaseEntity {
     private boolean basicAddress;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private AccountEntity account;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }
