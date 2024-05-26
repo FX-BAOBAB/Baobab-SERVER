@@ -2,6 +2,7 @@ package warehouse.domain.image.service;
 
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
+import db.domain.image.enums.ImageKind;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ public class ImageService {
 
     private final Path fileStorageLocation;
 
-    public String uploadImage(MultipartFile file, ImageEntity entity) {
+    public void uploadImage(MultipartFile file, ImageEntity entity) {
 
         if (file.isEmpty()) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
@@ -51,8 +52,6 @@ public class ImageService {
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return fileName;
-
         } catch (IOException ex) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR,
                 "파일을 저장할 수 없습니다. 대상 파일 : " + fileName + ". 재시도 바랍니다.!");
@@ -60,10 +59,13 @@ public class ImageService {
     }
 
     public ImageEntity saveImageDataToDB(ImageEntity entity) {
-        return Optional.ofNullable(entity)
-            .map(it -> {
-                return imageRepository.save(entity);
-            }).orElseThrow(() -> {
+
+        if (entity.getGoodsId() == null){
+            entity.setGoodsId(0L);
+        }
+
+        return Optional.of(entity)
+            .map(it -> imageRepository.save(entity)).orElseThrow(() -> {
                 // TODO imageException 처리 예정
                 return null;
             });
@@ -74,13 +76,20 @@ public class ImageService {
         return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
     }
 
+    public List<ImageEntity> getImageUrlList(Long goodsId, ImageKind kind) {
+        return imageRepository.findAllByGoodsIdAndKindOrderByIdDesc(goodsId, kind);
+    }
+
     public String getImageFullPath(String filepath) {
         return uploadDir + filepath;
     }
 
     private static String subStringExtension(ImageEntity entity) {
         int index = entity.getOriginalName().lastIndexOf(".");
-        String extension = entity.getOriginalName().substring(index);
-        return extension;
+        return entity.getOriginalName().substring(index);
+    }
+
+    public ImageEntity getImageByImageId(Long id) {
+        return imageRepository.findFirstByIdOrderByIdDesc(id);
     }
 }

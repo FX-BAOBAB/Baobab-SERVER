@@ -1,15 +1,14 @@
 package warehouse.domain.image.business;
 
 import db.domain.image.ImageEntity;
+import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
@@ -28,33 +27,23 @@ public class ImageBusiness {
     private final ImageService imageService;
     private final ImageConverter imageConverter;
 
-    @Transactional
     public ImageResponse uploadImage(ImageRequest request) {
 
         if (request.getFile().isEmpty()) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        ImageResponse response = imageUploadBizLogic(request);
-
-        return response;
+        return imageUploadBizLogic(request);
     }
 
-    @Transactional
-    public ImageListResponse uploadImage(ImageListRequest listRequest) {
+    public ImageListResponse uploadImages(ImageListRequest listRequest) {
 
         List<ImageRequest> imageRequestList = imageConverter.toImageRequest(listRequest);
 
-        List<ImageResponse> imageResponseList = new ArrayList<>();
-        imageRequestList.forEach(it -> {
-            ImageResponse response = imageUploadBizLogic(it);
-            imageResponseList.add(response);
-        });
+        List<ImageResponse> imageResponseList = imageRequestList.stream().map(this::uploadImage)
+            .collect(Collectors.toList());
 
-
-        return ImageListResponse.builder()
-            .imageResponseList(imageResponseList)
-            .build();
+        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
     }
 
 
@@ -62,13 +51,20 @@ public class ImageBusiness {
 
         List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
 
-        List<ImageResponse> collect = imageEntityList.stream()
-            .map(imageConverter::toResponse)
-            .collect(Collectors.toList());
+        List<ImageResponse> imageResponseList = imageEntityList.stream()
+            .map(imageConverter::toResponse).collect(Collectors.toList());
 
-        return ImageListResponse.builder()
-            .imageResponseList(collect)
-            .build();
+        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
+    }
+
+    public ImageListResponse getImageUrlListByGoodsIdAndKind(Long goodsId, ImageKind kind) {
+
+        List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId, kind);
+
+        List<ImageResponse> imageResponseList = imageEntityList.stream()
+            .map(imageConverter::toResponse).collect(Collectors.toList());
+
+        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
     }
 
     public byte[] getImageFile(String filepath) {
@@ -91,20 +87,30 @@ public class ImageBusiness {
 
         //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
         } catch (IOException e) {
-            log.info("",e);
+            log.info("", e);
             // TODO Exception 처리 필요
         }
-
 
         return result;
     }
 
+    public ImageEntity getImageByImageId(Long id) {
+        return imageService.getImageByImageId(id);
+    }
+
+    public List<ImageEntity> getImagesByImageIdList(List<Long> ids) {
+        return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
+    }
 
     private ImageResponse imageUploadBizLogic(ImageRequest request) {
         ImageEntity entity = imageConverter.toEntity(request);
         imageService.uploadImage(request.getFile(), entity);
         ImageEntity newEntity = imageService.saveImageDataToDB(entity);
-        ImageResponse response = imageConverter.toResponse(newEntity);
-        return response;
+        return imageConverter.toResponse(newEntity);
+    }
+
+
+    public void updateImageDB(ImageEntity th) {
+        imageService.saveImageDataToDB(th);
     }
 }

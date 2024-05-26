@@ -19,6 +19,8 @@ public class ImageResponse {
 
     private String serverName;
 
+    private String originalName;
+
     private String caption;
 
     private ImageKind kind;

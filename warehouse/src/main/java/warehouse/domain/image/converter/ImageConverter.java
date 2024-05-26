@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
 
+@Slf4j
 @RequiredArgsConstructor
 @Converter
 public class ImageConverter {
@@ -28,59 +30,49 @@ public class ImageConverter {
 
     public ImageEntity toEntity(ImageRequest request) {
 
-        String originalFileName = Objects.requireNonNullElse(
-                request.getFile().getOriginalFilename(),
-                new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR))
-            .toString();
+        if (Objects.requireNonNull(request.getFile().getOriginalFilename()).isEmpty()) {
+            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
+        }
+
+        String originalFileName = request.getFile().getOriginalFilename();
 
         String serverName = UUID.randomUUID().toString();
 
-        int index = originalFileName.lastIndexOf(".");
-        String extension = originalFileName.substring(index);
+        String extension = getExtension(originalFileName);
 
         String fileName = StringUtils.cleanPath(serverName + extension);
 
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path(uploadDir)
-            .path(fileName)
-            .toUriString();
+        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath().path(uploadDir)
+            .path(fileName).toUriString();
 
-        return ImageEntity.builder()
-            .imageUrl(imageUrl)
-            .originalName(originalFileName)
-            .serverName(serverName)
-            .goodsId(request.getGoodsId())
-            .kind(request.getKind())
-            .caption(request.getCaption())
-            .extension(extension)
-            .build();
+        return ImageEntity.builder().imageUrl(imageUrl).originalName(originalFileName)
+            .serverName(serverName).kind(request.getKind())
+            .caption(request.getCaption()).extension(extension).build();
 
+    }
+
+    private static String getExtension(String originalFileName) {
+        int index = originalFileName.lastIndexOf(".");
+        return originalFileName.substring(index);
     }
 
     public ImageResponse toResponse(ImageEntity newEntity) {
         return Optional.ofNullable(newEntity)
-            .map(it -> {
-                return ImageResponse.builder()
-                    .id(newEntity.getId())
-                    .serverName(newEntity.getServerName())
-                    .caption(newEntity.getCaption())
-                    .goodsId(newEntity.getGoodsId())
-                    .kind(newEntity.getKind())
-                    .extension(newEntity.getExtension())
-                    .build();
-            })
+            .map(it -> ImageResponse.builder().id(newEntity.getId())
+                .serverName(newEntity.getServerName()).originalName(newEntity.getOriginalName())
+                .caption(newEntity.getCaption()).goodsId(newEntity.getGoodsId())
+                .kind(newEntity.getKind()).extension(newEntity.getExtension()).build())
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }
 
     public List<ImageRequest> toImageRequest(ImageListRequest listRequest) {
 
         List<ImageRequest> requestList = new ArrayList<>();
-        ImageRequest request = new ImageRequest();
 
         for (int i = 0; i < listRequest.getFiles().size(); i++) {
+            ImageRequest request = new ImageRequest();
             request.setFile(listRequest.getFiles().get(i));
             request.setKind(listRequest.getKind());
-            request.setGoodsId(listRequest.getGoodsId());
             request.setCaption(listRequest.getCaptions().get(i));
 
             requestList.add(request);
