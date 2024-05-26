@@ -1,7 +1,6 @@
 package warehouse.domain.receiving.controller.model;
 
 
-import db.domain.receiving.enums.ReceivingStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,10 +18,9 @@ public class ReceivingRequest {
 
     private String visitAddress;
 
-    private ReceivingStatus receivingStatus;
-
     private List<GoodsRequest> goodsRequests;
 
     private LocalDateTime guaranteeAt;
+
 
 }
