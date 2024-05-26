@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -20,7 +21,6 @@ public class GoodsRequest {
     private String modelName;
     private GoodsCategory category;
     private int quantity;
-    private List<MultipartFile> basicImages;
-    private List<MultipartFile> faultImages;
+    private List<Long> imageIdList;
 
 }
