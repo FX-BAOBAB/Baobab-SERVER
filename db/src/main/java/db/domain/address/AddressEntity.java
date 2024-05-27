@@ -22,11 +22,14 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class AddressEntity extends BaseEntity {
 
+    //TODO length 추가
     private String address;
 
     private String detailAddress;
 
-    private boolean basicAddress;
+    private int post;
+
+    private Boolean basicAddress;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
