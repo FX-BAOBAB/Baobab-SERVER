@@ -1,0 +1,13 @@
+package warehouse.domain.token.controller.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReIssueAccessTokenRequest {
+
+    private String accessToken;
+}

@@ -31,4 +31,32 @@ public class TokenService {
         return tokenHelperIfs.issueRefreshToken(data);
     }
 
+    public Long validationAccessToken(String token) {
+        Map<String, Object> map = tokenHelperIfs.validationAccessTokenWithThrow(token);
+        Object userId = map.get("userId");
+
+        Objects.requireNonNull(userId, () -> {
+            throw new UserNotFoundException();
+        });
+
+        return Long.parseLong(userId.toString());
+    }
+
+    public Long validationRefreshToken(String token) {
+        Map<String, Object> map = tokenHelperIfs.validationRefreshTokenWithThrow(token);
+        Object userId = map.get("userId");
+
+        Objects.requireNonNull(userId, () -> {
+            throw new UserNotFoundException();
+        });
+
+        return Long.parseLong(userId.toString());
+    }
+
+    public TokenDto validationAndReIssueAccessToken(String accessToken, Long userId) {
+        Map<String, Object> data = new ConcurrentHashMap<>();
+        data.put("userId", userId);
+        TokenDto test = tokenHelperIfs.validationAndReIssueAccessToken(accessToken, data);
+        return test;
+    }
 }

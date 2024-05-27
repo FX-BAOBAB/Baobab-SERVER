@@ -45,3 +45,17 @@ public class TokenBusiness {
         return tokenService.validationAccessToken(accessToken);
     }
 
+    public ReIssueAccessTokenResponse reIssueAccessToken(String accessToken, String refreshToken) {
+
+        // refreshToken 유효성 및 만료 확인
+        Long userId = tokenService.validationRefreshToken(refreshToken);
+
+        // accessToken 토큰 재발급
+        TokenDto newAccessToken = tokenService.validationAndReIssueAccessToken(accessToken, userId);
+
+        //5. 클라이언트에게 새 AccessToken 전달
+        return ReIssueAccessTokenResponse.builder().accessToken(newAccessToken.getToken())
+            .expiredAt(newAccessToken.getExpiredAt()).build();
+    }
+
+}
