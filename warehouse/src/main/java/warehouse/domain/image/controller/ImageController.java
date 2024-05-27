@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.image.business.ImageBusiness;
 import warehouse.domain.image.controller.model.ImageListRequest;
-import warehouse.domain.image.controller.model.ImageListResponse;
+import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
 
@@ -32,17 +32,17 @@ public class ImageController {
 
 
     @PostMapping("/imageList")
-    public Api<ImageListResponse> uploadImages(ImageListRequest imageRequestList) {
+    public Api<ImageList> uploadImages(ImageListRequest imageRequestList) {
 
-        ImageListResponse response = imageBusiness.uploadImages(imageRequestList);
+        ImageList response = imageBusiness.uploadImages(imageRequestList);
 
         return Api.OK(response);
     }
 
     @GetMapping("/{goodsId}")
-    public Api<ImageListResponse> getImage(@PathVariable("goodsId") Long goodsId) {
+    public Api<ImageList> getImage(@PathVariable("goodsId") Long goodsId) {
 
-        ImageListResponse response = imageBusiness.getImageUrlList(goodsId);
+        ImageList response = imageBusiness.getImageUrlList(goodsId);
 
         return Api.OK(response);
     }

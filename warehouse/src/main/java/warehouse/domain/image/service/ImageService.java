@@ -18,8 +18,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
-import warehouse.domain.image.controller.model.ImageListResponse;
-import warehouse.domain.image.controller.model.ImageResponse;
 
 @Slf4j
 @RequiredArgsConstructor

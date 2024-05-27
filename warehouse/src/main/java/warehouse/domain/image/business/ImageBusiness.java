@@ -17,6 +17,7 @@ import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.image.controller.model.ImageListRequest;
+import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
@@ -41,25 +42,25 @@ public class ImageBusiness {
         return imageUploadBizLogic(request);
     }
 
-    public ImageListResponse uploadImages(ImageListRequest listRequest) {
+    public ImageList uploadImages(ImageListRequest listRequest) {
 
         List<ImageRequest> imageRequestList = imageConverter.toImageRequest(listRequest);
 
         List<ImageResponse> imageResponseList = imageRequestList.stream().map(this::uploadImage)
             .collect(Collectors.toList());
 
-        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
+        return ImageList.builder().imageResponseList(imageResponseList).build();
     }
 
 
-    public ImageListResponse getImageUrlList(Long goodsId) {
+    public ImageList getImageUrlList(Long goodsId) {
 
         List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
 
         List<ImageResponse> imageResponseList = imageEntityList.stream()
             .map(imageConverter::toResponse).collect(Collectors.toList());
 
-        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
+        return ImageList.builder().imageResponseList(imageResponseList).build();
     }
 
     public byte[] getImageFile(String filepath) {
@@ -97,7 +98,7 @@ public class ImageBusiness {
         return imageConverter.toResponse(newEntity);
     }
 
-    public List<GoodsResponse> receivingRequest(List<GoodsRequest> goodsRequests, List<GoodsEntity> goodsEntityList,Long goodsId) {
+    public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, List<GoodsEntity> goodsEntityList,Long goodsId) {
 
         goodsRequests
             .forEach(it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
@@ -112,12 +113,14 @@ public class ImageBusiness {
             goodsId,
             ImageKind.FAULT);
 
-        ImageListResponse basicImageListResponse = imageConverter.toEntityList(basicImageEntityList);
-        ImageListResponse faultImageListResponse = imageConverter.toEntityList(faultImageEntityList);
+        ImageList basicImageListResponse = imageConverter.toEntityList(basicImageEntityList);
+        ImageList faultImageListResponse = imageConverter.toEntityList(faultImageEntityList);
 
-        return goodsEntityList.stream().map(
-                goodsEntity -> goodsConverter.toResponse(goodsEntity, basicImageListResponse,
-                    faultImageListResponse)).toList();
+        return ImageListResponse.builder()
+            .basicImageListResponse(basicImageListResponse)
+            .faultImageListResponse(faultImageListResponse)
+            .build();
+
     }
 
 

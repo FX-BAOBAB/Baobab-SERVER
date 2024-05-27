@@ -1,7 +1,6 @@
 package warehouse.domain.image.converter;
 
 import db.domain.image.ImageEntity;
-import db.domain.image.enums.ImageKind;
 import global.annotation.Converter;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.image.controller.model.ImageListRequest;
-import warehouse.domain.image.controller.model.ImageListResponse;
+import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
 
@@ -83,9 +81,9 @@ public class ImageConverter {
         return requestList;
     }
 
-    public ImageListResponse toEntityList(List<ImageEntity> basicImageEntityList) {
+    public ImageList toEntityList(List<ImageEntity> basicImageEntityList) {
        List<ImageResponse> imageResponseList = basicImageEntityList.stream()
         .map(this::toResponse).collect(Collectors.toList());
-        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
+        return ImageList.builder().imageResponseList(imageResponseList).build();
     }
 }
