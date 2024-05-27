@@ -24,6 +24,7 @@ import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.receiving.controller.model.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.ReceivingResponse;
+import warehouse.domain.receiving.controller.model.ReceivingStatusResponse;
 import warehouse.domain.receiving.converter.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
 
@@ -69,5 +70,10 @@ public class ReceivingBusiness {
             .collect(Collectors.toList());
 
         return ReceivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);
+    }
+
+    public ReceivingStatusResponse getCurrentStatusBy(Long receivingId) {
+        ReceivingEntity receivingEntity = receivingService.getCurrentStatusBy(receivingId);
+        return receivingConverter.toCurrentStatusResponse(receivingEntity);
     }
 }
