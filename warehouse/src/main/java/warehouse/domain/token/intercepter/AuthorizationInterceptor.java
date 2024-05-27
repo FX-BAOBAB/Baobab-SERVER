@@ -22,7 +22,7 @@ import warehouse.domain.token.exception.tokenexception.InvalidTokenException;
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
     private final static String USER_ID = "userId";
-    private final static String AUTHORIZATION_TOKEN = "authorization-token";
+    private final static String ACCESS_TOKEN = "accessToken";
 
     private final TokenBusiness tokenBusiness;
 
@@ -48,7 +48,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         /**
          * 토큰 검증
          */
-        var accessToken = request.getHeader(AUTHORIZATION_TOKEN);
+        var accessToken = request.getHeader(ACCESS_TOKEN);
         if (accessToken == null) {
             throw new AuthorizationTokenNotFoundException();
         }
