@@ -38,6 +38,7 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+
     private LocalDateTime registeredAt;
 
     private LocalDateTime unregisteredAt;
@@ -47,6 +48,6 @@ public class UserEntity extends BaseEntity {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private AccountEntity account;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<AddressEntity> address;
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<AddressEntity> address;
 }
