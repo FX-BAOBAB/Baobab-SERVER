@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
+import warehouse.domain.image.controller.model.ImageListResponse;
+import warehouse.domain.image.controller.model.ImageResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -71,6 +74,14 @@ public class ImageService {
             });
     }
 
+    public void updateImageDB(ImageEntity th) {
+        saveImageDataToDB(th);
+    }
+
+    public List<ImageEntity> getImagesByImageIdList(List<Long> ids) {
+        return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
+    }
+
     
     public List<ImageEntity> getImageUrlList(Long goodsId) {
         return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
@@ -91,5 +102,13 @@ public class ImageService {
 
     public ImageEntity getImageByImageId(Long id) {
         return imageRepository.findFirstByIdOrderByIdDesc(id);
+    }
+
+
+    public List<ImageEntity> getImageUrlListByGoodsIdAndKind(Long goodsId, ImageKind kind) {
+
+        List<ImageEntity> imageEntityList = getImageUrlList(goodsId, kind);
+
+        return imageEntityList;
     }
 }

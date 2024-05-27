@@ -1,5 +1,6 @@
 package warehouse.domain.image.business;
 
+import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
@@ -12,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.FileCopyUtils;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
+import warehouse.domain.goods.controller.model.GoodsRequest;
+import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
@@ -26,6 +30,7 @@ public class ImageBusiness {
 
     private final ImageService imageService;
     private final ImageConverter imageConverter;
+    private final GoodsConverter goodsConverter;
 
     public ImageResponse uploadImage(ImageRequest request) {
 
@@ -50,16 +55,6 @@ public class ImageBusiness {
     public ImageListResponse getImageUrlList(Long goodsId) {
 
         List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
-
-        List<ImageResponse> imageResponseList = imageEntityList.stream()
-            .map(imageConverter::toResponse).collect(Collectors.toList());
-
-        return ImageListResponse.builder().imageResponseList(imageResponseList).build();
-    }
-
-    public ImageListResponse getImageUrlListByGoodsIdAndKind(Long goodsId, ImageKind kind) {
-
-        List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId, kind);
 
         List<ImageResponse> imageResponseList = imageEntityList.stream()
             .map(imageConverter::toResponse).collect(Collectors.toList());
@@ -94,13 +89,6 @@ public class ImageBusiness {
         return result;
     }
 
-    public ImageEntity getImageByImageId(Long id) {
-        return imageService.getImageByImageId(id);
-    }
-
-    public List<ImageEntity> getImagesByImageIdList(List<Long> ids) {
-        return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
-    }
 
     private ImageResponse imageUploadBizLogic(ImageRequest request) {
         ImageEntity entity = imageConverter.toEntity(request);
@@ -109,8 +97,28 @@ public class ImageBusiness {
         return imageConverter.toResponse(newEntity);
     }
 
+    public List<GoodsResponse> receivingRequest(List<GoodsRequest> goodsRequests, List<GoodsEntity> goodsEntityList,Long goodsId) {
 
-    public void updateImageDB(ImageEntity th) {
-        imageService.saveImageDataToDB(th);
+        goodsRequests
+            .forEach(it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
+                th.setGoodsId(goodsId);
+                imageService.updateImageDB(th);
+            }));
+
+        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
+            goodsId,
+            ImageKind.BASIC);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
+            goodsId,
+            ImageKind.FAULT);
+
+        ImageListResponse basicImageListResponse = imageConverter.toEntityList(basicImageEntityList);
+        ImageListResponse faultImageListResponse = imageConverter.toEntityList(faultImageEntityList);
+
+        return goodsEntityList.stream().map(
+                goodsEntity -> goodsConverter.toResponse(goodsEntity, basicImageListResponse,
+                    faultImageListResponse)).toList();
     }
+
+
 }

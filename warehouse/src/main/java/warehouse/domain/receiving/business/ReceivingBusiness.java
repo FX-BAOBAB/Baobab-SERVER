@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
@@ -46,7 +47,8 @@ public class ReceivingBusiness {
         ReceivingEntity registeredReceivingEntity = receivingService.receivingRequest(
             receivingEntity);
 
-        List<GoodsEntity> goodsEntityList = request.getGoodsRequests().stream()
+        List<GoodsRequest> goodsRequests = request.getGoodsRequests();
+        List<GoodsEntity> goodsEntityList = goodsRequests.stream()
             .map(goodsConverter::toEntity)
             .map(goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId()))
             .toList();
@@ -54,20 +56,7 @@ public class ReceivingBusiness {
         Long goodsId = goodsEntityList.stream().findAny().map(BaseEntity::getId)
             .orElseThrow(() -> new NullPointerException("존재하지 않습니다."));
 
-        request.getGoodsRequests()
-            .forEach(it -> imageBusiness.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
-                th.setGoodsId(goodsId);
-                imageBusiness.updateImageDB(th);
-            }));
-
-        ImageListResponse basicImageList = imageBusiness.getImageUrlListByGoodsIdAndKind(goodsId,
-            ImageKind.BASIC);
-        ImageListResponse faultImageList = imageBusiness.getImageUrlListByGoodsIdAndKind(goodsId,
-            ImageKind.FAULT);
-
-        List<GoodsResponse> goodsResponseList = goodsEntityList.stream().map(
-                goodsEntity -> goodsConverter.toResponse(goodsEntity, basicImageList, faultImageList))
-            .collect(Collectors.toList());
+        List<GoodsResponse> goodsResponseList = imageBusiness.receivingRequest(goodsRequests,goodsEntityList,goodsId);
 
         return ReceivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);
     }
