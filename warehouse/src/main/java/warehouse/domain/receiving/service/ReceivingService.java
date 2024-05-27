@@ -4,7 +4,6 @@ import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.ReceivingRepository;
 import db.domain.receiving.enums.ReceivingStatus;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +27,14 @@ public class ReceivingService {
         return receivingRepository.save(receivingEntity);
     }
 
-    public ReceivingEntity getCurrentStatusBy(Long receivingId) {
+    public ReceivingEntity getReceivingById(Long receivingId) {
         // TODO receiving null Exception 처리 필요
         return receivingRepository.findFirstById(receivingId).orElseThrow((() -> new NullPointerException("receiving Null Exception")));
+    }
+
+    public ReceivingEntity setGuarantee(Long receivingId) {
+        ReceivingEntity entity = getReceivingById(receivingId);
+        entity.setGuaranteeAt(LocalDateTime.now());
+        return receivingRepository.save(entity);
     }
 }

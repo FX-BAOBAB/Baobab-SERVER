@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.receiving.business.ReceivingBusiness;
-import warehouse.domain.receiving.controller.model.ReceivingRequest;
-import warehouse.domain.receiving.controller.model.ReceivingResponse;
-import warehouse.domain.receiving.controller.model.ReceivingStatusResponse;
+import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +37,14 @@ public class ReceivingApiController {
     @GetMapping("/{receivingId}")
     public Api<ReceivingStatusResponse> getCurrentStatusBy(@PathVariable Long receivingId) {
         ReceivingStatusResponse response = receivingBusiness.getCurrentStatusBy(receivingId);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/guarantee/{receivingId}")
+    public Api<GuaranteeResponse> setGuarantee(
+        @PathVariable Long receivingId
+    ){
+        GuaranteeResponse response = receivingBusiness.setGuarantee(receivingId);
         return Api.OK(response);
     }
 

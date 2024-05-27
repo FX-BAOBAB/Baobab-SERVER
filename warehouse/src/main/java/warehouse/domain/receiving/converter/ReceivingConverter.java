@@ -6,9 +6,10 @@ import global.annotation.Converter;
 import java.util.Arrays;
 import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
-import warehouse.domain.receiving.controller.model.ReceivingRequest;
-import warehouse.domain.receiving.controller.model.ReceivingResponse;
-import warehouse.domain.receiving.controller.model.ReceivingStatusResponse;
+import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
 
 @Converter
 public class ReceivingConverter {
@@ -29,12 +30,19 @@ public class ReceivingConverter {
 
     }
 
-    public ReceivingStatusResponse toCurrentStatusResponse(ReceivingEntity receivingEntity) {
-        return ReceivingStatusResponse.builder().receivingId(receivingEntity.getId())
+    public ReceivingStatusResponse toCurrentStatusResponse(ReceivingEntity entity) {
+        return ReceivingStatusResponse.builder().receivingId(entity.getId())
             .total(Arrays.stream(ReceivingStatus.values()).count())
-            .status(receivingEntity.getStatus()).description(
-                ReceivingStatus.valueOf(receivingEntity.getStatus().toString()).getDescription())
-            .current(ReceivingStatus.valueOf(receivingEntity.getStatus().toString()).getCurrent())
+            .status(entity.getStatus()).description(
+                ReceivingStatus.valueOf(entity.getStatus().toString()).getDescription())
+            .current(ReceivingStatus.valueOf(entity.getStatus().toString()).getCurrent())
+            .build();
+    }
+
+    public GuaranteeResponse toGuaranteeResponse(ReceivingEntity entity) {
+        return GuaranteeResponse.builder()
+            .receivingId(entity.getId())
+            .guaranteeAt(entity.getGuaranteeAt())
             .build();
     }
 }

@@ -13,9 +13,10 @@ import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.business.ImageBusiness;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.receiving.controller.model.ReceivingRequest;
-import warehouse.domain.receiving.controller.model.ReceivingResponse;
-import warehouse.domain.receiving.controller.model.ReceivingStatusResponse;
+import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
 import warehouse.domain.receiving.converter.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
 
@@ -55,7 +56,12 @@ public class ReceivingBusiness {
     }
 
     public ReceivingStatusResponse getCurrentStatusBy(Long receivingId) {
-        ReceivingEntity receivingEntity = receivingService.getCurrentStatusBy(receivingId);
+        ReceivingEntity receivingEntity = receivingService.getReceivingById(receivingId);
         return receivingConverter.toCurrentStatusResponse(receivingEntity);
+    }
+
+    public GuaranteeResponse setGuarantee(Long receivingId) {
+        ReceivingEntity receivingEntity = receivingService.setGuarantee(receivingId);
+        return receivingConverter.toGuaranteeResponse(receivingEntity);
     }
 }
