@@ -1,4 +1,4 @@
-package warehouse.domain.receiving.controller.model;
+package warehouse.domain.receiving.controller.model.receiving;
 
 
 import java.time.LocalDateTime;

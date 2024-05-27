@@ -1,4 +1,4 @@
-package warehouse.domain.receiving.controller.model;
+package warehouse.domain.receiving.controller.model.receiving;
 
 import db.domain.receiving.enums.ReceivingStatus;
 import java.time.LocalDateTime;
