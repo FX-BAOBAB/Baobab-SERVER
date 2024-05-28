@@ -35,8 +35,6 @@ public class ReceivingEntity extends BaseEntity {
 
     private LocalDateTime guaranteeAt;
 
-    private LocalDateTime returnRequestAt;
-
     @Column(nullable = false)
     private Long userId;
 
