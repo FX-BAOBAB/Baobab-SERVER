@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.users.business.UserBusiness;
 import warehouse.domain.users.controller.model.LoginResponse;
 import warehouse.domain.users.controller.model.LoginRequest;
+import warehouse.domain.users.controller.model.UserSignUpRequest;
+import warehouse.domain.users.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ import warehouse.domain.users.controller.model.LoginRequest;
 public class UserOpenApiController {
 
     private final UserBusiness userBusiness;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<Api<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -30,6 +33,12 @@ public class UserOpenApiController {
         headers.add("refreshToken", login.getRefreshToken());
 
         return ResponseEntity.ok().headers(headers).body(Api.OK(login));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Api<Object>> signUp(@RequestBody UserSignUpRequest request) {
+        Api<Object> response = userService.signUp(request);
+        return ResponseEntity.ok(response);
     }
 
 }
