@@ -39,18 +39,15 @@ public class ReceivingBusiness {
             receivingEntity);
 
         List<GoodsRequest> goodsRequests = request.getGoodsRequests();
-        List<GoodsEntity> goodsEntityList = goodsRequests.stream().map(goodsConverter::toEntity)
-            .map(goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId()))
-            .toList();
+        List<GoodsEntity> goodsEntityList = getGoodsEntityList(goodsRequests,
+            registeredReceivingEntity);
 
-        Long goodsId = goodsEntityList.stream().findAny().map(BaseEntity::getId)
-            .orElseThrow(() -> new NullPointerException("존재하지 않습니다."));
+        Long goodsId = getFirstGoodsId(goodsEntityList);
 
         ImageListResponse imageListResponse = imageBusiness.receivingRequest(goodsRequests,
             goodsId);
 
-        List<GoodsResponse> goodsResponseList = goodsEntityList.stream()
-            .map(goodsEntity -> goodsConverter.toResponse(goodsEntity, imageListResponse)).toList();
+        List<GoodsResponse> goodsResponseList = getGoodsResponseList(goodsEntityList, imageListResponse);
 
         return ReceivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);
     }
@@ -63,5 +60,24 @@ public class ReceivingBusiness {
     public GuaranteeResponse setGuarantee(Long receivingId) {
         ReceivingEntity receivingEntity = receivingService.setGuarantee(receivingId);
         return receivingConverter.toGuaranteeResponse(receivingEntity);
+    }
+
+
+    private List<GoodsResponse> getGoodsResponseList(List<GoodsEntity> goodsEntityList,
+        ImageListResponse imageListResponse) {
+        return goodsEntityList.stream()
+            .map(goodsEntity -> goodsConverter.toResponse(goodsEntity, imageListResponse)).toList();
+    }
+
+    private static Long getFirstGoodsId(List<GoodsEntity> goodsEntityList) {
+        return goodsEntityList.stream().findAny().map(BaseEntity::getId)
+            .orElseThrow(() -> new NullPointerException("존재하지 않습니다."));
+    }
+
+    private List<GoodsEntity> getGoodsEntityList(List<GoodsRequest> goodsRequests,
+        ReceivingEntity registeredReceivingEntity) {
+        return goodsRequests.stream().map(goodsConverter::toEntity)
+            .map(goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId()))
+            .toList();
     }
 }
