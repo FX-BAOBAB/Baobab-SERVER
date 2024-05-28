@@ -47,7 +47,7 @@ public class ReceivingBusiness {
             .orElseThrow(() -> new NullPointerException("존재하지 않습니다."));
 
         ImageListResponse imageListResponse = imageBusiness.receivingRequest(goodsRequests,
-            goodsEntityList, goodsId);
+            goodsId);
 
         List<GoodsResponse> goodsResponseList = goodsEntityList.stream()
             .map(goodsEntity -> goodsConverter.toResponse(goodsEntity, imageListResponse)).toList();

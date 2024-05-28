@@ -18,6 +18,7 @@ public class PathConfig {
         Path fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
             .toAbsolutePath().normalize();
 
+        // TODO Image Exception Description 처리 필요
         try {
             Files.createDirectories(fileStorageLocation);
         } catch (Exception ex) {

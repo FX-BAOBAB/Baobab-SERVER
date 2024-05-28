@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ImageListResponse {
 
     private ImageList basicImageListResponse;
+
     private ImageList faultImageListResponse;
 
 }

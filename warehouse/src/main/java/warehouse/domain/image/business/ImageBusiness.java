@@ -1,6 +1,5 @@
 package warehouse.domain.image.business;
 
-import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
@@ -14,10 +13,9 @@ import org.springframework.util.FileCopyUtils;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
-import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
-import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageList;
+import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
@@ -77,11 +75,11 @@ public class ImageBusiness {
             result = FileCopyUtils.copyToByteArray(file);
 
             // TODO header 에 넣어 줄지 byte[] 그대로 내릴지 고민 필요
-        /*HttpHeaders header = new HttpHeaders();
-        header.add("Content-type",
-            Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
+            /*HttpHeaders header = new HttpHeaders();
+            header.add("Content-type",
+                Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
 
-        //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
+            //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
         } catch (IOException e) {
             log.info("", e);
             // TODO Exception 처리 필요
@@ -98,28 +96,24 @@ public class ImageBusiness {
         return imageConverter.toResponse(newEntity);
     }
 
-    public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, List<GoodsEntity> goodsEntityList,Long goodsId) {
+    public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, Long goodsId) {
 
-        goodsRequests
-            .forEach(it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
+        goodsRequests.forEach(
+            it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
                 th.setGoodsId(goodsId);
                 imageService.updateImageDB(th);
             }));
 
         List<ImageEntity> basicImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
-            goodsId,
-            ImageKind.BASIC);
+            goodsId, ImageKind.BASIC);
         List<ImageEntity> faultImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
-            goodsId,
-            ImageKind.FAULT);
+            goodsId, ImageKind.FAULT);
 
         ImageList basicImageListResponse = imageConverter.toEntityList(basicImageEntityList);
         ImageList faultImageListResponse = imageConverter.toEntityList(faultImageEntityList);
 
-        return ImageListResponse.builder()
-            .basicImageListResponse(basicImageListResponse)
-            .faultImageListResponse(faultImageListResponse)
-            .build();
+        return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
+            .faultImageListResponse(faultImageListResponse).build();
 
     }
 

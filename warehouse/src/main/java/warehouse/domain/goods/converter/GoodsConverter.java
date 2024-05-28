@@ -5,7 +5,6 @@ import global.annotation.Converter;
 import lombok.RequiredArgsConstructor;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
-import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageListResponse;
 
 @Converter

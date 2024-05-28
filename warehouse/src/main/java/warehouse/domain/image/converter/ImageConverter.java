@@ -8,9 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import warehouse.common.error.ImageErrorCode;
@@ -25,36 +30,22 @@ import warehouse.domain.image.controller.model.ImageResponse;
 @Converter
 public class ImageConverter {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
     public ImageEntity toEntity(ImageRequest request) {
 
         if (Objects.requireNonNull(request.getFile().getOriginalFilename()).isEmpty()) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        String originalFileName = request.getFile().getOriginalFilename();
+        ImageInfo imageInfo = new ImageInfo(request);
 
-        String serverName = UUID.randomUUID().toString();
+        log.info("extension : {}", imageInfo.getExtension());
 
-        String extension = getExtension(originalFileName);
-
-        String fileName = StringUtils.cleanPath(serverName + extension);
-
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath().path(uploadDir)
-            .path(fileName).toUriString();
-
-        return ImageEntity.builder().imageUrl(imageUrl).originalName(originalFileName)
-            .serverName(serverName).kind(request.getKind())
-            .caption(request.getCaption()).extension(extension).build();
+        return ImageEntity.builder().imageUrl(imageInfo.getImageUrl()).originalName(imageInfo.getOriginalFileName())
+            .serverName(imageInfo.serverName).kind(request.getKind())
+            .caption(request.getCaption()).extension(imageInfo.getExtension()).build();
 
     }
 
-    private static String getExtension(String originalFileName) {
-        int index = originalFileName.lastIndexOf(".");
-        return originalFileName.substring(index);
-    }
 
     public ImageResponse toResponse(ImageEntity newEntity) {
         return Optional.ofNullable(newEntity)
@@ -82,8 +73,42 @@ public class ImageConverter {
     }
 
     public ImageList toEntityList(List<ImageEntity> basicImageEntityList) {
-       List<ImageResponse> imageResponseList = basicImageEntityList.stream()
-        .map(this::toResponse).collect(Collectors.toList());
+        List<ImageResponse> imageResponseList = basicImageEntityList.stream()
+            .map(this::toResponse).collect(Collectors.toList());
         return ImageList.builder().imageResponseList(imageResponseList).build();
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    static class ImageInfo{
+
+        @Value("${file.upload-dir}")
+        private String uploadDir;
+
+        private String originalFileName;
+
+        private String serverName;
+
+        private String extension;
+
+        private String fileName;
+
+        private  String imageUrl;
+
+        public ImageInfo(ImageRequest request) {
+            this.originalFileName = request.getFile().getOriginalFilename();
+            this.serverName = UUID.randomUUID().toString();
+            this.extension = getExtension(this.originalFileName);
+            this.fileName = StringUtils.cleanPath(this.serverName + this.extension);
+            this.imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath().path(uploadDir)
+                .path(fileName).toUriString();
+        }
+
+        private String getExtension(String originalFileName) {
+            int index = originalFileName.lastIndexOf(".");
+            return originalFileName.substring(index);
+        }
     }
 }
