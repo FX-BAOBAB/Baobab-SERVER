@@ -50,21 +50,6 @@ public class UserService {
             if (accountRepository.existsByEmail(request.getEmail())) {
                 throw new DuplicateUserException(String.valueOf(UserErrorCode.USER_ALREADY_EXISTS));
             }
-            AccountEntity accountEntity = AccountEntity.builder()
-                .email(request.getEmail())
-                // TODO 패스워드 암호화 보류
-//            .password(passwordEncoder.encode(request.getPassword()))
-                .password(request.getPassword())
-                .name(request.getName())
-                .build();
-            accountRepository.save(accountEntity);
-
-            AddressEntity addressEntity = AddressEntity.builder()
-                .address(request.getAddress())
-                .detailAddress(request.getDetail_address())
-                .basicAddress(request.isBasic_address())
-                .build();
-            addressRepository.save(addressEntity);
 
             UserEntity userEntity = UserEntity.builder()
                 .role(UserRole.BASIC)
@@ -72,6 +57,24 @@ public class UserService {
                 .registeredAt(LocalDateTime.now())
                 .build();
             userRepository.save(userEntity);
+
+            AccountEntity accountEntity = AccountEntity.builder()
+                .email(request.getEmail())
+                // TODO 패스워드 암호화 보류
+//            .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
+                .name(request.getName())
+                .user(userEntity)
+                .build();
+            accountRepository.save(accountEntity);
+
+            AddressEntity addressEntity = AddressEntity.builder()
+                .address(request.getAddress())
+                .detailAddress(request.getDetail_address())
+                .basicAddress(request.isBasic_address())
+                .user(userEntity)
+                .build();
+            addressRepository.save(addressEntity);
 
             return Api.OK("회원가입이 완료되었습니다.");
         } catch (Exception e) {
