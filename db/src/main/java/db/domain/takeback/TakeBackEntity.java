@@ -27,6 +27,6 @@ public class TakeBackEntity {
     @Column(length = 50, nullable = false,columnDefinition = "varchar(50)")
     private TakeBackStatus status;
 
-    private LocalDateTime returnRequestAt;
+    private LocalDateTime takeBackRequestAt;
 
 }
