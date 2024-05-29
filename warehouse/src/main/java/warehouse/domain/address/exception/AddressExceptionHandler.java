@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.domain.address.errorcode.AddressErrorCode;
+import warehouse.domain.address.exception.addressexception.InvalidAddressDataException;
 import warehouse.domain.address.exception.addressexception.NotFoundAddressException;
 
 @RestControllerAdvice
@@ -21,4 +22,10 @@ public class AddressExceptionHandler {
 
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidAddressDataException.class)
+    public Api<Object> InvalidAddressDataException() {
+        log.info("잘못된 주소 데이터입니다.");
+        return Api.ERROR(AddressErrorCode.INVALID_ADDRESS_DATA);
+    }
 }
