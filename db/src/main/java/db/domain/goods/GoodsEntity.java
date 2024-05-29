@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +36,8 @@ public class GoodsEntity extends BaseEntity {
     private GoodsCategory category;
 
     private int quantity;
+
+    private LocalDateTime abandonmentAt;
 
     @Column(nullable = false)
     private Long receivingId;

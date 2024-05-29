@@ -49,8 +49,4 @@ public class ReceivingService {
         return receivingRepository.save(receivingEntity);
     }
 
-    public void setAbandonmentAt(ReceivingEntity receivingEntity) {
-        receivingEntity.setAbandonmentAt(LocalDateTime.now());
-        receivingRepository.save(receivingEntity);
-    }
 }
