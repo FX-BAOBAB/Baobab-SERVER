@@ -48,6 +48,7 @@ public class UserSessionResolver implements HandlerMethodArgumentResolver {
         //사용자 정보 setting
         return User.builder()
             .id(user.getId())
+            .userStatus(user.getUser().getStatus())
             .build();
     }
 }
