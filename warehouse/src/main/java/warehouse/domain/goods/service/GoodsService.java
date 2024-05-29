@@ -12,7 +12,7 @@ public class GoodsService {
 
     private final GoodsRepository goodsRepository;
 
-    public GoodsEntity save(GoodsEntity goodsEntity,Long receivingId) {
+    public GoodsEntity save(GoodsEntity goodsEntity, Long receivingId) {
         // TODO user system 구현 완료 시 사용자 아이디 입력 필요
         goodsEntity.setReceivingId(receivingId);
         goodsEntity.setUserId(1L);
@@ -23,5 +23,11 @@ public class GoodsService {
         return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
 
-
+    public void abandonment(Long receivingId) {
+        // TODO 회사 아이디 생성 후 Matching 필요
+        goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId).forEach(goodsEntity -> {
+            goodsEntity.setUserId(0L);
+            goodsRepository.save(goodsEntity);
+        });
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.receiving.business.ReceivingBusiness;
+import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
@@ -45,6 +46,14 @@ public class ReceivingApiController {
         @PathVariable Long receivingId
     ){
         GuaranteeResponse response = receivingBusiness.setGuarantee(receivingId);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/abandonment/{receivingId}")
+    public Api<MessageResponse> abandonment(
+        @PathVariable Long receivingId
+    ){
+        MessageResponse response = receivingBusiness.abandonment(receivingId);
         return Api.OK(response);
     }
 

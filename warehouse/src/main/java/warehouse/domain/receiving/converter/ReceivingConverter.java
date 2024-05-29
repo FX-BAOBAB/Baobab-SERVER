@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFileChooser;
 import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
@@ -53,6 +54,12 @@ public class ReceivingConverter {
         return GuaranteeResponse.builder()
             .receivingId(entity.getId())
             .guaranteeAt(entity.getGuaranteeAt())
+            .build();
+    }
+
+    public MessageResponse toMassageResponse(String message) {
+        return MessageResponse.builder()
+            .Message(message)
             .build();
     }
 }

@@ -15,6 +15,7 @@ import warehouse.domain.image.business.ImageBusiness;
 import warehouse.domain.image.common.ImageUtils;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
@@ -73,5 +74,10 @@ public class ReceivingBusiness {
     public GuaranteeResponse setGuarantee(Long receivingId) {
         ReceivingEntity receivingEntity = receivingService.setGuarantee(receivingId);
         return receivingConverter.toGuaranteeResponse(receivingEntity);
+    }
+
+    public MessageResponse abandonment(Long receivingId) {
+        goodsService.abandonment(receivingId);
+        return receivingConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
     }
 }
