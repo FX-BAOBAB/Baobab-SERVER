@@ -30,7 +30,7 @@ public class ReceivingEntity extends BaseEntity {
     private String visitAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50,columnDefinition = "VARCHAR(50)")
+    @Column(length = 50,columnDefinition = "VARCHAR(50)")
     private ReceivingStatus status;
 
     private LocalDateTime guaranteeAt;

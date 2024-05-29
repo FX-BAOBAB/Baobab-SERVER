@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.takeback.controller.model.TakeBackResponse;
 
 @Data
 @NoArgsConstructor
@@ -26,5 +27,7 @@ public class ReceivingResponse {
     private ReceivingStatus receivingStatus;
 
     private List<GoodsResponse> goods;
+
+    private TakeBackResponse takeBackResponse;
 
 }

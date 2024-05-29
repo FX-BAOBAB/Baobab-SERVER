@@ -37,4 +37,12 @@ public class ReceivingService {
         entity.setGuaranteeAt(LocalDateTime.now());
         return receivingRepository.save(entity);
     }
+
+    public ReceivingEntity initReceivingStatus(Long receivingId) {
+        // TODO Exception 수정 예정
+        ReceivingEntity receivingEntity = receivingRepository.findFirstById(receivingId)
+            .orElseThrow(() -> new NullPointerException("receiving 요청서가 존재하지 않습니다."));
+        receivingEntity.setStatus(null);
+        return receivingRepository.save(receivingEntity);
+    }
 }
