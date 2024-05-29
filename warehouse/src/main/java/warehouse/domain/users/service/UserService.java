@@ -29,8 +29,14 @@ public class UserService {
 
     public AccountEntity login(String email, String password) {
         //TODO UserStatus 에 따른 로직 처리
-        AccountEntity user = getUser(email, password);
-        return user;
+        AccountEntity accountEntity = getUser(email, password);
+        
+        // UserEntity의 lastLoginAt 업데이트
+        UserEntity userEntity = accountEntity.getUser();
+        userEntity.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(userEntity);
+
+        return accountEntity;
     }
 
     public AccountEntity getUser(String email, String password) {

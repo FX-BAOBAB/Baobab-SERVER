@@ -21,7 +21,6 @@ public class UserBusiness {
      */
     private final UserService userService;
     private final TokenBusiness tokenBusiness;
-    private final UserConverter userConverter;
 
     public LoginResponse login(LoginRequest loginRequest) {
         AccountEntity accountEntity = userService.login(loginRequest.getEmail(),
