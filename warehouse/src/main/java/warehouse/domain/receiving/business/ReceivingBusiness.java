@@ -3,10 +3,12 @@ package warehouse.domain.receiving.business;
 import db.domain.goods.GoodsEntity;
 import db.domain.receiving.ReceivingEntity;
 import global.annotation.Business;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
@@ -23,6 +25,7 @@ import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResp
 import warehouse.domain.receiving.converter.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
 
+@Slf4j
 @Business
 @RequiredArgsConstructor
 public class ReceivingBusiness {
@@ -77,7 +80,21 @@ public class ReceivingBusiness {
     }
 
     public MessageResponse abandonment(Long receivingId) {
+        // TODO Login User 의 소유가 아닌 물품인 경우 Exception 처리 필요
+        ReceivingEntity receivingEntity = receivingService.getReceivingById(receivingId);
+        receivingService.setAbandonmentAt(receivingEntity);
         goodsService.abandonment(receivingId);
+        return receivingConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
+    }
+
+    public MessageResponse abandonment(List<Long> goodsIdList) {
+        List<Long> ReceivingIdList = goodsService.getReceivingIdList(goodsIdList);
+        // TODO Login User 의 소유가 아닌 물품인 경우 Exception 처리 필요
+        ReceivingIdList.forEach(receivingId -> {
+            ReceivingEntity receivingEntity = receivingService.getReceivingById(receivingId);
+            receivingService.setAbandonmentAt(receivingEntity);
+        });
+        goodsService.abandonment(goodsIdList);
         return receivingConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
     }
 }

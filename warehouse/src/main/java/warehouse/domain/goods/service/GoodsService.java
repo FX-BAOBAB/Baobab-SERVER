@@ -2,7 +2,11 @@ package warehouse.domain.goods.service;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
+import db.domain.receiving.ReceivingEntity;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +33,26 @@ public class GoodsService {
             goodsEntity.setUserId(0L);
             goodsRepository.save(goodsEntity);
         });
+    }
+
+    public void abandonment(List<Long> goodsIdList) {
+        // TODO 회사 아이디 생성 후 Matching 필요, Exception 처리 필요
+        goodsIdList.forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsRepository.findFirstById(goodsId)
+                .orElseThrow(() -> new NullPointerException("abandonment null point"));
+            goodsEntity.setUserId(0L);
+            goodsRepository.save(goodsEntity);
+        });
+    }
+
+    public List<Long> getReceivingIdList(List<Long> goodsIdList) {
+        // TODO Exception 처리 필요
+        List<Long> receivingIdList = new ArrayList<>();
+        goodsIdList.forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsRepository.findFirstById(goodsId)
+                .orElseThrow(() -> new NullPointerException("getReceivingIdList Null Point"));
+            receivingIdList.add(goodsEntity.getReceivingId());
+        });
+        return receivingIdList;
     }
 }

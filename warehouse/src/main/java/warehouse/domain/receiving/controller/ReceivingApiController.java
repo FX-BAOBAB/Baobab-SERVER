@@ -1,6 +1,7 @@
 package warehouse.domain.receiving.controller;
 
 import global.api.Api;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,14 @@ public class ReceivingApiController {
         @PathVariable Long receivingId
     ){
         MessageResponse response = receivingBusiness.abandonment(receivingId);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/abandonment")
+    public Api<MessageResponse> abandonment(
+        @RequestBody Api<List<Long>> goodsIdList
+    ){
+        MessageResponse response = receivingBusiness.abandonment(goodsIdList.getBody());
         return Api.OK(response);
     }
 

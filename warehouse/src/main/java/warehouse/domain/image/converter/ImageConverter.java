@@ -38,8 +38,6 @@ public class ImageConverter {
 
         ImageInfo imageInfo = new ImageInfo(request);
 
-        log.info("extension : {}", imageInfo.getExtension());
-
         return ImageEntity.builder().imageUrl(imageInfo.getImageUrl())
             .originalName(imageInfo.getOriginalFileName()).serverName(imageInfo.serverName)
             .kind(request.getKind()).caption(request.getCaption())

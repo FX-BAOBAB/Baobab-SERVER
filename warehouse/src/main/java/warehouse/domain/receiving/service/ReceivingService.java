@@ -4,6 +4,7 @@ import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.ReceivingRepository;
 import db.domain.receiving.enums.ReceivingStatus;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class ReceivingService {
 
     public ReceivingEntity getReceivingById(Long receivingId) {
         // TODO receiving null Exception 처리 필요
-        return receivingRepository.findFirstById(receivingId).orElseThrow((() -> new NullPointerException("receiving Null Exception")));
+        return receivingRepository.findFirstById(receivingId)
+            .orElseThrow((() -> new NullPointerException("receiving Null Exception")));
     }
 
     public ReceivingEntity setGuarantee(Long receivingId) {
@@ -45,5 +47,10 @@ public class ReceivingService {
             .orElseThrow(() -> new NullPointerException("receiving 요청서가 존재하지 않습니다."));
         receivingEntity.setStatus(null);
         return receivingRepository.save(receivingEntity);
+    }
+
+    public void setAbandonmentAt(ReceivingEntity receivingEntity) {
+        receivingEntity.setAbandonmentAt(LocalDateTime.now());
+        receivingRepository.save(receivingEntity);
     }
 }
