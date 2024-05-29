@@ -37,8 +37,8 @@ public class UserOpenApiController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Api<Object>> signUp(@RequestBody UserSignUpRequest request) {
-        Api<Object> response = userService.signUp(request);
+    public ResponseEntity<Api<Object>> signUp(@RequestBody Api<UserSignUpRequest> request) {
+        Api<Object> response = userService.signUp(request.getBody());
         return ResponseEntity.ok(response);
     }
 
