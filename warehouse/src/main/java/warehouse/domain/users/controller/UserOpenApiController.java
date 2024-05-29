@@ -25,8 +25,9 @@ public class UserOpenApiController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<Api<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
-        LoginResponse login = userBusiness.login(loginRequest);
+    public ResponseEntity<Api<LoginResponse>> login(
+        @Valid @RequestBody Api<LoginRequest> loginRequest) {
+        LoginResponse login = userBusiness.login(loginRequest.getBody());
 
         // 응답 헤더에 refreshToken 추가
         HttpHeaders headers = new HttpHeaders();
