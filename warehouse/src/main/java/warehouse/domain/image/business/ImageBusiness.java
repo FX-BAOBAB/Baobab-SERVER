@@ -98,23 +98,27 @@ public class ImageBusiness {
 
     public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, Long goodsId) {
 
+        setGoodsId(goodsRequests, goodsId);
+
+        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsId,
+            ImageKind.BASIC);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsId,
+            ImageKind.FAULT);
+
+        ImageList basicImageListResponse = imageConverter.toResponseList(basicImageEntityList);
+        ImageList faultImageListResponse = imageConverter.toResponseList(faultImageEntityList);
+
+        return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
+            .faultImageListResponse(faultImageListResponse).build();
+
+    }
+
+    private void setGoodsId(List<GoodsRequest> goodsRequests, Long goodsId) {
         goodsRequests.forEach(
             it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
                 th.setGoodsId(goodsId);
                 imageService.updateImageDB(th);
             }));
-
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
-            goodsId, ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListByGoodsIdAndKind(
-            goodsId, ImageKind.FAULT);
-
-        ImageList basicImageListResponse = imageConverter.toEntityList(basicImageEntityList);
-        ImageList faultImageListResponse = imageConverter.toEntityList(faultImageEntityList);
-
-        return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
-            .faultImageListResponse(faultImageListResponse).build();
-
     }
 
 

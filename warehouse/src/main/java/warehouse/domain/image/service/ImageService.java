@@ -1,5 +1,6 @@
 package warehouse.domain.image.service;
 
+import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
 import db.domain.image.enums.ImageKind;
@@ -18,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
+import warehouse.domain.image.common.ImageUtils;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,10 +39,10 @@ public class ImageService {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        String extension = subStringExtension(entity);
+        String extension = ImageUtils.subStringExtension(entity.getOriginalName());
 
         // Normalize file name
-        String fileName = StringUtils.cleanPath(entity.getServerName() + extension);
+        String fileName = ImageUtils.getCleanPath(entity.getServerName() + extension);
 
         try {
             // Check if the file's name contains invalid characters
@@ -61,15 +63,14 @@ public class ImageService {
 
     public ImageEntity saveImageDataToDB(ImageEntity entity) {
 
-        if (entity.getGoodsId() == null){
+        if (entity.getGoodsId() == null) {
             entity.setGoodsId(0L);
         }
 
-        return Optional.of(entity)
-            .map(it -> imageRepository.save(entity)).orElseThrow(() -> {
-                // TODO imageException 처리 예정
-                return null;
-            });
+        return Optional.of(entity).map(it -> imageRepository.save(entity)).orElseThrow(() -> {
+            // TODO imageException 처리 예정
+            return null;
+        });
     }
 
     public void updateImageDB(ImageEntity th) {
@@ -80,7 +81,7 @@ public class ImageService {
         return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
     }
 
-    
+
     public List<ImageEntity> getImageUrlList(Long goodsId) {
         return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
     }
@@ -93,20 +94,18 @@ public class ImageService {
         return uploadDir + filepath;
     }
 
-    private static String subStringExtension(ImageEntity entity) {
-        int index = entity.getOriginalName().lastIndexOf(".");
-        return entity.getOriginalName().substring(index);
-    }
-
     public ImageEntity getImageByImageId(Long id) {
         return imageRepository.findFirstByIdOrderByIdDesc(id);
     }
 
 
-    public List<ImageEntity> getImageUrlListByGoodsIdAndKind(Long goodsId, ImageKind kind) {
+    public List<ImageEntity> getImageUrlListBy(Long goodsId, ImageKind kind) {
 
-        List<ImageEntity> imageEntityList = getImageUrlList(goodsId, kind);
+        return getImageUrlList(goodsId, kind);
+    }
 
-        return imageEntityList;
+    public List<ImageEntity> getImageEntityListBy(List<GoodsEntity> goodsEntityList) {
+        Long goodsId = ImageUtils.getFirstGoodsId(goodsEntityList);
+        return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
     }
 }

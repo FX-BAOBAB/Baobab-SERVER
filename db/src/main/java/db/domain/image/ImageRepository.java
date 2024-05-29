@@ -11,4 +11,5 @@ public interface ImageRepository extends JpaRepository<ImageEntity,Long> {
     List<ImageEntity> findAllByGoodsIdAndKindOrderByIdDesc(Long goodsId, ImageKind kind);
 
     ImageEntity findFirstByIdOrderByIdDesc(Long id);
+
 }

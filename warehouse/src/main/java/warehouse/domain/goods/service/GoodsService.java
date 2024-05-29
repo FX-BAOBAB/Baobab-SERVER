@@ -2,6 +2,7 @@ package warehouse.domain.goods.service;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,9 @@ public class GoodsService {
         return goodsRepository.save(goodsEntity);
     }
 
-    public GoodsEntity findByReceivingIdGoodsWithThrow(Long receivingId) {
+    public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
         return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
+
+
 }
