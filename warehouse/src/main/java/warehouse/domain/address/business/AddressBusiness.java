@@ -5,8 +5,9 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import warehouse.domain.address.controller.model.AddressResponse;
+import warehouse.domain.address.controller.model.Address;
 import warehouse.domain.address.controller.model.AddressListResponse;
+import warehouse.domain.address.controller.model.BasicAddressResponse;
 import warehouse.domain.address.converter.AddressConverter;
 import warehouse.domain.address.service.AddressService;
 
@@ -20,17 +21,17 @@ public class AddressBusiness {
 
     public AddressListResponse findAddressList(Long userId) {
 
-        List<AddressResponse> addressResponseList = addressService.findAddressList(userId).stream()
+        List<Address> addressResponseList = addressService.findAddressList(userId).stream()
             .map(addressConverter::toAddressListResponse).toList();
 
         return AddressListResponse.builder()
-            .addressResponses(addressResponseList)
+            .address(addressResponseList)
             .build();
     }
 
-    public AddressResponse findBasicAddress(Long userId) {
+    public BasicAddressResponse findBasicAddress(Long userId) {
         AddressEntity basicAddress = addressService.findBasicAddress(userId);
-        AddressResponse basicAddressResponse = addressConverter.toBasicAddressResponse(
+        BasicAddressResponse basicAddressResponse = addressConverter.toBasicAddressResponse(
             basicAddress);
 
         return basicAddressResponse;

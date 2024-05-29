@@ -2,13 +2,14 @@ package warehouse.domain.address.converter;
 
 import db.domain.address.AddressEntity;
 import global.annotation.Converter;
-import warehouse.domain.address.controller.model.AddressResponse;
+import warehouse.domain.address.controller.model.Address;
+import warehouse.domain.address.controller.model.BasicAddressResponse;
 
 @Converter
 public class AddressConverter {
 
-    public AddressResponse toAddressListResponse(AddressEntity addressEntity) {
-        return AddressResponse.builder()
+    public Address toAddressListResponse(AddressEntity addressEntity) {
+        return Address.builder()
             .id(addressEntity.getId())
             .address(addressEntity.getAddress())
             .detailAddress(addressEntity.getDetailAddress())
@@ -16,12 +17,16 @@ public class AddressConverter {
             .build();
     }
 
-    public AddressResponse toBasicAddressResponse(AddressEntity addressEntity) {
-        return AddressResponse.builder()
-            .id(addressEntity.getId())
-            .address(addressEntity.getAddress())
-            .detailAddress(addressEntity.getDetailAddress())
-            .basicAddress(addressEntity.getBasicAddress())
+    public BasicAddressResponse toBasicAddressResponse(AddressEntity addressEntity) {
+        return BasicAddressResponse.builder()
+            .address(
+                Address.builder()
+                    .id(addressEntity.getId())
+                    .address(addressEntity.getAddress())
+                    .detailAddress(addressEntity.getDetailAddress())
+                    .post(addressEntity.getPost())
+                    .basicAddress(addressEntity.getBasicAddress())
+                    .build())
             .build();
     }
 }
