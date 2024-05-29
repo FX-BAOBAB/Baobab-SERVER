@@ -40,8 +40,9 @@ public class AddressController {
 
     // 주소 추가하기
     @PostMapping("/address")
-    public Api<AddAddressResponse> addAddress(@UserSession User user, @RequestBody AddAddressRequest request) {
-        AddAddressResponse response = addressBusiness.addAddress(user.getId(), request);
+    public Api<AddAddressResponse> addAddress(@UserSession User user,
+        @RequestBody Api<AddAddressRequest> request) {
+        AddAddressResponse response = addressBusiness.addAddress(user.getId(), request.getBody());
         return Api.OK(response);
     }
 }
