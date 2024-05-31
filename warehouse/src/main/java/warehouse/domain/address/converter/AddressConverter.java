@@ -47,6 +47,7 @@ public class AddressConverter {
         return AddAddressResponse.builder()
             .address(addressEntity.getAddress())
             .detailAddress(addressEntity.getDetailAddress())
+            .post(addressEntity.getPost())
             .basicAddress(addressEntity.getBasicAddress())
             .build();
     }

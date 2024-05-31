@@ -9,5 +9,6 @@ public class AddAddressResponse {
 
     private String address;
     private String detailAddress;
+    private int post;
     private boolean basicAddress;
 }
