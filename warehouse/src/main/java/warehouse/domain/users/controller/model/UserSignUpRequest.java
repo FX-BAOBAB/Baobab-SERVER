@@ -11,6 +11,6 @@ public class UserSignUpRequest {
     private String password;
     private String name;
     private String address;
-    private String detail_address;
-    private boolean basic_address;
+    private String detailAddress;
+    private boolean basicAddress;
 }
