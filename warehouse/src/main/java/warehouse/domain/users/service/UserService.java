@@ -30,7 +30,7 @@ public class UserService {
     public AccountEntity login(String email, String password) {
         //TODO UserStatus 에 따른 로직 처리
         AccountEntity accountEntity = getUser(email, password);
-        
+
         // UserEntity의 lastLoginAt 업데이트
         UserEntity userEntity = accountEntity.getUser();
         userEntity.setLastLoginAt(LocalDateTime.now());
@@ -76,8 +76,8 @@ public class UserService {
 
             AddressEntity addressEntity = AddressEntity.builder()
                 .address(request.getAddress())
-                .detailAddress(request.getDetail_address())
-                .basicAddress(request.isBasic_address())
+                .detailAddress(request.getDetailAddress())
+                .basicAddress(request.isBasicAddress())
                 .user(userEntity)
                 .build();
             addressRepository.save(addressEntity);
