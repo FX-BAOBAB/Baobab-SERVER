@@ -3,13 +3,10 @@ package warehouse.domain.image.business;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.FileCopyUtils;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
@@ -40,52 +37,29 @@ public class ImageBusiness {
         return imageUploadBizLogic(request);
     }
 
-    public ImageList uploadImages(ImageListRequest listRequest) {
+    public ImageList uploadImageList(ImageListRequest listRequest) {
 
-        List<ImageRequest> imageRequestList = imageConverter.toImageRequest(listRequest);
+        List<ImageRequest> imageRequestList = imageConverter.toRequestList(listRequest);
 
         List<ImageResponse> imageResponseList = imageRequestList.stream().map(this::uploadImage)
             .collect(Collectors.toList());
 
-        return ImageList.builder().imageResponseList(imageResponseList).build();
+        return imageConverter.toImageList(imageResponseList);
     }
 
 
-    public ImageList getImageUrlList(Long goodsId) {
+    public ImageList getImageUrlListBy(Long goodsId) {
 
         List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
 
         List<ImageResponse> imageResponseList = imageEntityList.stream()
             .map(imageConverter::toResponse).collect(Collectors.toList());
 
-        return ImageList.builder().imageResponseList(imageResponseList).build();
+        return imageConverter.toImageList(imageResponseList);
     }
 
     public byte[] getImageFile(String filepath) {
-
-        String fullPath = imageService.getImageFullPath(filepath);
-
-        File file = new File(fullPath);
-
-        //저장된 이미지파일의 이진데이터 형식을 구함
-        byte[] result = null; //1. data
-        //ResponseEntity<byte[]> entity = null;
-
-        try {
-            result = FileCopyUtils.copyToByteArray(file);
-
-            // TODO header 에 넣어 줄지 byte[] 그대로 내릴지 고민 필요
-            /*HttpHeaders header = new HttpHeaders();
-            header.add("Content-type",
-                Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
-
-            //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
-        } catch (IOException e) {
-            log.info("", e);
-            // TODO Exception 처리 필요
-        }
-
-        return result;
+        return imageService.getImageFileByteList(filepath);
     }
 
 
@@ -97,15 +71,12 @@ public class ImageBusiness {
     }
 
     public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, Long goodsId) {
-
         setGoodsId(goodsRequests, goodsId);
-
         List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsId,
             ImageKind.BASIC);
         List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsId,
             ImageKind.FAULT);
-
-        return imageConverter.toImageListResponse(basicImageEntityList,faultImageEntityList);
+        return imageConverter.toImageListResponse(basicImageEntityList, faultImageEntityList);
 
     }
 

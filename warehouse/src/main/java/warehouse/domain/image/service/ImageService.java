@@ -4,6 +4,7 @@ import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
 import db.domain.image.enums.ImageKind;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
@@ -104,5 +106,31 @@ public class ImageService {
 
     public List<ImageEntity> getImageEntity(GoodsEntity entity) {
         return imageRepository.findAllByGoodsIdOrderByIdDesc(entity.getId());
+    }
+
+    public byte[] getImageFileByteList(String filepath) {
+        String fullPath = getImageFullPath(filepath);
+
+        File file = new File(fullPath);
+
+        //저장된 이미지파일의 이진데이터 형식을 구함
+        byte[] result = null; //1. data
+        //ResponseEntity<byte[]> entity = null;
+
+        try {
+            result = FileCopyUtils.copyToByteArray(file);
+
+            // TODO header 에 넣어 줄지 byte[] 그대로 내릴지 고민 필요
+            /*HttpHeaders header = new HttpHeaders();
+            header.add("Content-type",
+                Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
+
+            //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
+        } catch (IOException e) {
+            log.info("", e);
+            // TODO Exception 처리 필요
+        }
+
+        return result;
     }
 }

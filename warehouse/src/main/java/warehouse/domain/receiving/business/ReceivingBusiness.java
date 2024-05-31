@@ -44,7 +44,7 @@ public class ReceivingBusiness {
 
         List<GoodsRequest> goodsRequests = request.getGoodsRequests();
 
-        List<GoodsEntity> goodsEntityList = goodsConverter.toGoodsEntityListBy(goodsRequests);
+        List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(goodsRequests);
 
         List<GoodsEntity> newGoodsEntityList = saveGoodsList(goodsEntityList,
             registeredReceivingEntity);
@@ -54,7 +54,7 @@ public class ReceivingBusiness {
         ImageListResponse imageListResponse = imageBusiness.receivingRequest(goodsRequests,
             goodsId);
 
-        List<GoodsResponse> goodsResponseList = goodsConverter.toGoodsResponseListBy(
+        List<GoodsResponse> goodsResponseList = goodsConverter.toResponseListBy(
             goodsEntityList, imageListResponse);
 
         return receivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);

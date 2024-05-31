@@ -34,7 +34,7 @@ public class ImageController {
     @PostMapping("/imageList")
     public Api<ImageList> uploadImages(ImageListRequest imageRequestList) {
 
-        ImageList response = imageBusiness.uploadImages(imageRequestList);
+        ImageList response = imageBusiness.uploadImageList(imageRequestList);
 
         return Api.OK(response);
     }
@@ -42,7 +42,7 @@ public class ImageController {
     @GetMapping("/{goodsId}")
     public Api<ImageList> getImage(@PathVariable("goodsId") Long goodsId) {
 
-        ImageList response = imageBusiness.getImageUrlList(goodsId);
+        ImageList response = imageBusiness.getImageUrlListBy(goodsId);
 
         return Api.OK(response);
     }
