@@ -1,6 +1,8 @@
 package warehouse.domain.goods.converter;
 
 import db.domain.goods.GoodsEntity;
+import db.domain.image.ImageEntity;
+import db.domain.image.enums.ImageKind;
 import global.annotation.Converter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

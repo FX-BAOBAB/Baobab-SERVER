@@ -10,4 +10,5 @@ public interface GoodsRepository extends JpaRepository<GoodsEntity,Long> {
 
     Optional<GoodsEntity> findFirstById(Long goodsId);
 
+    List<GoodsEntity> findAllByIdIn(List<Long> goodsIdList);
 }

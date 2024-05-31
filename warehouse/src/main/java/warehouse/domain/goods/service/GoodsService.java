@@ -5,6 +5,7 @@ import db.domain.goods.GoodsRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,4 +55,9 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
+
+    public List<GoodsEntity> getGoodsListBy(List<Long> goodsIdList) {
+       return goodsRepository.findAllByIdIn(goodsIdList);
+    }
+
 }
