@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.image.common.ImageUtils;
+import warehouse.domain.image.controller.model.ImageListResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -98,14 +98,11 @@ public class ImageService {
         return imageRepository.findFirstByIdOrderByIdDesc(id);
     }
 
-
     public List<ImageEntity> getImageUrlListBy(Long goodsId, ImageKind kind) {
-
         return getImageUrlList(goodsId, kind);
     }
 
-    public List<ImageEntity> getImageEntityListBy(List<GoodsEntity> goodsEntityList) {
-        Long goodsId = ImageUtils.getFirstGoodsId(goodsEntityList);
-        return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
+    public List<ImageEntity> getImageEntity(GoodsEntity entity) {
+        return imageRepository.findAllByGoodsIdOrderByIdDesc(entity.getId());
     }
 }

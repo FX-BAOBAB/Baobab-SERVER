@@ -2,11 +2,9 @@ package warehouse.domain.receiving.converter;
 
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
-import db.domain.takeback.TakeBackEntity;
 import global.annotation.Converter;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.JFileChooser;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
@@ -27,6 +25,7 @@ public class ReceivingConverter {
 
     public ReceivingResponse toResponse(ReceivingEntity receiving, List<GoodsResponse> goodsResponseList,
         TakeBackResponse takeBackResponse) {
+
         return ReceivingResponse.builder().id(receiving.getId())
             .receivingStatus(receiving.getStatus()).goods(goodsResponseList)
             .visitDate(receiving.getVisitDate()).visitAddress(receiving.getVisitAddress())

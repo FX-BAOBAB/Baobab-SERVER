@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TakeBackResponse {
 
+    private Long id;
     private TakeBackStatus status;
     private LocalDateTime takeBackRequestAt;
 

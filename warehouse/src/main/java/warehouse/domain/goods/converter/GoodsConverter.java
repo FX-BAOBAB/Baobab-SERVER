@@ -73,4 +73,5 @@ public class GoodsConverter {
 
         return goodsResponseList;
     }
+
 }

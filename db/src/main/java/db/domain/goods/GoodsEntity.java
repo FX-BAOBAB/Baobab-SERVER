@@ -45,4 +45,7 @@ public class GoodsEntity extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
+    private Long takeBackId;
+
 }

@@ -2,15 +2,19 @@ package warehouse.domain.takeback.business;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
+import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.takeback.TakeBackEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageList;
+import warehouse.domain.image.controller.model.ImageListResponse;
+import warehouse.domain.image.controller.model.ImageResponse;
 import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
@@ -20,6 +24,7 @@ import warehouse.domain.takeback.controller.model.TakeBackResponse;
 import warehouse.domain.takeback.converter.TakeBackConverter;
 import warehouse.domain.takeback.service.TakeBackService;
 
+@Slf4j
 @Business
 @RequiredArgsConstructor
 public class TakeBackBusiness {
@@ -35,23 +40,30 @@ public class TakeBackBusiness {
 
     public ReceivingResponse takeBackRequest(Long receivingId) {
 
-        ReceivingEntity nonStatusReceivingEntity = receivingService.initReceivingStatus(
-            receivingId);
-        TakeBackEntity takeBackEntity = takeBackConverter.toEntity(nonStatusReceivingEntity);
+        ReceivingEntity nonStatusReceivingEntity = receivingService.initReceivingStatus(receivingId);
+
+        TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
+
         TakeBackEntity newTakeBackEntity = takeBackService.takeBackRequest(takeBackEntity);
 
         List<GoodsEntity> goodsEntityList = goodsService.findAllByReceivingIdWithThrow(
             receivingId);
-        List<ImageEntity> imageEntityList = imageService.getImageEntityListBy(
-            goodsEntityList);
-        ImageList imageList = imageConverter.toResponseList(imageEntityList);
-        List<GoodsResponse> goodsResponseList = goodsConverter.toResponseList(goodsEntityList,
-            imageList);
+
+        goodsService.setTakeBackId(goodsEntityList, newTakeBackEntity.getId());
+
+        List<GoodsResponse> goodsResponseList = goodsEntityList.stream().map(it -> {
+            List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(it.getId(),
+                ImageKind.BASIC);
+            List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(it.getId(),
+                ImageKind.FAULT);
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+                basicImageEntityList, faultImageEntityList);
+            return goodsConverter.toResponse(it, imageListResponse);
+        }).toList();
 
         TakeBackResponse takeResponse = takeBackConverter.toResponse(newTakeBackEntity);
 
-        return receivingConverter.toResponse(nonStatusReceivingEntity, goodsResponseList,
+        return  receivingConverter.toResponse(nonStatusReceivingEntity, goodsResponseList,
             takeResponse);
-
     }
 }

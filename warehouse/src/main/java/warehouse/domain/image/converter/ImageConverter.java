@@ -1,6 +1,7 @@
 package warehouse.domain.image.converter;
 
 import db.domain.image.ImageEntity;
+import db.domain.image.enums.ImageKind;
 import global.annotation.Converter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.image.common.ImageUtils;
 import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageList;
+import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
 
@@ -71,11 +73,21 @@ public class ImageConverter {
         return requestList;
     }
 
-    public ImageList toResponseList(List<ImageEntity> basicImageEntityList) {
-        List<ImageResponse> imageResponseList = basicImageEntityList.stream().map(this::toResponse)
+    public ImageList toResponseList(List<ImageEntity> imageEntityList) {
+        List<ImageResponse> imageResponseList = imageEntityList.stream().map(this::toResponse)
             .collect(Collectors.toList());
         return ImageList.builder().imageResponseList(imageResponseList).build();
     }
+
+    public ImageListResponse toImageListResponse(List<ImageEntity> basic, List<ImageEntity> fault){
+
+        ImageList basicImageListResponse = toResponseList(basic);
+        ImageList faultImageListResponse = toResponseList(fault);
+
+        return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
+            .faultImageListResponse(faultImageListResponse).build();
+    }
+
 
     @Data
     @NoArgsConstructor

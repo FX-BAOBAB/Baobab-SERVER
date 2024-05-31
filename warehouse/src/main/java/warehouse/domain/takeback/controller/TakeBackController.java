@@ -18,8 +18,10 @@ public class TakeBackController {
 
     @PostMapping("/{receivingId}")
     public Api<ReceivingResponse> takeBackRequest(@PathVariable Long receivingId) {
-        ReceivingResponse response = takeBackBusiness.takeBackRequest(receivingId);
+        ReceivingResponse response = takeBackBusiness.takeBackRequest(
+            receivingId);
         return Api.OK(response);
     }
+
 
 }

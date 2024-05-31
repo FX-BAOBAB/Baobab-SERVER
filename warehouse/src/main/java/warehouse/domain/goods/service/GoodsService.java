@@ -48,4 +48,10 @@ public class GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
+    public void setTakeBackId(List<GoodsEntity> goodsEntityList,Long id) {
+        goodsEntityList.forEach(goodsEntity -> {
+            goodsEntity.setTakeBackId(id);
+            goodsRepository.save(goodsEntity);
+        });
+    }
 }

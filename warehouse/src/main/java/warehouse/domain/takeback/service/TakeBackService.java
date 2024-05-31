@@ -1,9 +1,11 @@
 package warehouse.domain.takeback.service;
 
+import db.domain.goods.GoodsEntity;
 import db.domain.takeback.TakeBackEntity;
 import db.domain.takeback.TakeBackRepository;
 import db.domain.takeback.enums.TakeBackStatus;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -105,11 +105,7 @@ public class ImageBusiness {
         List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsId,
             ImageKind.FAULT);
 
-        ImageList basicImageListResponse = imageConverter.toResponseList(basicImageEntityList);
-        ImageList faultImageListResponse = imageConverter.toResponseList(faultImageEntityList);
-
-        return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
-            .faultImageListResponse(faultImageListResponse).build();
+        return imageConverter.toImageListResponse(basicImageEntityList,faultImageEntityList);
 
     }
 
