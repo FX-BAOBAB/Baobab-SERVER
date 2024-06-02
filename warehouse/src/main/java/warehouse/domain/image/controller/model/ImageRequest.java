@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ImageRequest {
 
+    //TODO Valid 필요
+
     private MultipartFile file;
 
     private ImageKind kind;

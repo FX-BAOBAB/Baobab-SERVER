@@ -1,5 +1,6 @@
 package warehouse.domain.image.controller.model;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ImageListResponse {
 
-    private ImageList basicImageListResponse;
+    private List<ImageResponse> basicImageListResponse;
 
-    private ImageList faultImageListResponse;
+    private List<ImageResponse> faultImageListResponse;
 
 }

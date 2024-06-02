@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ImageListRequest {
 
+    // TODO Valid 필요
+
     private List<MultipartFile> files;
 
     private ImageKind kind;
