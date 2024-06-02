@@ -2,6 +2,7 @@ package warehouse.domain.users.business;
 
 import db.domain.account.AccountEntity;
 import global.annotation.Business;
+import global.api.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import warehouse.domain.token.business.TokenBusiness;
@@ -31,8 +32,7 @@ public class UserBusiness {
     }
 
     public FindUserResponse findUser(Long userId) {
-        FindUserResponse findUserResponse = userConverter.toFindUserResponse(userId);
-        return findUserResponse;
+        FindUserResponse findUserResponse = userService.findUserById(userId);
+        return userConverter.toFindUserResponse(findUserResponse);
     }
-
 }
