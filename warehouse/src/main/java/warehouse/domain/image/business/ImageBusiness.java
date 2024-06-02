@@ -4,6 +4,7 @@ import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.converter.GoodsConverter;
-import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
@@ -37,31 +37,22 @@ public class ImageBusiness {
         return imageUploadBizLogic(request);
     }
 
-    public ImageList uploadImageList(ImageListRequest listRequest) {
+    public List<ImageResponse> uploadImageList(ImageListRequest listRequest) {
 
-        List<ImageRequest> imageRequestList = imageConverter.toRequestList(listRequest);
+        return imageConverter.toRequestList(listRequest).stream()
+            .map(this::uploadImage).collect(Collectors.toList());
 
-        List<ImageResponse> imageResponseList = imageRequestList.stream().map(this::uploadImage)
-            .collect(Collectors.toList());
-
-        return imageConverter.toImageList(imageResponseList);
     }
+    
+    public List<ImageResponse> getImageUrlListBy(Long goodsId) {
 
-
-    public ImageList getImageUrlListBy(Long goodsId) {
-
-        List<ImageEntity> imageEntityList = imageService.getImageUrlList(goodsId);
-
-        List<ImageResponse> imageResponseList = imageEntityList.stream()
+        return imageService.getImageUrlList(goodsId).stream()
             .map(imageConverter::toResponse).collect(Collectors.toList());
-
-        return imageConverter.toImageList(imageResponseList);
     }
 
     public byte[] getImageFile(String filepath) {
         return imageService.getImageFileByteList(filepath);
     }
-
 
     private ImageResponse imageUploadBizLogic(ImageRequest request) {
         ImageEntity entity = imageConverter.toEntity(request);
@@ -69,24 +60,5 @@ public class ImageBusiness {
         ImageEntity newEntity = imageService.saveImageDataToDB(entity);
         return imageConverter.toResponse(newEntity);
     }
-
-    public ImageListResponse receivingRequest(List<GoodsRequest> goodsRequests, Long goodsId) {
-        setGoodsId(goodsRequests, goodsId);
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsId,
-            ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsId,
-            ImageKind.FAULT);
-        return imageConverter.toImageListResponse(basicImageEntityList, faultImageEntityList);
-
-    }
-
-    private void setGoodsId(List<GoodsRequest> goodsRequests, Long goodsId) {
-        goodsRequests.forEach(
-            it -> imageService.getImagesByImageIdList(it.getImageIdList()).forEach(th -> {
-                th.setGoodsId(goodsId);
-                imageService.updateImageDB(th);
-            }));
-    }
-
 
 }
