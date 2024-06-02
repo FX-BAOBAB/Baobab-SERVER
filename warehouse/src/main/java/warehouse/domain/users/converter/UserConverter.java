@@ -2,19 +2,23 @@ package warehouse.domain.users.converter;
 
 import global.annotation.Converter;
 import lombok.RequiredArgsConstructor;
-import warehouse.domain.users.controller.model.UserResponse;
-import db.domain.account.AccountEntity;
+import warehouse.domain.users.controller.model.FindUserResponse;
+import warehouse.domain.users.service.UserService;
 
 @Converter
 @RequiredArgsConstructor
 public class UserConverter {
 
-    public UserResponse toResponse(AccountEntity accountEntity) {
+    private final UserService userService;
 
-        return UserResponse.builder()
-            .id(accountEntity.getEmail())
-            .email(accountEntity.getEmail())
-            .name(accountEntity.getName())
+    public FindUserResponse toFindUserResponse(Long userId) {
+        FindUserResponse findUserResponse = userService.findUserById(userId);
+
+        return FindUserResponse.builder()
+            .id(findUserResponse.getId())
+            .email(findUserResponse.getEmail())
+            .password(findUserResponse.getPassword())
+            .role(findUserResponse.getRole())
             .build();
     }
 

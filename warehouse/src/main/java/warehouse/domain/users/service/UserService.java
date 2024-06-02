@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import db.domain.account.AccountEntity;
 import db.domain.account.AccountRepository;
+import warehouse.domain.users.controller.model.FindUserResponse;
 import warehouse.domain.users.controller.model.UserSignUpRequest;
 import warehouse.domain.users.exception.userexception.UserNotFoundException;
 import warehouse.domain.users.exception.userexception.DuplicateUserException;
@@ -87,4 +88,18 @@ public class UserService {
             throw new DuplicateUserException(String.valueOf(UserErrorCode.INVALID_USER_DATA));
         }
     }
+
+    public FindUserResponse findUserById(Long userId) {
+        AccountEntity accountEntity = accountRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = accountEntity.getUser();
+
+        return FindUserResponse.builder()
+            .id(userEntity.getId())
+            .email(accountEntity.getEmail())
+            .password(accountEntity.getPassword())
+            .role(String.valueOf(userEntity.getRole()))
+            .build();
+    }
+
 }
