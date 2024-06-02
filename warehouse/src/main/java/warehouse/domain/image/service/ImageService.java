@@ -1,5 +1,7 @@
 package warehouse.domain.image.service;
 
+import static db.domain.image.enums.ImageKind.*;
+
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
@@ -10,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +24,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
+import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.image.common.ImageUtils;
 import warehouse.domain.image.controller.model.ImageListResponse;
 
@@ -104,10 +109,6 @@ public class ImageService {
         return getImageUrlList(goodsId, kind);
     }
 
-    public List<ImageEntity> getImageEntity(GoodsEntity entity) {
-        return imageRepository.findAllByGoodsIdOrderByIdDesc(entity.getId());
-    }
-
     public byte[] getImageFileByteList(String filepath) {
         String fullPath = getImageFullPath(filepath);
 
@@ -132,5 +133,25 @@ public class ImageService {
         }
 
         return result;
+    }
+
+    public Map<ImageKind, List<ImageEntity>> receivingRequest(List<GoodsRequest> goodsRequests,
+        Long goodsId) {
+        Map<ImageKind, List<ImageEntity>> imageMap = new ConcurrentHashMap<>();
+        setGoodsId(goodsRequests, goodsId);
+        List<ImageEntity> basicImageEntityList = getImageUrlListBy(goodsId, BASIC);
+        List<ImageEntity> faultImageEntityList = getImageUrlListBy(goodsId, FAULT);
+        imageMap.put(BASIC, basicImageEntityList);
+        imageMap.put(FAULT, faultImageEntityList);
+        return imageMap;
+    }
+
+    private void setGoodsId(List<GoodsRequest> goodsRequests, Long goodsId) {
+        goodsRequests.forEach(
+            goodsRequest -> getImagesByImageIdList(goodsRequest.getImageIdList()).forEach(
+                imageEntity -> {
+                    imageEntity.setGoodsId(goodsId);
+                    updateImageDB(imageEntity);
+                }));
     }
 }
