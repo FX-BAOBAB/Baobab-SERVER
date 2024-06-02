@@ -1,5 +1,6 @@
 package warehouse.domain.users.controller.model;
 
+import db.domain.users.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,5 +14,5 @@ public class FindUserResponse {
 
     private String password;
 
-    private String role;
+    private UserRole role;
 }

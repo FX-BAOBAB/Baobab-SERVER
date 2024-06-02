@@ -98,7 +98,7 @@ public class UserService {
             .id(userEntity.getId())
             .email(accountEntity.getEmail())
             .password(accountEntity.getPassword())
-            .role(String.valueOf(userEntity.getRole()))
+            .role((userEntity.getRole()))
             .build();
     }
 
