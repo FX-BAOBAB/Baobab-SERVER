@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageResponse;
 
 @Data
@@ -23,8 +22,8 @@ public class GoodsResponse {
 
     private int quantity;
 
-    private ImageList basicImages;
+    private List<ImageResponse> basicImages;
 
-    private ImageList faultImages;
+    private List<ImageResponse> faultImages;
 
 }
