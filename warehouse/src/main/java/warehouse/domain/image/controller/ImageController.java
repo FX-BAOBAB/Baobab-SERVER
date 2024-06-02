@@ -1,6 +1,7 @@
 package warehouse.domain.image.controller;
 
 import global.api.Api;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.image.business.ImageBusiness;
 import warehouse.domain.image.controller.model.ImageListRequest;
-import warehouse.domain.image.controller.model.ImageList;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
 
@@ -30,19 +30,18 @@ public class ImageController {
 
     }
 
-
     @PostMapping("/imageList")
-    public Api<ImageList> uploadImages(ImageListRequest imageRequestList) {
+    public Api<List<ImageResponse>> uploadImages(ImageListRequest imageRequestList) {
 
-        ImageList response = imageBusiness.uploadImageList(imageRequestList);
+        List<ImageResponse> response = imageBusiness.uploadImageList(imageRequestList);
 
         return Api.OK(response);
     }
 
     @GetMapping("/{goodsId}")
-    public Api<ImageList> getImage(@PathVariable("goodsId") Long goodsId) {
+    public Api<List<ImageResponse>> getImage(@PathVariable("goodsId") Long goodsId) {
 
-        ImageList response = imageBusiness.getImageUrlListBy(goodsId);
+        List<ImageResponse> response = imageBusiness.getImageUrlListBy(goodsId);
 
         return Api.OK(response);
     }
