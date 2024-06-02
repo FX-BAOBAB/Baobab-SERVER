@@ -27,8 +27,15 @@ public class GoodsService {
     }
 
     public void abandonment(Long receivingId) {
+
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
+            receivingId);
+        // TODO goodsEntityList Empty Exception 처리 필요
+        if(goodsEntityList.isEmpty()){
+            throw new NullPointerException();
+        }
         // TODO 회사 아이디 생성 후 Matching 필요
-        goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId).forEach(goodsEntity -> {
+        goodsEntityList.forEach(goodsEntity -> {
             setAbandonmentAtAndUserId(goodsEntity);
             goodsRepository.save(goodsEntity);
         });

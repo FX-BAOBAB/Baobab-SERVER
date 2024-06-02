@@ -1,4 +1,4 @@
-package warehouse.domain.receiving.converter;
+package warehouse.domain.receiving.converter.receiving;
 
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
@@ -46,19 +46,6 @@ public class ReceivingConverter {
             .status(entity.getStatus()).description(
                 ReceivingStatus.valueOf(entity.getStatus().toString()).getDescription())
             .current(ReceivingStatus.valueOf(entity.getStatus().toString()).getCurrent())
-            .build();
-    }
-
-    public GuaranteeResponse toGuaranteeResponse(ReceivingEntity entity) {
-        return GuaranteeResponse.builder()
-            .receivingId(entity.getId())
-            .guaranteeAt(entity.getGuaranteeAt())
-            .build();
-    }
-
-    public MessageResponse toMassageResponse(String message) {
-        return MessageResponse.builder()
-            .Message(message)
             .build();
     }
 }
