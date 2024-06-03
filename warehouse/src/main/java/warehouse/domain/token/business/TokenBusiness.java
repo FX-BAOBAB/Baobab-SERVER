@@ -32,7 +32,7 @@ public class TokenBusiness {
          */
 
         // TODO Exception 처리
-        return Optional.ofNullable(entity).map(accountEntity -> accountEntity.getId())
+        return Optional.ofNullable(entity).map(accountEntity -> accountEntity.getUserId())
             .map(userId -> {
                 TokenDto accessToken = tokenService.issueAccessToken(userId);
                 TokenDto refreshToken = tokenService.issueRefreshToken(userId);

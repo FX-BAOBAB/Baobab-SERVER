@@ -1,6 +1,7 @@
 package warehouse.domain.token.resolver;
 
 import db.domain.account.AccountEntity;
+import db.domain.users.UserEntity;
 import global.annotation.UserSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -43,12 +44,12 @@ public class UserSessionResolver implements HandlerMethodArgumentResolver {
         RequestAttributes requestContext = RequestContextHolder.getRequestAttributes();
         Object userId = requestContext.getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
 
-        AccountEntity user = userService.getUser(Long.parseLong(userId.toString()));
+        UserEntity user = userService.getUser(Long.parseLong(userId.toString()));
 
         //사용자 정보 setting
         return User.builder()
             .id(user.getId())
-            .userStatus(user.getUser().getStatus())
+            .userStatus(user.getStatus())
             .build();
     }
 }

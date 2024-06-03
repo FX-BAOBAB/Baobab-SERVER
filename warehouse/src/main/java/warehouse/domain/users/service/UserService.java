@@ -46,8 +46,8 @@ public class UserService {
             .orElseThrow(UserNotFoundException::new);
     }
 
-    public AccountEntity getUser(Long userId) {
-        return accountRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public UserEntity getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     // 회원가입
