@@ -1,11 +1,8 @@
 package db.domain.address;
 
 import db.common.BaseEntity;
-import db.domain.users.UserEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,15 +20,19 @@ import lombok.experimental.SuperBuilder;
 public class AddressEntity extends BaseEntity {
 
     //TODO length 추가
+    @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
     private String detailAddress;
 
+    @Column(nullable = false, length = 5)
     private int post;
 
+    @Column(nullable = false)
     private Boolean basicAddress;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(nullable = false)
+    private Long userId;
+
 }
