@@ -33,7 +33,7 @@ public class UserService {
         AccountEntity accountEntity = getUser(email, password);
 
         // UserEntity의 lastLoginAt 업데이트
-        UserEntity userEntity = accountEntity.getUser();
+        UserEntity userEntity = getUser(accountEntity.getUserId());
         userEntity.setLastLoginAt(LocalDateTime.now());
         userRepository.save(userEntity);
 
@@ -42,7 +42,7 @@ public class UserService {
 
     public AccountEntity getUser(String email, String password) {
         //등록된 USER 조회
-        return accountRepository.findByEmailAndPasswordAndUserStatus(email, password, UserStatus.REGISTERED)
+        return accountRepository.findByEmailAndPassword(email, password)
             .orElseThrow(UserNotFoundException::new);
     }
 
