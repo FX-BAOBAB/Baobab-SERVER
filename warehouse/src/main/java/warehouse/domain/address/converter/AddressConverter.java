@@ -16,6 +16,7 @@ public class AddressConverter {
             .id(addressEntity.getId())
             .address(addressEntity.getAddress())
             .detailAddress(addressEntity.getDetailAddress())
+            .post(addressEntity.getPost())
             .basicAddress(addressEntity.getBasicAddress())
             .build();
     }
