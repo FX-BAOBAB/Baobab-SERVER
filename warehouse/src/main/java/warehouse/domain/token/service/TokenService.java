@@ -56,7 +56,7 @@ public class TokenService {
     public TokenDto validationAndReIssueAccessToken(String accessToken, Long userId) {
         Map<String, Object> data = new ConcurrentHashMap<>();
         data.put("userId", userId);
-        TokenDto test = tokenHelperIfs.validationAndReIssueAccessToken(accessToken, data);
-        return test;
+        TokenDto tokenDto = tokenHelperIfs.validationAndReIssueAccessToken(accessToken, data);
+        return tokenDto;
     }
 }

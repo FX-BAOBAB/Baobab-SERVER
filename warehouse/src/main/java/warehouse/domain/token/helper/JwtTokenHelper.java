@@ -203,7 +203,6 @@ public class JwtTokenHelper implements TokenHelperIfs {
                 //토큰이 유효하지 않을 때
                 throw new InvalidTokenException(e);
             } else if (e instanceof ExpiredJwtException) {
-                log.info("만료됨!!");
                 //만료된 토큰
                 /**
                  * access 5분
@@ -241,7 +240,6 @@ public class JwtTokenHelper implements TokenHelperIfs {
             }
         }
 
-        log.info("만료되지 않은 토큰");
         throw new ValidTokenException();
     }
 }

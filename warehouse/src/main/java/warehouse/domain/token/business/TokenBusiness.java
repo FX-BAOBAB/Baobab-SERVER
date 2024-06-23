@@ -53,7 +53,7 @@ public class TokenBusiness {
         // accessToken 토큰 재발급
         TokenDto newAccessToken = tokenService.validationAndReIssueAccessToken(accessToken, userId);
 
-        //5. 클라이언트에게 새 AccessToken 전달
+        // 클라이언트에게 새 AccessToken 전달
         return ReIssueAccessTokenResponse.builder().accessToken(newAccessToken.getToken())
             .expiredAt(newAccessToken.getExpiredAt()).build();
     }
