@@ -2,6 +2,7 @@ package warehouse.domain.address.controller;
 
 import global.annotation.UserSession;
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +27,16 @@ public class AddressController {
 
     //아이디와 상태로 주소 리스트 보여주기
     @GetMapping("/address")
-    public Api<AddressListResponse> showAddressList(@UserSession User user) {
+    public Api<AddressListResponse> showAddressList(
+        @Parameter(hidden = true) @UserSession User user) {
         AddressListResponse addressList = addressBusiness.findAddressList(user.getId());
         return Api.OK(addressList);
     }
 
     //아이디와 상태로 기본 주소 보여주기
     @GetMapping("/basic-address")
-    public Api<BasicAddressResponse> showBasicAddress(@UserSession User user) {
+    public Api<BasicAddressResponse> showBasicAddress(
+        @Parameter(hidden = true) @UserSession User user) {
         BasicAddressResponse basicAddress = addressBusiness.findBasicAddress(user.getId());
         return Api.OK(basicAddress);
     }
