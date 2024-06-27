@@ -11,4 +11,6 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Long> {
 
     AddressEntity findByUserIdAndBasicAddress(Long userId, boolean basicAddress);
 
+    AddressEntity findByIdAndBasicAddress(Long userId, boolean b);
+
 }

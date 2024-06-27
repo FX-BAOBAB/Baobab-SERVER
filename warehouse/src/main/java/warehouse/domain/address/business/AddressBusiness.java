@@ -1,17 +1,17 @@
 package warehouse.domain.address.business;
 
 import db.domain.address.AddressEntity;
-import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import warehouse.domain.address.controller.model.AddAddressRequest;
-import warehouse.domain.address.controller.model.AddAddressResponse;
+import warehouse.domain.address.controller.model.AddressRequest;
+import warehouse.domain.address.controller.model.AddressResponse;
 import warehouse.domain.address.controller.model.Address;
 import warehouse.domain.address.controller.model.AddressListResponse;
 import warehouse.domain.address.controller.model.BasicAddressResponse;
 import warehouse.domain.address.converter.AddressConverter;
+import warehouse.domain.address.exception.addressexception.NotFoundAddressException;
 import warehouse.domain.address.service.AddressService;
 
 @Business
@@ -40,11 +40,19 @@ public class AddressBusiness {
         return basicAddressResponse;
     }
 
-    public AddAddressResponse addAddress(Long userId, AddAddressRequest request) {
-        UserEntity user = addressService.findUserById(userId);
-        addressService.updateExistingBasicAddressIfNecessary(userId, request.isBasicAddress());
-        AddressEntity addressEntity = addressConverter.toEntity(request, user);
-        AddressEntity savedAddress = addressService.saveAddressEntity(addressEntity);
-        return addressConverter.toAddAddressResponse(savedAddress);
+    public AddressResponse updateAddress(Long userId, AddressRequest addressRequest) {
+
+        AddressEntity addressEntity = addressConverter.toAddressEntity(addressRequest);
+        addressEntity.setUserId(userId);
+
+        if (addressRequest.isBasicAddress() ){
+            addressService.resetBasicAddress(userId);
+        }
+
+        AddressEntity updatedAddress = addressService.updateAddress(addressEntity);
+
+        return addressConverter.toAddressResponse(updatedAddress);
+
     }
+
 }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.address.business.AddressBusiness;
-import warehouse.domain.address.controller.model.AddAddressRequest;
-import warehouse.domain.address.controller.model.AddAddressResponse;
+import warehouse.domain.address.controller.model.AddressRequest;
+import warehouse.domain.address.controller.model.AddressResponse;
 import warehouse.domain.address.controller.model.AddressListResponse;
 import warehouse.domain.address.controller.model.BasicAddressResponse;
 import warehouse.domain.users.model.User;
@@ -43,9 +43,9 @@ public class AddressController {
 
     // 주소 추가하기
     @PostMapping("/address")
-    public Api<AddAddressResponse> addAddress(@UserSession User user,
-        @RequestBody Api<AddAddressRequest> request) {
-        AddAddressResponse response = addressBusiness.addAddress(user.getId(), request.getBody());
+    public Api<AddressResponse> addAddress(@UserSession User user,
+        @RequestBody Api<AddressRequest> request) {
+        AddressResponse response = addressBusiness.updateAddress(user.getId(), request.getBody());
         return Api.OK(response);
     }
 }

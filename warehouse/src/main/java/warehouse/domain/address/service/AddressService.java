@@ -2,18 +2,14 @@ package warehouse.domain.address.service;
 
 import db.domain.address.AddressEntity;
 import db.domain.address.AddressRepository;
-import db.domain.users.UserEntity;
 import db.domain.users.UserRepository;
 import db.domain.users.enums.UserStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import warehouse.domain.address.errorcode.AddressErrorCode;
-import warehouse.domain.address.exception.addressexception.InvalidAddressDataException;
+import org.springframework.transaction.annotation.Transactional;
 import warehouse.domain.address.exception.addressexception.NotFoundAddressException;
-import warehouse.domain.users.errorcode.UserErrorCode;
-import warehouse.domain.users.exception.userexception.UserNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -52,27 +48,17 @@ public class AddressService {
         return basicAddress;
     }
 
-    public UserEntity findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
-            String.valueOf(UserErrorCode.NOT_FOUND_USER)));
+    @Transactional
+    public AddressEntity updateAddress(AddressEntity addressEntity) {
+        return addressRepository.save(addressEntity);
     }
 
-    public void updateExistingBasicAddressIfNecessary(Long userId, boolean isBasicAddress) {
-        if (isBasicAddress) {
-            AddressEntity existBasicAddress = addressRepository.findByUserIdAndBasicAddress(userId, true);
-            if (existBasicAddress != null) {
-                existBasicAddress.setBasicAddress(false);
-                addressRepository.save(existBasicAddress);
-            }
-        }
-    }
-
-    public AddressEntity saveAddressEntity(AddressEntity addressEntity) {
-        try {
-            return addressRepository.save(addressEntity);
-        } catch (Exception e) {
-            throw new InvalidAddressDataException(
-                String.valueOf(AddressErrorCode.INVALID_ADDRESS_DATA));
+    @Transactional
+    public void resetBasicAddress(Long userId) {
+        AddressEntity addressEntity = addressRepository.findByIdAndBasicAddress(userId, true);
+        if (addressEntity != null) {
+            addressEntity.setBasicAddress(false);
+            addressRepository.save(addressEntity);
         }
     }
 }
