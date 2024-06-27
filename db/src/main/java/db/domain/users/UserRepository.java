@@ -1,6 +1,7 @@
 package db.domain.users;
 
 import db.domain.users.enums.UserStatus;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

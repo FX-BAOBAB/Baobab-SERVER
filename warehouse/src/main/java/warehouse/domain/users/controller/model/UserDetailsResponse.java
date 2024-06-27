@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class FindUserResponse {
+public class UserDetailsResponse {
 
     private Long id;
 

@@ -6,15 +6,14 @@ import db.domain.users.UserEntity;
 import db.domain.users.UserRepository;
 import db.domain.users.enums.UserRole;
 import db.domain.users.enums.UserStatus;
-import global.api.Api;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import db.domain.account.AccountEntity;
 import db.domain.account.AccountRepository;
-import warehouse.domain.users.controller.model.FindUserResponse;
-import warehouse.domain.users.controller.model.UserSignUpRequest;
+import warehouse.domain.users.controller.model.UserDetailsResponse;
+import warehouse.domain.users.controller.model.SignUpRequest;
 import warehouse.domain.users.exception.userexception.UserNotFoundException;
 import warehouse.domain.users.exception.userexception.DuplicateUserException;
 import warehouse.domain.users.errorcode.UserErrorCode;
@@ -50,51 +49,50 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-    // 회원가입
-    public Api<Object> signUp(UserSignUpRequest request) {
-        try {
-            // 이메일 중복 검사
-            if (accountRepository.existsByEmail(request.getEmail())) {
-                throw new DuplicateUserException(String.valueOf(UserErrorCode.USER_ALREADY_EXISTS));
-            }
-
-            UserEntity userEntity = UserEntity.builder()
-                .role(UserRole.BASIC)
-                .status(UserStatus.REGISTERED)
-                .registeredAt(LocalDateTime.now())
-                .build();
-            userRepository.save(userEntity);
-
-            AccountEntity accountEntity = AccountEntity.builder()
-                .email(request.getEmail())
-                // TODO 패스워드 암호화 보류
-//            .password(passwordEncoder.encode(request.getPassword()))
-                .password(request.getPassword())
-                .name(request.getName())
-                .user(userEntity)
-                .build();
-            accountRepository.save(accountEntity);
-
-            AddressEntity addressEntity = AddressEntity.builder()
-                .address(request.getAddress())
-                .detailAddress(request.getDetailAddress())
-                .basicAddress(request.isBasicAddress())
-                .user(userEntity)
-                .build();
-            addressRepository.save(addressEntity);
-
-            return Api.OK("회원가입이 완료되었습니다.");
-        } catch (Exception e) {
-            throw new DuplicateUserException(String.valueOf(UserErrorCode.INVALID_USER_DATA));
+    public void checkEmailDuplication(String email) {
+        if (accountRepository.findByEmail(email).isPresent()) {
+            throw new DuplicateUserException(String.valueOf(UserErrorCode.USER_ALREADY_EXISTS));
         }
     }
 
-    public FindUserResponse findUserById(Long userId) {
+    public UserEntity createUser() {
+        UserEntity userEntity = UserEntity.builder()
+            .registeredAt(LocalDateTime.now())
+            .role(UserRole.BASIC)
+            .status(UserStatus.REGISTERED)
+            .build();
+        return userRepository.save(userEntity);
+    }
+
+    public AccountEntity createAccount(SignUpRequest request, Long userId) {
+        AccountEntity accountEntity = AccountEntity.builder()
+            .email(request.getEmail())
+            // TODO 패스워드 암호화 보류
+//            .password(passwordEncoder.encode(request.getPassword()))
+            .password(request.getPassword())
+            .name(request.getName())
+            .userId(userId)
+            .build();
+        return accountRepository.save(accountEntity);
+    }
+
+    public AddressEntity createAddress(SignUpRequest request, Long userId) {
+        AddressEntity addressEntity = AddressEntity.builder()
+            .address(request.getAddress())
+            .basicAddress(request.isBasicAddress())
+            .detailAddress(request.getDetailAddress())
+            .post(request.getPost())
+            .userId(userId)
+            .build();
+        return addressRepository.save(addressEntity);
+    }
+
+    public UserDetailsResponse findUserById(Long userId) {
         AccountEntity accountEntity = accountRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
-        UserEntity userEntity = accountEntity.getUser();
+        UserEntity userEntity = getUser(accountEntity.getUserId());
 
-        return FindUserResponse.builder()
+        return UserDetailsResponse.builder()
             .id(userEntity.getId())
             .email(accountEntity.getEmail())
             .password(accountEntity.getPassword())

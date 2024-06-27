@@ -1,14 +1,16 @@
 package warehouse.domain.users.business;
 
 import db.domain.account.AccountEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
-import global.api.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import warehouse.domain.token.business.TokenBusiness;
 import warehouse.domain.users.controller.model.LoginRequest;
 import warehouse.domain.users.controller.model.LoginResponse;
-import warehouse.domain.users.controller.model.FindUserResponse;
+import warehouse.domain.users.controller.model.SignUpRequest;
+import warehouse.domain.users.controller.model.SignUpResponse;
+import warehouse.domain.users.controller.model.UserDetailsResponse;
 import warehouse.domain.users.converter.UserConverter;
 import warehouse.domain.users.service.UserService;
 
@@ -31,8 +33,23 @@ public class UserBusiness {
         return response;
     }
 
-    public FindUserResponse findUser(Long userId) {
-        FindUserResponse findUserResponse = userService.findUserById(userId);
+    public UserDetailsResponse findUser(Long userId) {
+        UserDetailsResponse findUserResponse = userService.findUserById(userId);
         return userConverter.toFindUserResponse(findUserResponse);
+    }
+
+    public SignUpResponse signUp(SignUpRequest request) {
+        userService.checkEmailDuplication(request.getEmail());
+
+        UserEntity userEntity = userService.createUser();
+        Long userId = userEntity.getId();
+
+        AccountEntity accountEntity = userService.createAccount(request, userId);
+        userService.createAddress(request, userId);
+
+        return SignUpResponse.builder()
+            .email(accountEntity.getEmail())
+            .name(accountEntity.getName())
+            .build();
     }
 }

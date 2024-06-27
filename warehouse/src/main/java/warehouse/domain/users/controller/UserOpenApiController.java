@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.users.business.UserBusiness;
 import warehouse.domain.users.controller.model.LoginResponse;
 import warehouse.domain.users.controller.model.LoginRequest;
-import warehouse.domain.users.controller.model.UserSignUpRequest;
+import warehouse.domain.users.controller.model.SignUpRequest;
+import warehouse.domain.users.controller.model.SignUpResponse;
 import warehouse.domain.users.service.UserService;
 
 @RestController
@@ -37,9 +38,9 @@ public class UserOpenApiController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Api<Object>> signUp(@RequestBody Api<UserSignUpRequest> request) {
-        Api<Object> response = userService.signUp(request.getBody());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Api<SignUpResponse>> signUp(@RequestBody Api<SignUpRequest> signUpRequest) {
+        SignUpResponse signUp = userBusiness.signUp(signUpRequest.getBody());
+        return ResponseEntity.ok().body(Api.OK(signUp));
     }
 
 }
