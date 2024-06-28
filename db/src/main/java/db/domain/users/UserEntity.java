@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Table(name = "users")
-public class UsersEntity extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50,columnDefinition = "VARCHAR(50)")
@@ -34,7 +34,7 @@ public class UsersEntity extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String email;
-    
+
     @Column(nullable = false, length = 100)
     private String password;
 
