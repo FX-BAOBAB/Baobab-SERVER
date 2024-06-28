@@ -4,8 +4,8 @@ import db.domain.users.enums.UserStatus;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UsersRepository extends JpaRepository<UsersEntity,Long> {
+public interface UsersRepository extends JpaRepository<UserEntity,Long> {
 
-    Optional<UsersEntity> findFirstByEmailAndStatusOrderByIdDesc(String email, UserStatus status);
+    Optional<UserEntity> findFirstByEmailAndStatusOrderByIdDesc(String email, UserStatus status);
 
 }
