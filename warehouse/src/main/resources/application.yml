@@ -11,4 +11,9 @@ spring:
     url: jdbc:mysql://localhost:3306/baobab?useSSL=false&useUnicode=true&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 1234
+    password: 1234token:
+  secret:
+    key: akgjasdfrhdgfdfg$$#afsdgrvbagsraaq
+  expiration-time:
+    access: 5
+    refresh: 30
