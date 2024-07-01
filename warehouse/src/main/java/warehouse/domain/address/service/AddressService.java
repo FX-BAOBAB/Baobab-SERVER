@@ -28,4 +28,24 @@ public class AddressService {
             ErrorCode.NULL_POINT));
     }
 
+    public AddressEntity setAddress(AddressEntity addressEntity) {
+
+        if (addressEntity.isBasicAddress()){
+            setFalseOldBasicAddress(addressEntity.getUserId());
+        }
+
+        return addressRepository.save(addressEntity);
+
+    }
+
+    private void setFalseOldBasicAddress(Long userId) {
+        // TODO Exception 처리 필요
+        AddressEntity oldBasicEntity = addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(
+            userId, true).orElseThrow(() -> new RuntimeException("oldBasicEntity 없음"));
+
+        oldBasicEntity.setBasicAddress(false);
+
+        addressRepository.save(oldBasicEntity);
+    }
+
 }

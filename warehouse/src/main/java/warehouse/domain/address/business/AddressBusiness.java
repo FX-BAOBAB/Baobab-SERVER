@@ -5,6 +5,7 @@ import db.domain.users.address.AddressEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import warehouse.domain.address.controller.model.AddressRequest;
 import warehouse.domain.address.controller.model.AddressResponse;
 import warehouse.domain.address.controller.model.AddressResponses;
 import warehouse.domain.address.converter.AddressConverter;
@@ -35,6 +36,13 @@ public class AddressBusiness {
     public AddressResponse getBasicAddressList(String username) {
         UserEntity user = usersService.getUserWithThrow(username);
         AddressEntity addressEntity = addressService.getBasicAddress(user.getId());
+        return addressConverter.toResponse(addressEntity);
+    }
+
+    public AddressResponse setAddress(String username, AddressRequest addressRequest) {
+        UserEntity user = usersService.getUserWithThrow(username);
+        AddressEntity addressEntity = addressConverter.toEntity(addressRequest,user.getId());
+        AddressEntity newAddressEntity = addressService.setAddress(addressEntity);
         return addressConverter.toResponse(addressEntity);
     }
 
