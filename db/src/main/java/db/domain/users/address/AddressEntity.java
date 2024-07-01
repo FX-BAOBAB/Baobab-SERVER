@@ -25,6 +25,8 @@ public class AddressEntity extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String detailAddress;
 
+    private int post;
+
     private boolean basicAddress;
 
     private Long userId;

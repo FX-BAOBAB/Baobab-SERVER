@@ -2,7 +2,9 @@ package warehouse.domain.address.converter;
 
 import db.domain.users.address.AddressEntity;
 import global.annotation.Converter;
-import warehouse.domain.users.controller.model.UsersRegisterRequest;
+import warehouse.domain.address.controller.model.AddressRequest;
+import warehouse.domain.address.controller.model.AddressResponse;
+import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
 
 @Converter
 public class AddressConverter {
@@ -12,6 +14,28 @@ public class AddressConverter {
             .address(request.getAddress())
             .detailAddress(request.getDetailAddress())
             .basicAddress(request.isBasicAddress())
+            .post(request.getPost())
+            .build();
+    }
+
+    public AddressEntity toEntity(AddressRequest request,Long userId) {
+        return AddressEntity.builder()
+            .userId(userId)
+            .address(request.getAddress())
+            .detailAddress(request.getDetailAddress())
+            .basicAddress(request.isBasicAddress())
+            .post(request.getPost())
+            .basicAddress(request.isBasicAddress())
+            .build();
+    }
+
+    public AddressResponse toResponse(AddressEntity addressEntity) {
+        return AddressResponse.builder()
+            .id(addressEntity.getId())
+            .address(addressEntity.getAddress())
+            .detailAddress(addressEntity.getDetailAddress())
+            .post(addressEntity.getPost())
+            .basicAddress(addressEntity.isBasicAddress())
             .build();
     }
 }
