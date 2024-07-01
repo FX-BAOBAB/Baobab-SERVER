@@ -51,4 +51,12 @@ public class TokenService {
         refreshTokenRepository.deleteByUserId(userId);
     }
 
+    public TokenDto reIssueAccessToken(String refreshToken) {
+        Long userId = validationToken(refreshToken);
+        RefreshTokenEntity entity = refreshTokenRepository.findFirstByUserIdOrderByUserId(userId);
+        if (!Objects.equals(userId, entity.getUserId())){
+            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+        }
+        return issueRefreshToken(userId);
+    }
 }

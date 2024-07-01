@@ -35,4 +35,8 @@ public class TokenBusiness {
                 return tokenConverter.toReponse(accessToken, refreshToken);
             }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
     }
+
+    public TokenDto reIssueAccessToken(String refreshToken) {
+        return tokenService.reIssueAccessToken(refreshToken);
+    }
 }
