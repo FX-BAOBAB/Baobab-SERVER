@@ -1,4 +1,4 @@
-package warehouse.domain.users.controller.model;
+package warehouse.domain.users.controller.model.register;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +17,6 @@ public class UsersRegisterRequest {
     private String address;
     private String detailAddress;
     private boolean basicAddress;
+    private int post;
 
 }

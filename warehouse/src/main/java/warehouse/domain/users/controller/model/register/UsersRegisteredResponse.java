@@ -1,4 +1,4 @@
-package warehouse.domain.users.controller.model;
+package warehouse.domain.users.controller.model.register;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

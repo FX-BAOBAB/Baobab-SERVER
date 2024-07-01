@@ -7,8 +7,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import warehouse.domain.address.controller.model.AddressResponse;
-import warehouse.domain.address.controller.model.AddressResponseList;
 import warehouse.domain.users.business.UsersBusiness;
 import warehouse.domain.users.controller.model.login.UserResponse;
 
