@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.address.business.AddressBusiness;
+import warehouse.domain.address.controller.model.AddressResponse;
 import warehouse.domain.address.controller.model.AddressResponses;
 
 @RestController
@@ -22,6 +23,14 @@ public class AddressApiController {
         @AuthenticationPrincipal User user
     ){
         AddressResponses response = addressBusiness.getAddressList(user.getUsername());
+        return Api.OK(response);
+    }
+
+    @GetMapping("/basic")
+    public Api<AddressResponse> getBasicAddress(
+        @AuthenticationPrincipal User user
+    ){
+        AddressResponse response = addressBusiness.getBasicAddressList(user.getUsername());
         return Api.OK(response);
     }
 

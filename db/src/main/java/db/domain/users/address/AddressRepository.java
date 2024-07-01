@@ -8,4 +8,6 @@ public interface AddressRepository extends JpaRepository<AddressEntity,Long> {
 
     List<AddressEntity> findAllByUserIdOrderByIdDesc(Long userId);
 
+    Optional<AddressEntity> findFirstByUserIdAndBasicAddressOrderByIdDesc(Long userId,boolean basic);
+
 }

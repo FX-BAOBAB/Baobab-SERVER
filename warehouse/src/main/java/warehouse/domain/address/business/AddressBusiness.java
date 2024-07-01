@@ -1,6 +1,7 @@
 package warehouse.domain.address.business;
 
 import db.domain.users.UserEntity;
+import db.domain.users.address.AddressEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,4 +31,11 @@ public class AddressBusiness {
             .addressDtoList(addressResponseList)
             .build();
     }
+
+    public AddressResponse getBasicAddressList(String username) {
+        UserEntity user = usersService.getUserWithThrow(username);
+        AddressEntity addressEntity = addressService.getBasicAddress(user.getId());
+        return addressConverter.toResponse(addressEntity);
+    }
+
 }

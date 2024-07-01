@@ -22,4 +22,10 @@ public class AddressService {
         return addressRepository.findAllByUserIdOrderByIdDesc(userId);
     }
 
+    public AddressEntity getBasicAddress(Long userId) {
+        boolean basic = true;
+        return addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(userId,basic).orElseThrow(() -> new ApiException(
+            ErrorCode.NULL_POINT));
+    }
+
 }
