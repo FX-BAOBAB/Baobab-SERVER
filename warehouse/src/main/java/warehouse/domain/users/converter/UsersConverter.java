@@ -6,8 +6,9 @@ import db.domain.users.enums.UserRole;
 import global.annotation.Converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import warehouse.domain.users.controller.model.UsersRegisterRequest;
-import warehouse.domain.users.controller.model.UsersRegisteredResponse;
+import warehouse.domain.users.controller.model.login.UserResponse;
+import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
+import warehouse.domain.users.controller.model.register.UsersRegisteredResponse;
 
 @Converter
 @RequiredArgsConstructor
@@ -24,9 +25,18 @@ public class UsersConverter {
             .build();
     }
 
-    public UsersRegisteredResponse toResponse(UserEntity savedUserEntity, AddressEntity savedAddressEntity) {
+    public UsersRegisteredResponse toResponse() {
         return UsersRegisteredResponse.builder()
             .Message("회원 가입이 완료되었습니다.")
+            .build();
+    }
+
+    public UserResponse toResponse(UserEntity userEntity) {
+        return UserResponse.builder()
+            .id(userEntity.getId())
+            .name(userEntity.getName())
+            .email(userEntity.getEmail())
+            .role(userEntity.getRole())
             .build();
     }
 }

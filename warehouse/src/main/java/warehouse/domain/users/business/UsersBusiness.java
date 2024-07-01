@@ -58,4 +58,9 @@ public class UsersBusiness {
         return tokenBusiness.issueToken(userEntity);
     }
 
+    public UserResponse getUserInformation(String email) {
+        UserEntity userEntity = usersService.getUserWithThrow(email);
+        return usersConverter.toResponse(userEntity);
+    }
+
 }

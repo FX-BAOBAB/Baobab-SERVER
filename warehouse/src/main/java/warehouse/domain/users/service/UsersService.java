@@ -47,4 +47,13 @@ public class UsersService {
         throw new TokenException(TokenErrorCode.USER_NOT_FOUNT);
 
     }
+    public UserEntity getUserWithThrow(Long userId) {
+        log.info("userid : {} in UsersService", userId);
+        return usersRepository.findFirstByIdAndStatusOrderByIdDesc(userId,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(TokenErrorCode.USER_NOT_FOUNT));
+    }
+
+    public UserEntity getUserWithThrow(String email) {
+        log.info("userid : {} in UsersService", email);
+        return usersRepository.findFirstByEmailAndStatusOrderByIdDesc(email,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(TokenErrorCode.USER_NOT_FOUNT));
+    }
 }
