@@ -14,3 +14,11 @@ spring:
     password: 1234
 file:
   upload-dir: /Users/yeongwoonshin/Desktop/Baobab-SERVER/warehouse/src/main/resources/static/images/
+
+jwt:
+  secret:
+    key: shinyangjunglee_baobab_passwordkey
+  access-token:
+    plus-hour: 1
+  refresh-token:
+    plus-hour: 12
