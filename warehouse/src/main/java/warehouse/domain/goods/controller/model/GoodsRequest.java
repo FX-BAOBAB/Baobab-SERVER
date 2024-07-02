@@ -1,6 +1,11 @@
 package warehouse.domain.goods.controller.model;
 
 import db.domain.goods.enums.GoodsCategory;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,12 +20,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class GoodsRequest {
 
-    // TODO List Valid 추가 필요
-
+    @NotBlank
+    @Size(min = 1, max = 20) //이름 길이
     private String name;
+
+    @NotBlank
+    @Size(min = 1, max = 20) //이름 길이
     private String modelName;
+
+    @NotNull
     private GoodsCategory category;
+
+//    @Positive
+    @Min(value = 1) @Max(value = 2)
     private int quantity;
+
+    @NotNull
+    @Size(min = 1, max = 2)
     private List<Long> imageIdList;
 
 }
