@@ -11,7 +11,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/db" />
             <option value="$PROJECT_DIR$/global" />
-            <option value="$PROJECT_DIR$/warehouse" />
+            <option value="$PROJECT_DIR$/receiving" />
+            <option value="$PROJECT_DIR$/users" />
           </set>
         </option>
       </GradleProjectSettings>
