@@ -28,10 +28,8 @@ public class ReceivingApiController {
 
     @PostMapping
     public Api<ReceivingResponse> receivingRequest(
-        @Parameter(hidden = true)
-        @AuthenticationPrincipal User user,
-        @RequestBody Api<ReceivingRequest> request
-    ) {
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
+        @RequestBody Api<ReceivingRequest> request) {
 
         ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody(),
             user.getUsername());
@@ -53,14 +51,18 @@ public class ReceivingApiController {
     }
 
     @PostMapping("/abandonment/{receivingId}")
-    public Api<MessageResponse> abandonment(@PathVariable Long receivingId) {
-        MessageResponse response = receivingBusiness.abandonment(receivingId);
+    public Api<MessageResponse> abandonment(
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
+        @PathVariable Long receivingId) {
+        MessageResponse response = receivingBusiness.abandonment(receivingId, user.getUsername());
         return Api.OK(response);
     }
 
     @PostMapping("/abandonment")
-    public Api<MessageResponse> abandonment(@RequestBody Api<List<Long>> goodsIdList) {
-        MessageResponse response = receivingBusiness.abandonment(goodsIdList.getBody());
+    public Api<MessageResponse> abandonment(
+        @Parameter(hidden = true) @AuthenticationPrincipal User user,
+        @RequestBody Api<List<Long>> goodsIdList) {
+        MessageResponse response = receivingBusiness.abandonment(goodsIdList.getBody(),user.getUsername());
         return Api.OK(response);
     }
 

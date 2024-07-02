@@ -2,6 +2,7 @@ package warehouse.domain.goods.service;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
+import db.domain.receiving.ReceivingEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,9 @@ public class GoodsService {
         return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
 
-    public void abandonment(Long receivingId) {
+    public void abandonment(ReceivingEntity receiving) {
 
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receivingId);
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(receiving.getId());
         // TODO goodsEntityList Empty Exception 처리 필요
         if (goodsEntityList.isEmpty()) {
             throw new NullPointerException();
@@ -64,6 +64,11 @@ public class GoodsService {
 
     public List<GoodsEntity> getGoodsListBy(List<Long> goodsIdList) {
         return goodsRepository.findAllByIdIn(goodsIdList);
+    }
+
+    // TODO EXCEPTION 처리 필요
+    public GoodsEntity getGoodsListBy(Long goodsId) {
+        return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new RuntimeException("존재하지 않는 상품 ID"));
     }
 
 }
