@@ -2,12 +2,12 @@ package warehouse.domain.goods.service;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
+import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import warehouse.common.exception.Goods.GoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +30,8 @@ public class GoodsService {
 
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
             receivingId);
-        // TODO goodsEntityList Empty Exception 처리 필요
         if(goodsEntityList.isEmpty()){
-            throw new NullPointerException();
+            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
         }
         // TODO 회사 아이디 생성 후 Matching 필요
         goodsEntityList.forEach(goodsEntity -> {
@@ -42,10 +41,10 @@ public class GoodsService {
     }
 
     public void abandonment(List<Long> goodsIdList) {
-        // TODO 회사 아이디 생성 후 Matching 필요, Exception 처리 필요
+        // TODO 회사 아이디 생성 후 Matching 필요
         goodsIdList.forEach(goodsId -> {
             GoodsEntity goodsEntity = goodsRepository.findFirstById(goodsId)
-                .orElseThrow(() -> new NullPointerException("abandonment null point"));
+                .orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
             setAbandonmentAtAndUserId(goodsEntity);
         });
     }

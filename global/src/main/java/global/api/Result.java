@@ -1,5 +1,6 @@
 package global.api;
 
+import global.api.enums.ResultStatus;
 import global.errorcode.ErrorCode;
 import global.errorcode.ErrorCodeIfs;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,7 @@ public class Result {
         return Result.builder()
             .resultCode(ErrorCode.OK.getErrorCode())
             .resultMessage(ErrorCode.OK.getDescription())
-            // TODO Message 기능으로 refactoring 예정
-            .resultDescription("성공")
+            .resultDescription(ResultStatus.SUCCESS.getDescription())
             .build();
     }
 
@@ -31,8 +31,7 @@ public class Result {
         return Result.builder()
             .resultCode(errorCodeIfs.getErrorCode())
             .resultMessage(errorCodeIfs.getDescription())
-            // TODO Message 기능으로 refactoring 예정
-            .resultDescription("실패")
+            .resultDescription(ResultStatus.FAIL.getDescription())
             .build();
     }
 

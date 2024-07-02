@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.ImageErrorCode;
+import warehouse.common.exception.image.ImageNotFoundException;
 import warehouse.common.exception.image.ImageStorageException;
 
 @Slf4j
@@ -20,6 +21,13 @@ public class ImageExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Api.ERROR(ImageErrorCode.IMAGE_STORAGE_ERROR));
+    }
+
+    @ExceptionHandler(value = ImageNotFoundException.class)
+    public ResponseEntity<Api<Object>> imageException(ImageNotFoundException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Api.ERROR(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
 }
