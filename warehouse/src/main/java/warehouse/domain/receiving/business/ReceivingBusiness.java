@@ -4,6 +4,7 @@ import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import warehouse.domain.receiving.converter.guarantee.GuaranteeConverter;
 import warehouse.domain.receiving.converter.message.MessageConverter;
 import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
+import warehouse.domain.users.business.UsersBusiness;
+import warehouse.domain.users.service.UsersService;
 
 @Slf4j
 @Business
@@ -41,11 +44,15 @@ public class ReceivingBusiness {
     private final ImageConverter imageConverter;
     private final GuaranteeConverter guaranteeConverter;
     private final MessageConverter messageConverter;
+    private final UsersService usersService;
 
 
-    public ReceivingResponse receivingRequest(ReceivingRequest request) {
+    public ReceivingResponse receivingRequest(ReceivingRequest request, String email) {
+
+        UserEntity loginUser = usersService.getUserWithThrow(email);
 
         ReceivingEntity receivingEntity = receivingConverter.toEntity(request);
+
         ReceivingEntity registeredReceivingEntity = receivingService.receivingRequest(
             receivingEntity);
 
@@ -54,7 +61,7 @@ public class ReceivingBusiness {
         List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(goodsRequests);
 
         List<GoodsEntity> newGoodsEntityList = saveGoodsList(goodsEntityList,
-            registeredReceivingEntity);
+            registeredReceivingEntity, loginUser.getId());
 
         Long goodsId = ImageUtils.getFirstGoodsId(newGoodsEntityList);
 
@@ -71,10 +78,10 @@ public class ReceivingBusiness {
     }
 
     private List<GoodsEntity> saveGoodsList(List<GoodsEntity> goodsEntityList,
-        ReceivingEntity registeredReceivingEntity) {
-        return goodsEntityList.stream()
-            .map(goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId()))
-            .collect(Collectors.toList());
+        ReceivingEntity registeredReceivingEntity, Long userId) {
+        return goodsEntityList.stream().map(
+            goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId(),
+                userId)).collect(Collectors.toList());
     }
 
     public ReceivingStatusResponse getCurrentStatusBy(Long receivingId) {

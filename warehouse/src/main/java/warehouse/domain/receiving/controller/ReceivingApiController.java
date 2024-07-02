@@ -1,8 +1,11 @@
 package warehouse.domain.receiving.controller;
 
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +28,13 @@ public class ReceivingApiController {
 
     @PostMapping
     public Api<ReceivingResponse> receivingRequest(
-        // TODO User 관리 시스템 완료 후 로그인 유저 정보 가저옴
-        /*@Parameter(hidden = true)
-        @UserSession User user;*/
-        @RequestBody Api<ReceivingRequest> request) {
+        @Parameter(hidden = true)
+        @AuthenticationPrincipal User user,
+        @RequestBody Api<ReceivingRequest> request
+    ) {
 
-        ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody());
+        ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody(),
+            user.getUsername());
 
         return Api.OK(response);
 
@@ -43,25 +47,19 @@ public class ReceivingApiController {
     }
 
     @PostMapping("/guarantee/{receivingId}")
-    public Api<GuaranteeResponse> setGuarantee(
-        @PathVariable Long receivingId
-    ){
+    public Api<GuaranteeResponse> setGuarantee(@PathVariable Long receivingId) {
         GuaranteeResponse response = receivingBusiness.setGuarantee(receivingId);
         return Api.OK(response);
     }
 
     @PostMapping("/abandonment/{receivingId}")
-    public Api<MessageResponse> abandonment(
-        @PathVariable Long receivingId
-    ){
+    public Api<MessageResponse> abandonment(@PathVariable Long receivingId) {
         MessageResponse response = receivingBusiness.abandonment(receivingId);
         return Api.OK(response);
     }
 
     @PostMapping("/abandonment")
-    public Api<MessageResponse> abandonment(
-        @RequestBody Api<List<Long>> goodsIdList
-    ){
+    public Api<MessageResponse> abandonment(@RequestBody Api<List<Long>> goodsIdList) {
         MessageResponse response = receivingBusiness.abandonment(goodsIdList.getBody());
         return Api.OK(response);
     }
