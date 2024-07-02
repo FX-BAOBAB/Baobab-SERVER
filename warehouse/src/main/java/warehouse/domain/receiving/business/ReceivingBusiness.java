@@ -49,19 +49,19 @@ public class ReceivingBusiness {
 
     public ReceivingResponse receivingRequest(ReceivingRequest request, String email) {
 
-        UserEntity loginUser = usersService.getUserWithThrow(email);
+        Long userId = usersService.getUserWithThrow(email).getId();
 
         ReceivingEntity receivingEntity = receivingConverter.toEntity(request);
 
         ReceivingEntity registeredReceivingEntity = receivingService.receivingRequest(
-            receivingEntity);
+            receivingEntity,userId);
 
         List<GoodsRequest> goodsRequests = request.getGoodsRequests();
 
         List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(goodsRequests);
 
         List<GoodsEntity> newGoodsEntityList = saveGoodsList(goodsEntityList,
-            registeredReceivingEntity, loginUser.getId());
+            registeredReceivingEntity, userId);
 
         Long goodsId = ImageUtils.getFirstGoodsId(newGoodsEntityList);
 
