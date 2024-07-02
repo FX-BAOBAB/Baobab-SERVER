@@ -1,6 +1,7 @@
 package warehouse.domain.receiving.controller;
 
 import global.api.Api;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ public class ReceivingApiController {
         // TODO User 관리 시스템 완료 후 로그인 유저 정보 가저옴
         /*@Parameter(hidden = true)
         @UserSession User user;*/
-        @RequestBody Api<ReceivingRequest> request) {
-
+        @RequestBody Api<@Valid ReceivingRequest> request) {
+        //TODO @Valid 어노테이션 검토 필요
         ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody());
 
         return Api.OK(response);
