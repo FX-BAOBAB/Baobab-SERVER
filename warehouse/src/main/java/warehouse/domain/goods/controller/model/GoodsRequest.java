@@ -36,7 +36,7 @@ public class GoodsRequest {
     private int quantity;
 
     @NotNull
-    @Size(min = 1, max = 2)
+    @Size(min = 6)
     private List<Long> imageIdList;
 
 }
