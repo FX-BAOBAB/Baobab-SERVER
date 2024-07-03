@@ -21,11 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class GoodsRequest {
 
     @NotBlank
-    @Size(min = 1, max = 20) //이름 길이
+    @Size(max = 20) //이름 길이
     private String name;
 
     @NotBlank
-    @Size(min = 1, max = 20) //이름 길이
+    @Size(max = 20) //이름 길이
     private String modelName;
 
     @NotNull
