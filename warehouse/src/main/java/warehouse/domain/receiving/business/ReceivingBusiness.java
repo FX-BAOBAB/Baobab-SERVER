@@ -4,12 +4,15 @@ import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import warehouse.common.exception.ApiException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
@@ -27,6 +30,8 @@ import warehouse.domain.receiving.converter.guarantee.GuaranteeConverter;
 import warehouse.domain.receiving.converter.message.MessageConverter;
 import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
+import warehouse.domain.users.business.UsersBusiness;
+import warehouse.domain.users.service.UsersService;
 
 @Slf4j
 @Business
@@ -41,20 +46,23 @@ public class ReceivingBusiness {
     private final ImageConverter imageConverter;
     private final GuaranteeConverter guaranteeConverter;
     private final MessageConverter messageConverter;
+    private final UsersService usersService;
 
+    public ReceivingResponse receivingRequest(ReceivingRequest request, String email) {
 
-    public ReceivingResponse receivingRequest(ReceivingRequest request) {
+        Long userId = usersService.getUserWithThrow(email).getId();
 
         ReceivingEntity receivingEntity = receivingConverter.toEntity(request);
+
         ReceivingEntity registeredReceivingEntity = receivingService.receivingRequest(
-            receivingEntity);
+            receivingEntity, userId);
 
         List<GoodsRequest> goodsRequests = request.getGoodsRequests();
 
         List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(goodsRequests);
 
         List<GoodsEntity> newGoodsEntityList = saveGoodsList(goodsEntityList,
-            registeredReceivingEntity);
+            registeredReceivingEntity, userId);
 
         Long goodsId = ImageUtils.getFirstGoodsId(newGoodsEntityList);
 
@@ -71,10 +79,10 @@ public class ReceivingBusiness {
     }
 
     private List<GoodsEntity> saveGoodsList(List<GoodsEntity> goodsEntityList,
-        ReceivingEntity registeredReceivingEntity) {
-        return goodsEntityList.stream()
-            .map(goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId()))
-            .collect(Collectors.toList());
+        ReceivingEntity registeredReceivingEntity, Long userId) {
+        return goodsEntityList.stream().map(
+            goodsEntity -> goodsService.save(goodsEntity, registeredReceivingEntity.getId(),
+                userId)).collect(Collectors.toList());
     }
 
     public ReceivingStatusResponse getCurrentStatusBy(Long receivingId) {
@@ -87,13 +95,31 @@ public class ReceivingBusiness {
         return guaranteeConverter.toGuaranteeResponse(receivingEntity);
     }
 
-    public MessageResponse abandonment(Long receivingId) {
-        // TODO Login User 의 소유가 아닌 물품인 경우 Exception 처리 필요
-        goodsService.abandonment(receivingId);
+    public MessageResponse abandonment(Long receivingId, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId();
+        ReceivingEntity receiving = receivingService.getReceivingById(receivingId);
+
+        // TODO Exception 처리 필요
+        if (!Objects.equals(userId, receiving.getUserId())) {
+            throw new RuntimeException("소유가 아닌 물품이 아닙니다.");
+        }
+
+        goodsService.abandonment(receiving);
         return messageConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
     }
 
-    public MessageResponse abandonment(List<Long> goodsIdList) {
+    public MessageResponse abandonment(List<Long> goodsIdList, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId();
+
+        //TODO Exception 처리 필요
+        goodsIdList.forEach(it -> {
+                GoodsEntity goodsEntity = goodsService.getGoodsListBy(it);
+                if (!Objects.equals(goodsEntity.getUserId(), userId)){
+                    throw new RuntimeException("소유가 아닌 물품이 아닙니다.");
+                }
+        });
         // TODO Login User 의 소유가 아닌 물품인 경우 Exception 처리 필요
         goodsService.abandonment(goodsIdList);
         return messageConverter.toMassageResponse("소유권 전환이 완료되었습니다.");

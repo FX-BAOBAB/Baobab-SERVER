@@ -2,6 +2,7 @@ package warehouse.domain.goods.service;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
+import db.domain.receiving.ReceivingEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,9 @@ public class GoodsService {
 
     private final GoodsRepository goodsRepository;
 
-    public GoodsEntity save(GoodsEntity goodsEntity, Long receivingId) {
-        // TODO user system 구현 완료 시 사용자 아이디 입력 필요
+    public GoodsEntity save(GoodsEntity goodsEntity, Long receivingId, Long userId) {
         goodsEntity.setReceivingId(receivingId);
-        goodsEntity.setUserId(1L);
+        goodsEntity.setUserId(userId);
         return goodsRepository.save(goodsEntity);
     }
 
@@ -26,12 +26,11 @@ public class GoodsService {
         return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
 
-    public void abandonment(Long receivingId) {
+    public void abandonment(ReceivingEntity receiving) {
 
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receivingId);
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(receiving.getId());
         // TODO goodsEntityList Empty Exception 처리 필요
-        if(goodsEntityList.isEmpty()){
+        if (goodsEntityList.isEmpty()) {
             throw new NullPointerException();
         }
         // TODO 회사 아이디 생성 후 Matching 필요
@@ -56,7 +55,7 @@ public class GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    public void setTakeBackId(List<GoodsEntity> goodsEntityList,Long id) {
+    public void setTakeBackId(List<GoodsEntity> goodsEntityList, Long id) {
         goodsEntityList.forEach(goodsEntity -> {
             goodsEntity.setTakeBackId(id);
             goodsRepository.save(goodsEntity);
@@ -64,7 +63,12 @@ public class GoodsService {
     }
 
     public List<GoodsEntity> getGoodsListBy(List<Long> goodsIdList) {
-       return goodsRepository.findAllByIdIn(goodsIdList);
+        return goodsRepository.findAllByIdIn(goodsIdList);
+    }
+
+    // TODO EXCEPTION 처리 필요
+    public GoodsEntity getGoodsListBy(Long goodsId) {
+        return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new RuntimeException("존재하지 않는 상품 ID"));
     }
 
 }
