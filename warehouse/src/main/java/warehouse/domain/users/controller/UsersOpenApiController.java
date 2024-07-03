@@ -1,6 +1,7 @@
 package warehouse.domain.users.controller;
 
 import global.api.Api;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,16 +25,18 @@ public class UsersOpenApiController {
 
     @PostMapping()
     public Api<UsersRegisteredResponse> register(
-        @RequestBody Api<UsersRegisterRequest> request
+        @RequestBody Api<@Valid UsersRegisterRequest> request
     ){
+        //TODO @Valid 검토 필요
         UsersRegisteredResponse response = usersBusiness.register(request.getBody());
         return Api.OK(response);
     }
 
     @PostMapping("/login")
     public Api<TokenResponse> login(
-        @RequestBody Api<UserLoginRequest> request
+        @RequestBody Api<@Valid UserLoginRequest> request
     ){
+        //TODO @Valid 검토 필요
         TokenResponse response = usersBusiness.login(request.getBody());
         return Api.OK(response);
     }
