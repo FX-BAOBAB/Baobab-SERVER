@@ -2,7 +2,6 @@ package warehouse.domain.image.service;
 
 import static db.domain.image.enums.ImageKind.*;
 
-import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
 import db.domain.image.enums.ImageKind;
@@ -23,10 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
+import warehouse.common.exception.image.ImageNotFoundException;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.image.common.ImageUtils;
-import warehouse.domain.image.controller.model.ImageListResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,10 +73,8 @@ public class ImageService {
             entity.setGoodsId(0L);
         }
 
-        return Optional.of(entity).map(it -> imageRepository.save(entity)).orElseThrow(() -> {
-            // TODO imageException 처리 예정
-            return null;
-        });
+        return Optional.of(entity).map(imageRepository::save).orElseThrow(() ->
+            new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }
 
     public void updateImageDB(ImageEntity th) {
@@ -121,15 +118,9 @@ public class ImageService {
         try {
             result = FileCopyUtils.copyToByteArray(file);
 
-            // TODO header 에 넣어 줄지 byte[] 그대로 내릴지 고민 필요
-            /*HttpHeaders header = new HttpHeaders();
-            header.add("Content-type",
-                Files.probeContentType(file.toPath())); //파일의 컨텐츠타입을 직접 구해서 header에 저장
-
-            //entity =  new ResponseEntity<>(result, header, HttpStatus.OK);//데이터, 헤더, 상태값*/
         } catch (IOException e) {
             log.info("", e);
-            // TODO Exception 처리 필요
+            throw new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND);
         }
 
         return result;

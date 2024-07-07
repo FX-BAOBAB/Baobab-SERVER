@@ -2,6 +2,7 @@ package warehouse.domain.receiving.controller;
 
 import global.api.Api;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,8 +30,8 @@ public class ReceivingApiController {
     @PostMapping
     public Api<ReceivingResponse> receivingRequest(
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
-        @RequestBody Api<ReceivingRequest> request) {
-
+        @RequestBody Api<@Valid ReceivingRequest> request) {
+        //TODO @Valid 어노테이션 검토 필요
         ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody(),
             user.getUsername());
 

@@ -1,6 +1,7 @@
 package warehouse.domain.image.controller;
 
 import global.api.Api;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ public class ImageController {
     private final ImageBusiness imageBusiness;
 
     @PostMapping()
-    public Api<ImageResponse> upload(ImageRequest imageRequest) {
+    public Api<ImageResponse> upload(@Valid ImageRequest imageRequest) {
 
         ImageResponse response = imageBusiness.uploadImage(imageRequest);
 
@@ -31,8 +32,7 @@ public class ImageController {
     }
 
     @PostMapping("/imageList")
-    public Api<List<ImageResponse>> uploadImages(ImageListRequest imageRequestList) {
-
+    public Api<List<ImageResponse>> uploadImages(@Valid ImageListRequest imageRequestList) {
         List<ImageResponse> response = imageBusiness.uploadImageList(imageRequestList);
 
         return Api.OK(response);

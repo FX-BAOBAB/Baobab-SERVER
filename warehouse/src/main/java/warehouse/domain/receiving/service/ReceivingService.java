@@ -3,11 +3,11 @@ package warehouse.domain.receiving.service;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.ReceivingRepository;
 import db.domain.receiving.enums.ReceivingStatus;
+import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import warehouse.common.exception.Receiving.ReceivingNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +29,8 @@ public class ReceivingService {
     }
 
     public ReceivingEntity getReceivingById(Long receivingId) {
-        // TODO receiving null Exception 처리 필요
         return receivingRepository.findFirstById(receivingId)
-            .orElseThrow((() -> new NullPointerException("receiving Null Exception")));
+            .orElseThrow((() -> new ReceivingNotFoundException(ErrorCode.NULL_POINT)));
     }
 
     public ReceivingEntity setGuarantee(Long receivingId) {
@@ -41,9 +40,8 @@ public class ReceivingService {
     }
 
     public void initReceivingStatus(Long receivingId) {
-        // TODO Exception 수정 예정
         ReceivingEntity receivingEntity = receivingRepository.findFirstById(receivingId)
-            .orElseThrow(() -> new NullPointerException("receiving 요청서가 존재하지 않습니다."));
+            .orElseThrow((() -> new ReceivingNotFoundException(ErrorCode.NULL_POINT)));
         receivingEntity.setStatus(null);
         receivingRepository.save(receivingEntity);
     }

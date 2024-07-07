@@ -1,6 +1,11 @@
 package warehouse.domain.receiving.controller.model.receiving;
 
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -13,14 +18,18 @@ import warehouse.domain.goods.controller.model.GoodsRequest;
 @AllArgsConstructor
 public class ReceivingRequest {
 
-    // TODO List Valid 추가 필요
+    @NotNull
     private LocalDateTime visitDate;
 
+    @NotBlank
+    @Size(min = 1, max = 200)
     private String visitAddress;
 
+    @NotEmpty
+    @Valid
     private List<GoodsRequest> goodsRequests;
 
+    @NotNull
     private LocalDateTime guaranteeAt;
-
 
 }
