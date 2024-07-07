@@ -1,7 +1,6 @@
 package warehouse.domain.users.controller;
 
 import global.api.Api;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.validation.Errors;
@@ -28,7 +27,7 @@ public class UsersOpenApiController {
 
     @PostMapping()
     public Api<UsersRegisteredResponse> register(
-        @RequestBody @Valid Api<UsersRegisterRequest> request, Errors errors
+        @RequestBody Api<UsersRegisterRequest> request, Errors errors
     ) {
         customValidator.validate(request, errors);
         UsersRegisteredResponse response = usersBusiness.register(request.getBody());
@@ -37,7 +36,7 @@ public class UsersOpenApiController {
 
     @PostMapping("/login")
     public Api<TokenResponse> login(
-        @RequestBody @Valid Api<UserLoginRequest> request, Errors errors
+        @RequestBody Api<UserLoginRequest> request, Errors errors
     ) {
         customValidator.validate(request, errors);
         TokenResponse response = usersBusiness.login(request.getBody());

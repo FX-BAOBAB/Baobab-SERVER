@@ -2,17 +2,18 @@ package warehouse.domain.receiving.controller;
 
 import global.api.Api;
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import warehouse.common.customvalidation.CustomValidator;
 import warehouse.domain.receiving.business.ReceivingBusiness;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
@@ -26,12 +27,14 @@ import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResp
 public class ReceivingApiController {
 
     private final ReceivingBusiness receivingBusiness;
+    private final CustomValidator customValidator;
 
     @PostMapping
     public Api<ReceivingResponse> receivingRequest(
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
-        @RequestBody Api<@Valid ReceivingRequest> request) {
-        //TODO @Valid 어노테이션 검토 필요
+        @RequestBody Api<ReceivingRequest> request, Errors errors) {
+
+        customValidator.validate(request, errors);
         ReceivingResponse response = receivingBusiness.receivingRequest(request.getBody(),
             user.getUsername());
 
