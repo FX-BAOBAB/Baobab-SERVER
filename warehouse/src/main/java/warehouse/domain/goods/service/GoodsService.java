@@ -3,7 +3,6 @@ package warehouse.domain.goods.service;
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
 import global.errorcode.ErrorCode;
-import db.domain.receiving.ReceivingEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,8 @@ public class GoodsService {
 
     public void abandonment(Long receivingId) {
 
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(receiving.getId());
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
+            receivingId);
         if(goodsEntityList.isEmpty()){
             throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
         }
