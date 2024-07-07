@@ -11,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -21,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class GoodsRequest {
 
     @NotBlank
-    @Size(min = 1, max = 20) //이름 길이
+    @Size(max = 20) //이름 길이
     private String name;
 
     @NotBlank
-    @Size(min = 1, max = 20) //이름 길이
+    @Size(max = 20) //이름 길이
     private String modelName;
 
     @NotNull
@@ -36,7 +34,7 @@ public class GoodsRequest {
     private int quantity;
 
     @NotNull
-    @Size(min = 1, max = 2)
+    @Size(min = 6)
     private List<Long> imageIdList;
 
 }
