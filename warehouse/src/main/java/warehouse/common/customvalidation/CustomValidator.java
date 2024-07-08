@@ -1,14 +1,13 @@
 package warehouse.common.customvalidation;
 
 import global.api.Api;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Component
 @RequiredArgsConstructor
@@ -29,9 +28,9 @@ public class CustomValidator implements Validator {
             Object body = api.getBody();
             validator.validate(body, errors);
 
-            //TODO 예외 처리
+            //TODO 검토 필요
             if (errors.hasErrors()) {
-                throw new RuntimeException();
+                throw new ValidationException(errors.getAllErrors().toString());
             }
         }
     }
