@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.GoodsErrorCode;
-import warehouse.common.exception.Goods.GoodsNotFoundException;
+import warehouse.common.exception.goods.GoodsNotFoundException;
 
 @Slf4j
 @RestControllerAdvice

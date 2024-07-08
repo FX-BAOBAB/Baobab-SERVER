@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import warehouse.common.exception.Goods.GoodsNotFoundException;
+import warehouse.common.exception.goods.GoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -65,9 +65,8 @@ public class GoodsService {
         return goodsRepository.findAllByIdIn(goodsIdList);
     }
 
-    // TODO EXCEPTION 처리 필요
     public GoodsEntity getGoodsListBy(Long goodsId) {
-        return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new RuntimeException("존재하지 않는 상품 ID"));
+        return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
     }
 
 }

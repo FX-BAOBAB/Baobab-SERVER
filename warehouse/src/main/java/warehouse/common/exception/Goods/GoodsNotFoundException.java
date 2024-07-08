@@ -1,4 +1,4 @@
-package warehouse.common.exception.Goods;
+package warehouse.common.exception.goods;
 
 import global.errorcode.ErrorCodeIfs;
 

@@ -5,7 +5,7 @@ import db.domain.goods.GoodsEntity;
 import global.errorcode.ErrorCode;
 import java.util.List;
 import org.springframework.util.StringUtils;
-import warehouse.common.exception.Goods.GoodsNotFoundException;
+import warehouse.common.exception.goods.GoodsNotFoundException;
 
 public class ImageUtils {
 
