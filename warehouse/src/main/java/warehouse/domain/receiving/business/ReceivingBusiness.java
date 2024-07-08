@@ -12,7 +12,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import warehouse.common.error.ReceivingErrorCode;
 import warehouse.common.exception.ApiException;
+import warehouse.common.exception.receiving.NoOwnershipException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
@@ -100,9 +102,8 @@ public class ReceivingBusiness {
         Long userId = usersService.getUserWithThrow(email).getId();
         ReceivingEntity receiving = receivingService.getReceivingById(receivingId);
 
-        // TODO Exception 처리 필요
         if (!Objects.equals(userId, receiving.getUserId())) {
-            throw new RuntimeException("소유가 아닌 물품이 아닙니다.");
+            throw new NoOwnershipException(ReceivingErrorCode.NO_OWNERSHIP);
         }
 
         goodsService.abandonment(receiving);
@@ -113,14 +114,12 @@ public class ReceivingBusiness {
 
         Long userId = usersService.getUserWithThrow(email).getId();
 
-        //TODO Exception 처리 필요
         goodsIdList.forEach(it -> {
                 GoodsEntity goodsEntity = goodsService.getGoodsListBy(it);
                 if (!Objects.equals(goodsEntity.getUserId(), userId)){
-                    throw new RuntimeException("소유가 아닌 물품이 아닙니다.");
+                    throw new NoOwnershipException(ReceivingErrorCode.NO_OWNERSHIP);
                 }
         });
-        // TODO Login User 의 소유가 아닌 물품인 경우 Exception 처리 필요
         goodsService.abandonment(goodsIdList);
         return messageConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
     }
