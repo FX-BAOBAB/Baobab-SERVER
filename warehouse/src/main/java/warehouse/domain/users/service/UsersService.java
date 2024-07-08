@@ -3,15 +3,15 @@ package warehouse.domain.users.service;
 import db.domain.users.UserEntity;
 import db.domain.users.UsersRepository;
 import db.domain.users.enums.UserStatus;
-import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import warehouse.common.error.TokenErrorCode;
-import warehouse.common.exception.ApiException;
+import warehouse.common.error.UserErrorCode;
+import warehouse.common.exception.user.ExistUserException;
 import warehouse.common.exception.jwt.TokenException;
+import warehouse.common.exception.user.LogInException;
 
 @Slf4j
 @Service
@@ -23,7 +23,7 @@ public class UsersService {
     public void validationUserId(String email) {
         boolean existsByEmail = usersRepository.existsByEmail(email);
         if (existsByEmail){
-            throw new ApiException(TokenErrorCode.EXIST_USER);
+            throw new ExistUserException(UserErrorCode.EXIST_USER);
         }
     }
 
@@ -36,7 +36,7 @@ public class UsersService {
     public UserEntity login(String email, String password) {
 
         UserEntity userEntity = usersRepository.findFirstByEmailOrderByEmailDesc(email)
-            .orElseThrow(() -> new TokenException(TokenErrorCode.USER_NOT_FOUNT));
+            .orElseThrow(() ->  new LogInException(UserErrorCode.LOGIN_FAIL));
 
         if (BCrypt.checkpw(password, userEntity.getPassword())){
             userEntity.setLastLoginAt(LocalDateTime.now());
@@ -44,16 +44,19 @@ public class UsersService {
             return userEntity;
         }
 
-        throw new TokenException(TokenErrorCode.USER_NOT_FOUNT);
+        throw new LogInException(UserErrorCode.LOGIN_FAIL);
 
     }
+
     public UserEntity getUserWithThrow(Long userId) {
         log.info("userid : {} in UsersService", userId);
-        return usersRepository.findFirstByIdAndStatusOrderByIdDesc(userId,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(TokenErrorCode.USER_NOT_FOUNT));
+        return usersRepository.findFirstByIdAndStatusOrderByIdDesc(userId,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(
+            UserErrorCode.USER_NOT_FOUND));
     }
 
     public UserEntity getUserWithThrow(String email) {
         log.info("userid : {} in UsersService", email);
-        return usersRepository.findFirstByEmailAndStatusOrderByIdDesc(email,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(TokenErrorCode.USER_NOT_FOUNT));
+        return usersRepository.findFirstByEmailAndStatusOrderByIdDesc(email,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(
+            UserErrorCode.USER_NOT_FOUND));
     }
 }

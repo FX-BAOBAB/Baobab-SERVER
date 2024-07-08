@@ -6,6 +6,8 @@ import global.annotation.Business;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import warehouse.common.error.UserErrorCode;
+import warehouse.common.exception.user.FailedToRegisterException;
 import warehouse.domain.address.converter.AddressConverter;
 import warehouse.domain.address.service.AddressService;
 import warehouse.domain.users.controller.model.login.UserLoginRequest;
@@ -42,9 +44,8 @@ public class UsersBusiness {
         addressEntity.setUserId(userEntity.getId());
         AddressEntity savedAddressEntity = addressService.save(addressEntity);
 
-        // TODO Exception 처리 필요
         if((savedUserEntity.getId() == null) || (savedAddressEntity.getId() == null)){
-            return null;
+            throw new FailedToRegisterException(UserErrorCode.FAILED_TO_REGISTER);
         }
 
         // 3. entity -> response 변경 후 반환
