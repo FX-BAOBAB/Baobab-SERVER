@@ -8,7 +8,7 @@ import global.errorcode.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import warehouse.common.exception.ApiException;
+import warehouse.common.exception.jwt.TokenException;
 import warehouse.domain.users.security.jwt.converter.TokenConverter;
 import warehouse.domain.users.security.jwt.model.TokenDto;
 import warehouse.domain.users.security.jwt.model.TokenResponse;
@@ -32,8 +32,8 @@ public class TokenBusiness {
                     userEntity.getId(), refreshToken.getToken());
                 tokenService.deleteRefreshToken(userId);
                 tokenService.saveRefreshToken(refreshTokenEntity);
-                return tokenConverter.toReponse(accessToken, refreshToken);
-            }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
+                return tokenConverter.toResponse(accessToken, refreshToken);
+            }).orElseThrow(() -> new TokenException(ErrorCode.NULL_POINT));
     }
 
     public TokenDto reIssueAccessToken(String refreshToken) {
