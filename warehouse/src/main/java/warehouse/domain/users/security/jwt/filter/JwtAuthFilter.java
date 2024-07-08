@@ -5,15 +5,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import warehouse.common.error.TokenErrorCode;
+import warehouse.common.error.UserErrorCode;
 import warehouse.common.exception.jwt.TokenException;
 import warehouse.domain.users.security.jwt.service.TokenService;
 import warehouse.domain.users.security.service.AuthorizationService;
@@ -41,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
             Long userId = tokenService.validationToken(token);
 
             if (userId == null) {
-                throw new TokenException(TokenErrorCode.USER_NOT_FOUNT);
+                throw new TokenException(UserErrorCode.USER_NOT_FOUND);
             }
 
             //유저와 토큰 일치 시 userDetails 생성

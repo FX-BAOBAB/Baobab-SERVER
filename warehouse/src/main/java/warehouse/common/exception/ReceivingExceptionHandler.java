@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.ReceivingErrorCode;
-import warehouse.common.exception.Receiving.ReceivingNotFoundException;
+import warehouse.common.exception.receiving.NoOwnershipException;
+import warehouse.common.exception.receiving.ReceivingNotFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,5 +21,12 @@ public class ReceivingExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Api.ERROR(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
+    }
+
+    @ExceptionHandler(value = NoOwnershipException.class)
+    public ResponseEntity<Api<Object>> noOwnershipException(NoOwnershipException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(ReceivingErrorCode.NO_OWNERSHIP));
     }
 }

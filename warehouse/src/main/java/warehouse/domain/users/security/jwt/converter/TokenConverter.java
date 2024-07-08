@@ -5,7 +5,7 @@ import global.annotation.Converter;
 import global.errorcode.ErrorCode;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import warehouse.common.exception.ApiException;
+import warehouse.common.exception.jwt.TokenException;
 import warehouse.domain.users.security.jwt.model.TokenDto;
 import warehouse.domain.users.security.jwt.model.TokenResponse;
 
@@ -13,13 +13,13 @@ import warehouse.domain.users.security.jwt.model.TokenResponse;
 @RequiredArgsConstructor
 public class TokenConverter {
 
-    public TokenResponse toReponse(
+    public TokenResponse toResponse(
         TokenDto accessToken,
         TokenDto refreshToken
     ){
 
-        Objects.requireNonNull(accessToken, ()->{throw new ApiException(ErrorCode.NULL_POINT);});
-        Objects.requireNonNull(refreshToken, ()->{throw new ApiException(ErrorCode.NULL_POINT);});
+        Objects.requireNonNull(accessToken, ()->{throw new TokenException(ErrorCode.NULL_POINT);});
+        Objects.requireNonNull(refreshToken, ()->{throw new TokenException(ErrorCode.NULL_POINT);});
 
         return TokenResponse.builder()
             .accessToken(accessToken.getToken())

@@ -9,7 +9,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.TokenErrorCode;
-import warehouse.common.exception.ApiException;
 import warehouse.common.exception.jwt.TokenException;
 import warehouse.domain.users.security.jwt.ifs.TokenHelperIfs;
 import warehouse.domain.users.security.jwt.model.TokenDto;
@@ -38,7 +37,7 @@ public class TokenService {
         Map<String, Object> map = tokenHelperIfs.validationTokenWithThrow(token);
 
         Object userId = map.get("userId");
-        Objects.requireNonNull(userId,()->{throw new ApiException(ErrorCode.NULL_POINT);});
+        Objects.requireNonNull(userId,()->{throw new TokenException(ErrorCode.NULL_POINT);});
 
         return Long.parseLong(userId.toString());
     }
