@@ -22,36 +22,27 @@ import warehouse.domain.users.security.service.AuthorizationService;
 @EnableWebSecurity // security 활성화
 @EnableGlobalAuthentication
 @AllArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final AuthorizationService authorizationService;
     private final TokenService tokenService;
 
-    private final List<String> WHITE_LIST = List.of(
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/v3/api-docs/**",
-        "/open-api/**"
-    );
+    private final List<String> WHITE_LIST = List.of("/swagger-ui.html", "/swagger-ui/**",
+        "/v3/api-docs/**", "/open-api/**");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity
-            .addFilterBefore(new JwtAuthFilter(authorizationService, tokenService), UsernamePasswordAuthenticationFilter.class)
-            .csrf((csrfConfig) ->
-                csrfConfig.disable()
-            ) // 1번
+        httpSecurity.cors(cors -> cors.disable())
+            .addFilterBefore(new JwtAuthFilter(authorizationService, tokenService),
+                UsernamePasswordAuthenticationFilter.class)
+            .csrf((csrfConfig) -> csrfConfig.disable()) // 1번
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(it -> {
-                it
-                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                    .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll()
-                    .anyRequest().authenticated();
-            })
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
+                SessionCreationPolicy.STATELESS)).authorizeHttpRequests(it -> {
+                it.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll().anyRequest()
+                    .authenticated();
+            }).formLogin(AbstractHttpConfigurer::disable).httpBasic(AbstractHttpConfigurer::disable)
 
         ;
 
@@ -59,7 +50,7 @@ public class SecurityConfig{
     }
 
     @Bean
-    public BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
