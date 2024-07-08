@@ -1,4 +1,4 @@
-package warehouse.common.exception.Receiving;
+package warehouse.common.exception.receiving;
 
 import global.errorcode.ErrorCodeIfs;
 import lombok.Getter;

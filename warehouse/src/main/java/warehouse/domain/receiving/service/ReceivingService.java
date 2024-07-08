@@ -7,7 +7,7 @@ import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import warehouse.common.exception.Receiving.ReceivingNotFoundException;
+import warehouse.common.exception.receiving.ReceivingNotFoundException;
 
 @Service
 @RequiredArgsConstructor
