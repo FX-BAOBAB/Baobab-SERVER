@@ -2,11 +2,11 @@ package warehouse.domain.address.service;
 
 import db.domain.users.address.AddressEntity;
 import db.domain.users.address.AddressRepository;
-import global.errorcode.ErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import warehouse.common.exception.ApiException;
+import warehouse.common.error.UserErrorCode;
+import warehouse.common.exception.user.AddressNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +24,8 @@ public class AddressService {
 
     public AddressEntity getBasicAddress(Long userId) {
         boolean basic = true;
-        return addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(userId,basic).orElseThrow(() -> new ApiException(
-            ErrorCode.NULL_POINT));
+        return addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(userId,basic).orElseThrow(() -> new AddressNotFoundException(
+            UserErrorCode.ADDRESS_NOT_FOUND));
     }
 
     public AddressEntity setAddress(AddressEntity addressEntity) {
@@ -39,9 +39,8 @@ public class AddressService {
     }
 
     private void setFalseOldBasicAddress(Long userId) {
-        // TODO Exception 처리 필요
         AddressEntity oldBasicEntity = addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(
-            userId, true).orElseThrow(() -> new RuntimeException("oldBasicEntity 없음"));
+            userId, true).orElseThrow(() -> new AddressNotFoundException(UserErrorCode.ADDRESS_NOT_FOUND));
 
         oldBasicEntity.setBasicAddress(false);
 

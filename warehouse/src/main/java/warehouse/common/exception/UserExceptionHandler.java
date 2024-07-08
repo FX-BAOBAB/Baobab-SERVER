@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.UserErrorCode;
+import warehouse.common.exception.user.AddressNotFoundException;
 import warehouse.common.exception.user.ExistUserException;
 import warehouse.common.exception.user.FailedToRegisterException;
 import warehouse.common.exception.user.LogInException;
@@ -34,5 +35,12 @@ public class UserExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(UserErrorCode.LOGIN_FAIL));
+    }
+
+    @ExceptionHandler(value = AddressNotFoundException.class)
+    public ResponseEntity<Api<Object>> addressNotFoundException(AddressNotFoundException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Api.ERROR(UserErrorCode.ADDRESS_NOT_FOUND));
     }
 }
