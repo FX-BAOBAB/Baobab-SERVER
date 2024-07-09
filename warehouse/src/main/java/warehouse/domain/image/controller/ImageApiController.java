@@ -18,41 +18,33 @@ import warehouse.domain.image.controller.model.ImageResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/image")
-public class ImageController {
+public class ImageApiController {
 
     private final ImageBusiness imageBusiness;
 
     @PostMapping()
     public Api<ImageResponse> upload(@Valid ImageRequest imageRequest) {
-
         ImageResponse response = imageBusiness.uploadImage(imageRequest);
-
         return Api.OK(response);
-
     }
 
-    @PostMapping("/imageList")
+    @PostMapping("/list")
     public Api<List<ImageResponse>> uploadImages(@Valid ImageListRequest imageRequestList) {
         List<ImageResponse> response = imageBusiness.uploadImageList(imageRequestList);
 
         return Api.OK(response);
     }
 
-    @GetMapping("/{goodsId}")
+    @GetMapping("/list/{goodsId}")
     public Api<List<ImageResponse>> getImage(@PathVariable("goodsId") Long goodsId) {
-
         List<ImageResponse> response = imageBusiness.getImageUrlListBy(goodsId);
-
         return Api.OK(response);
     }
 
     @GetMapping("/byte/{filepath}")
     public Api<byte[]> display(@PathVariable("filepath") String filepath) {
-
         byte[] result = imageBusiness.getImageFile(filepath);
-
         return Api.OK(result);
-
     }
 
 

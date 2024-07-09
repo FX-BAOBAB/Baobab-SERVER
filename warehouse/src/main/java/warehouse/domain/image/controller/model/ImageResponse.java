@@ -21,6 +21,8 @@ public class ImageResponse {
 
     private String originalName;
 
+    private String imageUrl;
+
     private String caption;
 
     private ImageKind kind;

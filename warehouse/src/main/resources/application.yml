@@ -14,6 +14,7 @@ spring:
     password: 1234
 file:
   upload-dir: /Users/yeongwoonshin/Desktop/Baobab-SERVER/warehouse/src/main/resources/static/images/
+  path : /images/
 
 jwt:
   secret:

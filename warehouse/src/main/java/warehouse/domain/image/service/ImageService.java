@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,7 @@ import warehouse.domain.image.common.ImageUtils;
 public class ImageService {
 
     @Value("${file.upload-dir}")
-    private String uploadDir;
+    private static String uploadDir;
 
     private final ImageRepository imageRepository;
 

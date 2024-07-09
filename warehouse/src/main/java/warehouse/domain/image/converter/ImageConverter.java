@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,13 +31,16 @@ import warehouse.domain.image.controller.model.ImageResponse;
 @Converter
 public class ImageConverter {
 
+    @Value("${file.path}")
+    private String uploadDir;
+
     public ImageEntity toEntity(ImageRequest request) {
 
         if (Objects.requireNonNull(request.getFile().getOriginalFilename()).isEmpty()) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
 
-        ImageInfo imageInfo = new ImageInfo(request);
+        ImageInfo imageInfo = new ImageInfo(request,uploadDir);
 
         return ImageEntity.builder().imageUrl(imageInfo.getImageUrl())
             .originalName(imageInfo.getOriginalFileName()).serverName(imageInfo.serverName)
@@ -49,6 +53,7 @@ public class ImageConverter {
         return Optional.ofNullable(newEntity).map(
                 it -> ImageResponse.builder().id(newEntity.getId())
                     .serverName(newEntity.getServerName()).originalName(newEntity.getOriginalName())
+                    .imageUrl(newEntity.getImageUrl())
                     .caption(newEntity.getCaption()).goodsId(newEntity.getGoodsId())
                     .kind(newEntity.getKind()).extension(newEntity.getExtension()).build())
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
@@ -84,13 +89,13 @@ public class ImageConverter {
             .faultImageListResponse(faultImageListResponse).build();
     }
 
+    @Slf4j
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     static class ImageInfo {
 
-        @Value("${file.upload-dir}")
         private String uploadDir;
 
         private String originalFileName;
@@ -103,14 +108,14 @@ public class ImageConverter {
 
         private String imageUrl;
 
-        public ImageInfo(ImageRequest request) {
+        public ImageInfo(ImageRequest request,String uploadDir) {
+            this.uploadDir = uploadDir;
             this.originalFileName = request.getFile().getOriginalFilename();
             this.serverName = UUID.randomUUID().toString();
             this.extension = ImageUtils.subStringExtension(
                 Objects.requireNonNull(this.originalFileName));
             this.fileName = StringUtils.cleanPath(this.serverName + this.extension);
-            this.imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath().path(uploadDir)
-                .path(fileName).toUriString();
+            this.imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath().path(uploadDir + fileName).toUriString();
         }
     }
 }
