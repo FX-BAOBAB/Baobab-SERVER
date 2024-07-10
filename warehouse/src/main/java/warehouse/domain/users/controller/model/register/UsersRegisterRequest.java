@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UsersRegisterRequest {
 
-    @Pattern(regexp = "^[0-9a-zA-Z]{1,100}@[0-9a-zA-Z]+(\\.[0-9a-zA-Z]+)+$")
+    @Pattern(regexp = "^[0-9a-zA-Z]{1,50}@[0-9a-zA-Z]{1,24}+(\\.[0-9a-zA-Z]+){1,24}$")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*[\\\\[\\\\]{}()<>#$%^&*_=|~`]).{8,100}$")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*[\\\\{}()<>#$%^&*_=|~`]).{8,100}$")
     private String password;
 
     @Pattern(regexp = "^[가-힣]{1,50}$")
@@ -37,5 +37,6 @@ public class UsersRegisterRequest {
 
 //    @Pattern(regexp = "^[0-9]{5}$")
     private int post;
+
 
 }

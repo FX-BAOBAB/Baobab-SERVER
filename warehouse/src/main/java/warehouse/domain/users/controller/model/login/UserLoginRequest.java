@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserLoginRequest {
 
-    @Pattern(regexp = "^[0-9a-zA-Z]{1,100}@[0-9a-zA-Z]+(\\.[0-9a-zA-Z]+)+$")
+    @Pattern(regexp = "^[0-9a-zA-Z]{1,50}@[0-9a-zA-Z]{1,24}+(\\.[0-9a-zA-Z]+){1,24}$")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*[\\\\[\\\\]{}()<>#$%^&*_=|~`]).{8,100}$")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*[\\\\{}()<>#$%^&*_=|~`]).{8,100}$")
     private String password;
 
 }
