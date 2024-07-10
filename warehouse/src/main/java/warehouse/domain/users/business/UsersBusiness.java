@@ -10,6 +10,7 @@ import warehouse.common.error.UserErrorCode;
 import warehouse.common.exception.user.FailedToRegisterException;
 import warehouse.domain.address.converter.AddressConverter;
 import warehouse.domain.address.service.AddressService;
+import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.users.controller.model.login.UserLoginRequest;
 import warehouse.domain.users.controller.model.login.UserResponse;
 import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
@@ -33,7 +34,7 @@ public class UsersBusiness {
 
     public UsersRegisteredResponse register(UsersRegisterRequest request){
 
-        usersService.validationUserId(request.getEmail());
+        usersService.existsByEmailThrowEx(request.getEmail());
 
         // 1. request -> UsersEntity , AddressEntity 변경
         UserEntity userEntity = usersConverter.toEntity(request);
@@ -64,4 +65,10 @@ public class UsersBusiness {
         return usersConverter.toResponse(userEntity);
     }
 
+    public MessageResponse unregister(String email) {
+        usersService.unregister(email);
+        return MessageResponse.builder()
+            .Message("회원탈퇴 완료")
+            .build();
+    }
 }
