@@ -35,8 +35,8 @@ public class UsersRegisterRequest {
     @NotNull
     private boolean basicAddress;
 
-//    @Pattern(regexp = "^[0-9]{5}$")
-    private int post;
+    @Pattern(regexp = "^[0-9]{5}$")
+    private String post;
 
 
 }

@@ -14,7 +14,7 @@ public class AddressResponse {
     private Long id;
     private String address;
     private String detailAddress;
-    private int post;
+    private String post;
     private boolean basicAddress;
 
 }
