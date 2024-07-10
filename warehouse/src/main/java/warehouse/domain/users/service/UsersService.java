@@ -6,12 +6,15 @@ import db.domain.users.enums.UserStatus;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.UserErrorCode;
 import warehouse.common.exception.user.ExistUserException;
 import warehouse.common.exception.jwt.TokenException;
 import warehouse.common.exception.user.LogInException;
+import warehouse.common.exception.user.UserNotFoundException;
+import warehouse.common.exception.user.UserUnregisterException;
 
 @Slf4j
 @Service
@@ -20,11 +23,28 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
 
-    public void validationUserId(String email) {
-        boolean existsByEmail = usersRepository.existsByEmail(email);
+    public boolean existsByEmail(String email){
+        return usersRepository.existsByEmail(email);
+    }
+
+    public void existsByEmailThrowEx(String email) {
+
+        boolean existsByEmail = existsByEmail(email);
+
         if (existsByEmail){
             throw new ExistUserException(UserErrorCode.EXIST_USER);
         }
+
+    }
+
+    public void notExistsByEmailThrowEx(String email) {
+
+        boolean existsByEmail = existsByEmail(email);
+
+        if (!existsByEmail){
+            throw new ExistUserException(UserErrorCode.USER_NOT_FOUND);
+        }
+
     }
 
     public UserEntity save(UserEntity userEntity) {
@@ -58,5 +78,18 @@ public class UsersService {
         log.info("userid : {} in UsersService", email);
         return usersRepository.findFirstByEmailAndStatusOrderByIdDesc(email,UserStatus.REGISTERED).orElseThrow(() -> new TokenException(
             UserErrorCode.USER_NOT_FOUND));
+    }
+
+    public void unregister(String email) {
+        UserEntity userEntity = usersRepository.findFirstByEmailAndStatusOrderByIdDesc(email,
+                UserStatus.REGISTERED)
+            .orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        userEntity.setStatus(UserStatus.UNREGISTERED);
+        userEntity.setUnRegisteredAt(LocalDateTime.now());
+        UserEntity unRegisterdUserEntity = usersRepository.save(userEntity);
+        if (!unRegisterdUserEntity.getStatus().equals(UserStatus.UNREGISTERED)){
+            throw new UserUnregisterException(UserErrorCode.FAILED_TO_UNREGISTER);
+        }
+
     }
 }
