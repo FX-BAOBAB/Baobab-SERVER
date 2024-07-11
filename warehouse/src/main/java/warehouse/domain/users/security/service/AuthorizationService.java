@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import warehouse.common.error.UserErrorCode;
+import warehouse.common.exception.user.UserNameNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class AuthorizationService implements UserDetailsService {
 
         return account.map(it -> User.builder().username(it.getEmail()).password(it.getPassword())
                 .roles(it.getRole().toString()).build())
-            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new UserNameNotFoundException(UserErrorCode.USER_NOT_FOUND));
 
     }
 }
