@@ -1,5 +1,6 @@
 package warehouse.domain.address.controller;
 
+import global.annotation.ApiValid;
 import global.api.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,7 @@ public class AddressApiController {
     @PostMapping()
     public Api<AddressResponse> setAddress(
         @AuthenticationPrincipal User user,
-        @RequestBody Api<AddressRequest> addressRequest
+        @RequestBody @ApiValid Api<AddressRequest> addressRequest
     ){
         AddressResponse response = addressBusiness.setAddress(user.getUsername(),addressRequest.getBody());
         return Api.OK(response);
