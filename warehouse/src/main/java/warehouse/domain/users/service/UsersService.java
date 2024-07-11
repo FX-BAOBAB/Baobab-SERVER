@@ -55,7 +55,7 @@ public class UsersService {
 
     public UserEntity login(String email, String password) {
 
-        UserEntity userEntity = usersRepository.findFirstByEmailOrderByEmailDesc(email)
+        UserEntity userEntity = usersRepository.findFirstByEmailAndStatusNotOrderByEmailDesc(email,UserStatus.UNREGISTERED)
             .orElseThrow(() ->  new LogInException(UserErrorCode.LOGIN_FAIL));
 
         if (BCrypt.checkpw(password, userEntity.getPassword())){
