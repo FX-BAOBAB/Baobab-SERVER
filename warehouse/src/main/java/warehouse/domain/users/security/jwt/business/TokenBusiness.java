@@ -8,7 +8,9 @@ import global.errorcode.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import warehouse.common.error.TokenErrorCode;
 import warehouse.common.exception.jwt.TokenException;
+import warehouse.common.exception.jwt.TokenSignatureException;
 import warehouse.domain.users.security.jwt.converter.TokenConverter;
 import warehouse.domain.users.security.jwt.model.TokenDto;
 import warehouse.domain.users.security.jwt.model.TokenResponse;
@@ -37,6 +39,11 @@ public class TokenBusiness {
     }
 
     public TokenDto reIssueAccessToken(String refreshToken) {
-        return tokenService.reIssueAccessToken(refreshToken);
+        //JWT가 헤더에 있는 경우
+        if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+            String token = refreshToken.substring(7);
+            return tokenService.reIssueAccessToken(token);
+        }
+        throw new TokenSignatureException(TokenErrorCode.INVALID_TOKEN);
     }
 }
