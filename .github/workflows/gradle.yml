@@ -18,15 +18,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Make docker-compose.yml
+        run: echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml   
+
       - name: Make application.yml
         run: |
           cd ./warehouse/src/main/resources
           echo "${{ secrets.APPLICATION }}" > application.yml
-
-      - name: Make docker-compose.yml
-        run: |
-          cd ./
-          echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml    
 
       - name: Build with Gradle
         run: ./gradlew build
