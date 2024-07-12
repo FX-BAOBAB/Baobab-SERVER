@@ -43,7 +43,7 @@ public class UsersOpenApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/duplicaion")
+    @PostMapping("/duplication")
     public Api<DuplicationResponse> duplicationEmailCheck(
         @RequestBody @ApiValid Api<DuplicationRequest> request
     ){
