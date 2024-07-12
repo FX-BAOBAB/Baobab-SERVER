@@ -11,6 +11,8 @@ import warehouse.common.exception.user.FailedToRegisterException;
 import warehouse.domain.address.converter.AddressConverter;
 import warehouse.domain.address.service.AddressService;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationRequest;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationResponse;
 import warehouse.domain.users.controller.model.login.UserLoginRequest;
 import warehouse.domain.users.controller.model.login.UserResponse;
 import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
@@ -71,4 +73,11 @@ public class UsersBusiness {
             .Message("회원탈퇴 완료")
             .build();
     }
+
+    public DuplicationResponse duplicationCheckEmail(DuplicationRequest request) {
+        return DuplicationResponse.builder()
+            .duplication(usersService.existsByEmail(request.getEmail()))
+            .build();
+    }
+
 }
