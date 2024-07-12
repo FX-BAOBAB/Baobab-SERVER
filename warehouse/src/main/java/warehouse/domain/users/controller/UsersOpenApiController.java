@@ -2,22 +2,19 @@ package warehouse.domain.users.controller;
 
 import global.api.Api;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import global.annotation.ApiValid;
 import warehouse.domain.users.business.UsersBusiness;
-import warehouse.domain.users.controller.model.duplicaiton.DuplicationRequest;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationEmailRequest;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationNameRequest;
 import warehouse.domain.users.controller.model.duplicaiton.DuplicationResponse;
 import warehouse.domain.users.controller.model.login.UserLoginRequest;
 import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
 import warehouse.domain.users.controller.model.register.UsersRegisteredResponse;
-import warehouse.domain.users.security.jwt.model.TokenDto;
 import warehouse.domain.users.security.jwt.model.TokenResponse;
 
 @RestController
@@ -43,13 +40,22 @@ public class UsersOpenApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/duplication")
+    @PostMapping("/duplication/email")
     public Api<DuplicationResponse> duplicationEmailCheck(
-        @RequestBody @ApiValid Api<DuplicationRequest> request
+        @RequestBody @ApiValid Api<DuplicationEmailRequest> request
     ){
         DuplicationResponse response = usersBusiness.duplicationCheckEmail(request.getBody());
         return Api.OK(response);
     }
+
+    @PostMapping("/duplication/name")
+    public Api<DuplicationResponse> duplicationNameCheck(
+        @RequestBody @ApiValid Api<DuplicationNameRequest> request
+    ){
+        DuplicationResponse response = usersBusiness.duplicationCheckName(request.getBody());
+        return Api.OK(response);
+    }
+
 
 
 }
