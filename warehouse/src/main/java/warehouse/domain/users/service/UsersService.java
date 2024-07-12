@@ -27,6 +27,10 @@ public class UsersService {
         return usersRepository.existsByEmail(email);
     }
 
+    public boolean existsByName(String name){
+        return usersRepository.existsByName(name);
+    }
+
     public void existsByEmailThrowEx(String email) {
 
         boolean existsByEmail = existsByEmail(email);
@@ -36,6 +40,8 @@ public class UsersService {
         }
 
     }
+
+
 
     public void notExistsByEmailThrowEx(String email) {
 

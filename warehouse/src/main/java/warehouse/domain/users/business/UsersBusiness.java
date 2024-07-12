@@ -11,7 +11,8 @@ import warehouse.common.exception.user.FailedToRegisterException;
 import warehouse.domain.address.converter.AddressConverter;
 import warehouse.domain.address.service.AddressService;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
-import warehouse.domain.users.controller.model.duplicaiton.DuplicationRequest;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationEmailRequest;
+import warehouse.domain.users.controller.model.duplicaiton.DuplicationNameRequest;
 import warehouse.domain.users.controller.model.duplicaiton.DuplicationResponse;
 import warehouse.domain.users.controller.model.login.UserLoginRequest;
 import warehouse.domain.users.controller.model.login.UserResponse;
@@ -74,10 +75,15 @@ public class UsersBusiness {
             .build();
     }
 
-    public DuplicationResponse duplicationCheckEmail(DuplicationRequest request) {
+    public DuplicationResponse duplicationCheckEmail(DuplicationEmailRequest request) {
         return DuplicationResponse.builder()
             .duplication(usersService.existsByEmail(request.getEmail()))
             .build();
     }
 
+    public DuplicationResponse duplicationCheckName(DuplicationNameRequest request) {
+        return DuplicationResponse.builder()
+            .duplication(usersService.existsByName(request.getName()))
+            .build();
+    }
 }
