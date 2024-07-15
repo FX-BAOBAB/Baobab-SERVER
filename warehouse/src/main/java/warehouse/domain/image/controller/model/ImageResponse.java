@@ -29,6 +29,4 @@ public class ImageResponse {
 
     private Long goodsId;
 
-    private String extension;
-
 }
