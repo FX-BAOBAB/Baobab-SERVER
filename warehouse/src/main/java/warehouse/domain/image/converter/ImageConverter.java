@@ -55,7 +55,7 @@ public class ImageConverter {
                     .serverName(newEntity.getServerName()).originalName(newEntity.getOriginalName())
                     .imageUrl(newEntity.getImageUrl())
                     .caption(newEntity.getCaption()).goodsId(newEntity.getGoodsId())
-                    .kind(newEntity.getKind()).extension(newEntity.getExtension()).build())
+                    .kind(newEntity.getKind()).build())
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }
 
