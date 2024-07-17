@@ -2,6 +2,7 @@ package db.domain.goods;
 
 import db.common.BaseEntity;
 import db.domain.goods.enums.GoodsCategory;
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.ReceivingEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,5 +47,9 @@ public class GoodsEntity extends BaseEntity {
     private Long userId;
 
     private Long takeBackId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
+    private GoodsStatus status;
 
 }
