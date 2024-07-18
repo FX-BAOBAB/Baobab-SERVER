@@ -7,13 +7,17 @@ import db.domain.receiving.ReceivingEntity;
 import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import warehouse.common.error.TakeBackErrorCode;
+import warehouse.common.exception.takeback.TakeBackNotAllowedException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GoodsService {
 
     private final GoodsRepository goodsRepository;
@@ -74,25 +78,32 @@ public class GoodsService {
         return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
     }
 
-    //TODO 예외처리
-    public void validateTakeBackStatusWithThrow(Long receivingId){
-        Optional<GoodsEntity> optionalGoodsEntity = goodsRepository.findFirstByReceivingId(receivingId);
-        GoodsEntity goodsEntity = optionalGoodsEntity.orElseThrow(() ->
-            new RuntimeException("반품 접수 상품이 존재하지 않습니다."));
-
-        if (goodsEntity.getStatus() != GoodsStatus.RECEIVING) {
-            throw new RuntimeException("이미 반품이 접수된 상품입니다.");
+    public void hasGoodsBy(Long receivingId) {
+        if (goodsRepository.findAllByReceivingId(receivingId).isEmpty()) {
+            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
         }
     }
 
-    //TODO 예외처리
+    public void hasGoodsBy(List<Long> goodsIdList) {
+        if (goodsRepository.findAllByIdIn(goodsIdList).isEmpty()) {
+            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
+        }
+    }
+
+    public void validateTakeBackStatusWithThrow(Long receivingId){
+        List<Long> goodsIdList = goodsRepository.findAllByReceivingId(receivingId).stream()
+            .map(goodsEntity -> goodsEntity.getId()).collect(Collectors.toList());
+
+        this.validateTakeBackStatusWithThrow(goodsIdList);
+    }
+
     public void validateTakeBackStatusWithThrow(List<Long> goodsIdList) {
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
-        goodsEntityList.forEach(goodsEntity -> {
-            if (goodsEntity.getStatus() != GoodsStatus.RECEIVING) {
-                throw new RuntimeException("이미 반품이 접수된 상품입니다.");
+        goodsRepository.findAllByIdIn(goodsIdList).forEach(goodsEntity -> {
+                if (goodsEntity.getStatus() != GoodsStatus.RECEIVING) {
+                    throw new TakeBackNotAllowedException(TakeBackErrorCode.TAKE_BAKE_NOT_ALLOWED);
+                }
             }
-        });
+        );
     }
 
 }

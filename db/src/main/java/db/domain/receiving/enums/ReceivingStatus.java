@@ -15,7 +15,7 @@ public enum ReceivingStatus implements StatusIfs{
     RECEIVING(6,"배송 완료", "물건이 지정된 창고에 도착하였습니다."),
     LOADING(7,"입고 진행 중","최종 검수 및 창고 적재 진행 중입니다."),
     STORAGE(8,"입고 완료","입고가 완료되어 안전하게 보관 중입니다."),
-    CLOSE(9, "CLOSE", "CLOSE") //TODO 명칭 재정립
+    CLOSE(9, "CLOSE", "입고가 완료되어 안전하게 보관 중입니다.")
     ;
 
     private final int current;
