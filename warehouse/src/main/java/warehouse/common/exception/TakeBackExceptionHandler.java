@@ -13,7 +13,6 @@ import warehouse.common.exception.takeback.TakeBackNotAllowedException;
 
 @Slf4j
 @RestControllerAdvice
-@Order(value = Integer.MIN_VALUE)
 public class TakeBackExceptionHandler {
 
     @ExceptionHandler(value = TakeBackNotAllowedException.class)

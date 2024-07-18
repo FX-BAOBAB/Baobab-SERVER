@@ -78,32 +78,31 @@ public class GoodsService {
         return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
     }
 
-    public void hasGoodsBy(Long receivingId) {
-        if (goodsRepository.findAllByReceivingId(receivingId).isEmpty()) {
-            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
-        }
+    public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId){
+        List<GoodsEntity> goodsList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
+            receivingId);
+        checkEmptyGoodsListWithThrow(goodsList);
+        checkGoodsStatusWithThrow(goodsList, GoodsStatus.RECEIVING);
     }
 
-    public void hasGoodsBy(List<Long> goodsIdList) {
-        if (goodsRepository.findAllByIdIn(goodsIdList).isEmpty()) {
-            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
-        }
+    public void checkStoredGoodsAndStatusWithThrowBy(List<Long> goodsIdList) {
+        List<GoodsEntity> goodsList = goodsRepository.findAllByIdIn(goodsIdList);
+        checkEmptyGoodsListWithThrow(goodsList);
+        checkGoodsStatusWithThrow(goodsList, GoodsStatus.RECEIVING);
     }
 
-    public void validateTakeBackStatusWithThrow(Long receivingId){
-        List<Long> goodsIdList = goodsRepository.findAllByReceivingId(receivingId).stream()
-            .map(goodsEntity -> goodsEntity.getId()).collect(Collectors.toList());
-
-        this.validateTakeBackStatusWithThrow(goodsIdList);
-    }
-
-    public void validateTakeBackStatusWithThrow(List<Long> goodsIdList) {
-        goodsRepository.findAllByIdIn(goodsIdList).forEach(goodsEntity -> {
-                if (goodsEntity.getStatus() != GoodsStatus.RECEIVING) {
-                    throw new TakeBackNotAllowedException(TakeBackErrorCode.TAKE_BAKE_NOT_ALLOWED);
-                }
+    private void checkGoodsStatusWithThrow(List<GoodsEntity> goodsList, GoodsStatus status) {
+        goodsList.forEach(goodsEntity -> {
+            if (goodsEntity.getStatus() != status) {
+                throw new TakeBackNotAllowedException(TakeBackErrorCode.TAKE_BAKE_NOT_ALLOWED);
             }
-        );
+        });
+    }
+
+    private void checkEmptyGoodsListWithThrow(List<GoodsEntity> goodsList) {
+        if (goodsList.isEmpty()) {
+            throw new GoodsNotFoundException(ErrorCode.NULL_POINT);
+        }
     }
 
 }

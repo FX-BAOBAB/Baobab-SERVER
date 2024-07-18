@@ -12,6 +12,4 @@ public interface GoodsRepository extends JpaRepository<GoodsEntity,Long> {
 
     List<GoodsEntity> findAllByIdIn(List<Long> goodsIdList);
 
-    List<GoodsEntity> findAllByReceivingId(Long receivingId);
-
 }
