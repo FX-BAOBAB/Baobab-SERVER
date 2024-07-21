@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.error.TakeBackErrorCode;
+import warehouse.common.exception.goods.InvalidGoodsStatusException;
 import warehouse.common.exception.takeback.TakeBackNotAllowedException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
 
@@ -78,23 +80,23 @@ public class GoodsService {
         return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
     }
 
-    public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId){
+    public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId, GoodsStatus status){
         List<GoodsEntity> goodsList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
             receivingId);
         checkEmptyGoodsListWithThrow(goodsList);
-        checkGoodsStatusWithThrow(goodsList, GoodsStatus.RECEIVING);
+        checkGoodsStatusWithThrow(goodsList, status);
     }
 
-    public void checkStoredGoodsAndStatusWithThrowBy(List<Long> goodsIdList) {
+    public void checkStoredGoodsAndStatusWithThrowBy(List<Long> goodsIdList, GoodsStatus status) {
         List<GoodsEntity> goodsList = goodsRepository.findAllByIdIn(goodsIdList);
         checkEmptyGoodsListWithThrow(goodsList);
-        checkGoodsStatusWithThrow(goodsList, GoodsStatus.RECEIVING);
+        checkGoodsStatusWithThrow(goodsList, status);
     }
 
     private void checkGoodsStatusWithThrow(List<GoodsEntity> goodsList, GoodsStatus status) {
         goodsList.forEach(goodsEntity -> {
             if (goodsEntity.getStatus() != status) {
-                throw new TakeBackNotAllowedException(TakeBackErrorCode.TAKE_BAKE_NOT_ALLOWED);
+                throw new InvalidGoodsStatusException(GoodsErrorCode.INVALID_GODOS_STATUS);
             }
         });
     }

@@ -39,7 +39,7 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(Long receivingId) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(receivingId);
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(receivingId, GoodsStatus.RECEIVING);
 
         receivingService.initReceivingStatus(receivingId);
 
@@ -63,7 +63,7 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(List<Long> goodsIdList) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList);
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.RECEIVING);
 
         TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
 
