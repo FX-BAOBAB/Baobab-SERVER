@@ -15,12 +15,11 @@ import warehouse.domain.usedgoods.business.UsedGoodsBusiness;
 import warehouse.domain.usedgoods.controller.model.request.UsedGoodsFormsRequest;
 import warehouse.domain.usedgoods.controller.model.response.GoodsStatusChangeResponse;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsFormsResponse;
-import warehouse.domain.usedgoods.service.UsedGoodsService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/usedgoods")
-public class UsedGoodsController {
+public class UsedGoodsApiController {
 
     private final UsedGoodsBusiness usedGoodsBusiness;
 
