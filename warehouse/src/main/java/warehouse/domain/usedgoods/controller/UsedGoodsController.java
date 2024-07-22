@@ -30,6 +30,15 @@ public class UsedGoodsController {
         return Api.OK(response);
     }
 
+    @PostMapping
+    public Api<List<GoodsStatusChangeResponse>> convertToSaleRequest(
+        @RequestBody Api<List<Long>> goodsIdList
+    ) {
+        List<GoodsStatusChangeResponse> responses = usedGoodsBusiness.convertToSaleRequest(
+            goodsIdList.getBody());
+        return Api.OK(responses);
+    }
+
     @PostMapping("/forms")
     public Api<UsedGoodsFormsResponse> postSaleForm(@AuthenticationPrincipal User user,
         @RequestBody @ApiValid Api<UsedGoodsFormsRequest> request) {
