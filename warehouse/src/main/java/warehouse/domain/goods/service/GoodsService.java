@@ -4,15 +4,14 @@ import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
 import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.ReceivingEntity;
-import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.GoodsErrorCode;
-import warehouse.common.exception.goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
+import warehouse.common.exception.goods.InvalidGoodsStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +25,6 @@ public class GoodsService {
         goodsEntity.setUserId(userId);
         goodsEntity.setStatus(GoodsStatus.RECEIVING);
         return goodsRepository.save(goodsEntity);
-    }
-
-
-    public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receivingId);
-        checkEmptyGoodsListWithThrow(goodsEntityList);
-        return goodsEntityList;
     }
 
     public void abandonment(ReceivingEntity receiving) {

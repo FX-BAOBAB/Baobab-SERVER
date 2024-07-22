@@ -28,5 +28,5 @@ public class GoodsExceptionHandler {
         warehouse.common.exception.goods.InvalidGoodsStatusException e) {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Api.ERROR(GoodsErrorCode.INVALID_GODOS_STATUS));
+            .body(Api.ERROR(GoodsErrorCode.INVALID_GOODS_STATUS));
     }}
