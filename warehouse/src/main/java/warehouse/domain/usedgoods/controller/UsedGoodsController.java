@@ -45,6 +45,14 @@ public class UsedGoodsController {
         return Api.OK(response);
     }
 
+    @PostMapping("/cancel")
+    public Api<List<GoodsStatusChangeResponse>> cancelSaleRequest(
+        @RequestBody Api<List<Long>> goodsIdList) {
+        List<GoodsStatusChangeResponse> response = usedGoodsBusiness.cancelSaleRequest(
+            goodsIdList.getBody());
+        return Api.OK(response);
+    }
+
     @PostMapping("/forms")
     public Api<UsedGoodsFormsResponse> postSaleForm(@AuthenticationPrincipal User user,
         @RequestBody @ApiValid Api<UsedGoodsFormsRequest> request) {

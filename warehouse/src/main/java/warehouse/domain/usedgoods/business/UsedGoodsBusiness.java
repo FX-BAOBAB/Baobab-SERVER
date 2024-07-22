@@ -61,6 +61,17 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(goodsEntity);
     }
 
+    public List<GoodsStatusChangeResponse> cancelSaleRequest(List<Long> goodsIdList) {
+
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.USED);
+
+        goodsService.setGoodsStatusBy(goodsIdList, GoodsStatus.STORAGE);
+
+        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
+
+        return usedGoodsConverter.toResponse(goodsEntityList);
+    }
+
     public UsedGoodsFormsResponse postSaleForm(UsedGoodsFormsRequest request, String email) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(), GoodsStatus.USED);
