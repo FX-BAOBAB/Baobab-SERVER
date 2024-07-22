@@ -1,6 +1,7 @@
 package warehouse.domain.goods.business;
 
 import db.domain.goods.GoodsEntity;
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import global.annotation.Business;
@@ -29,6 +30,18 @@ public class GoodsBusiness {
     public List<List<GoodsResponse>> getGoodsList(Long requestId) {
 
         List<GoodsEntity> goodsList = goodsService.findAllByReceivingIdWithThrow(requestId);
+
+        return getGoodsResponsesBy(goodsList);
+    }
+
+    public List<List<GoodsResponse>> getGoodsList(GoodsStatus status) {
+
+        List<GoodsEntity> goodsList = goodsService.findAllByGoodsStatusWithThrow(status);
+
+        return getGoodsResponsesBy(goodsList);
+    }
+
+    private List<List<GoodsResponse>> getGoodsResponsesBy(List<GoodsEntity> goodsList) {
 
         List<List<GoodsResponse>> goodsResponse = new ArrayList<>();
 
