@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import warehouse.common.error.GoodsErrorCode;
+import warehouse.common.exception.Goods.GoodsStrategyException;
+import warehouse.domain.goods.controller.enums.GetGoodsStrategy;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
-import warehouse.domain.image.controller.model.ImageResponse;
 import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 
@@ -26,9 +28,9 @@ public class GoodsBusiness {
     private final ImageService imageService;
     private final ImageConverter imageConverter;
 
-    public List<List<GoodsResponse>> getGoodsList(Long requestId) {
+    public List<List<GoodsResponse>> getGoodsList(GetGoodsStrategy strategy,Long requestId) {
 
-        List<GoodsEntity> goodsList = goodsService.findAllByReceivingIdWithThrow(requestId);
+        List<GoodsEntity> goodsList = findGoodsListById(strategy,requestId);
 
         List<List<GoodsResponse>> goodsResponse = new ArrayList<>();
 
@@ -54,4 +56,19 @@ public class GoodsBusiness {
 
         return goodsResponse;
     }
+
+    private List<GoodsEntity> findGoodsListById(GetGoodsStrategy strategy, Long requestId) {
+        switch (strategy) {
+            case RECEIVING -> {
+                return goodsService.findAllByReceivingIdWithThrow(requestId);
+            }
+            case TAKE_BACK -> {
+                return goodsService.findAllByTakeBackIdWithThrow(requestId);
+            }
+            // TODO 출고 완료 후 처리 필요
+            //case SHIPPING -> goodsService.findAllByShippingIdWithThrow(requestId);
+            default -> throw new GoodsStrategyException(GoodsErrorCode.INVALID_GOODS_STRATEGY);
+        }
+    }
+
 }
