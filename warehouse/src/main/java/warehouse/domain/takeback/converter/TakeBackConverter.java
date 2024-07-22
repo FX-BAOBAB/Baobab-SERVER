@@ -1,7 +1,9 @@
 package warehouse.domain.takeback.converter;
 
 import db.domain.takeback.TakeBackEntity;
+import db.domain.takeback.enums.TakeBackStatus;
 import global.annotation.Converter;
+import java.time.LocalDateTime;
 import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
@@ -11,6 +13,8 @@ public class TakeBackConverter {
 
     public TakeBackEntity toEntity() {
         return TakeBackEntity.builder()
+            .status(TakeBackStatus.TAKE_BACK_REGISTERING)
+            .takeBackRequestAt(LocalDateTime.now())
             .build();
     }
 

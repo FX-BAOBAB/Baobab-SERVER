@@ -16,8 +16,6 @@ public class TakeBackService {
     private final TakeBackRepository takeBackRepository;
 
     public TakeBackEntity takeBackRequest(TakeBackEntity takeBackEntity) {
-        takeBackEntity.setStatus(TakeBackStatus.TAKE_BACK_REGISTERED);
-        takeBackEntity.setTakeBackRequestAt(LocalDateTime.now());
         return takeBackRepository.save(takeBackEntity);
     }
 }

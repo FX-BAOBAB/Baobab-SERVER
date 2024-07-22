@@ -1,9 +1,11 @@
 package warehouse.domain.takeback.business;
 
 import db.domain.goods.GoodsEntity;
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.takeback.TakeBackEntity;
 import global.annotation.Business;
 import java.util.List;
@@ -37,6 +39,8 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(Long receivingId) {
 
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(receivingId, GoodsStatus.RECEIVING);
+
         receivingService.initReceivingStatus(receivingId);
 
         TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
@@ -46,7 +50,8 @@ public class TakeBackBusiness {
         List<GoodsEntity> goodsEntityList = goodsService.findAllByReceivingIdWithThrow(
             receivingId);
 
-        goodsService.setTakeBackId(goodsEntityList, newTakeBackEntity.getId());
+        goodsService.setTakeBackIdAndStatus(goodsEntityList, newTakeBackEntity.getId(),
+            GoodsStatus.TAKE_BACK_ING);
 
         List<GoodsResponse> goodsResponseList = getGoodsResponses(
             goodsEntityList);
@@ -58,13 +63,16 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(List<Long> goodsIdList) {
 
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.RECEIVING);
+
         TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
 
         TakeBackEntity newTakeBackEntity = takeBackService.takeBackRequest(takeBackEntity);
 
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
 
-        goodsService.setTakeBackId(goodsEntityList, newTakeBackEntity.getId());
+        goodsService.setTakeBackIdAndStatus(goodsEntityList, newTakeBackEntity.getId(),
+            GoodsStatus.TAKE_BACK_ING);
 
         List<GoodsResponse> goodsResponseList = getGoodsResponses(
             goodsEntityList);

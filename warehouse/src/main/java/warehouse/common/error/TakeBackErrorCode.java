@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum GoodsErrorCode implements ErrorCodeIfs {
+public enum TakeBackErrorCode implements ErrorCodeIfs {
 
-    GOODS_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 1200, "물품이 존재하지 않습니다."),
-    INVALID_GODOS_STATUS(HttpStatus.BAD_REQUEST.value(), 1201, "다음 작업을 진행할 수 없는 상태입니다.")
+    TAKE_BAKE_NOT_ALLOWED(HttpStatus.BAD_REQUEST.value(), 1400, "반품을 진행할 수 없습니다.")
     ;
 
     private final Integer httpCode;

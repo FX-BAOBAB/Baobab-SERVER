@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.GoodsErrorCode;
+import warehouse.common.exception.goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
 
 @Slf4j
@@ -21,4 +22,11 @@ public class GoodsExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_FOUND));
     }
-}
+
+    @ExceptionHandler(value = InvalidGoodsStatusException.class)
+    public ResponseEntity<Api<Object>> InvalidGoodsStatus(
+        warehouse.common.exception.goods.InvalidGoodsStatusException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.INVALID_GODOS_STATUS));
+    }}
