@@ -84,6 +84,8 @@ public class ImageService {
         saveImageDataToDB(th);
     }
 
+    public void deleteImageDB(ImageEntity th) { imageRepository.deleteById(th.getId()); }
+
     public List<ImageEntity> getImagesByImageIdList(List<Long> ids) {
         return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
     }

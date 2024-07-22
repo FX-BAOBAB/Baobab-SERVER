@@ -42,7 +42,7 @@ public class ReceivingService {
     public void initReceivingStatus(Long receivingId) {
         ReceivingEntity receivingEntity = receivingRepository.findFirstById(receivingId)
             .orElseThrow((() -> new ReceivingNotFoundException(ErrorCode.NULL_POINT)));
-        receivingEntity.setStatus(null);
+        receivingEntity.setStatus(ReceivingStatus.CLOSE);
         receivingRepository.save(receivingEntity);
     }
 
