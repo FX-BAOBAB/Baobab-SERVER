@@ -26,6 +26,7 @@ import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageNotFoundException;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.domain.goods.controller.model.GoodsRequest;
+import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.common.ImageUtils;
 
 @Slf4j
@@ -39,6 +40,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
 
     private final Path fileStorageLocation;
+    private final GoodsService goodsService;
 
     public void uploadImage(MultipartFile file, ImageEntity entity) {
 
@@ -145,5 +147,9 @@ public class ImageService {
                     imageEntity.setGoodsId(goodsId);
                     updateImageDB(imageEntity);
                 }));
+    }
+
+    public List<ImageEntity> getImagesByGoodsId(Long goodsId) {
+        return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
     }
 }
