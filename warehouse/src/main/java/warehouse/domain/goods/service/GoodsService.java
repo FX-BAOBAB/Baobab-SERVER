@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.exception.goods.GoodsNotFoundException;
 
 @Service
@@ -20,10 +21,6 @@ public class GoodsService {
         goodsEntity.setReceivingId(receivingId);
         goodsEntity.setUserId(userId);
         return goodsRepository.save(goodsEntity);
-    }
-
-    public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
-        return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
 
     public void abandonment(ReceivingEntity receiving) {
@@ -69,4 +66,35 @@ public class GoodsService {
         return goodsRepository.findFirstById(goodsId).orElseThrow(() -> new GoodsNotFoundException(ErrorCode.NULL_POINT));
     }
 
+    public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
+            receivingId);
+        if (goodsEntityList.isEmpty()){
+            throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
+        }
+        return goodsEntityList;
+    }
+
+    public List<GoodsEntity> findAllByTakeBackIdWithThrow(Long takeBackId) {
+
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByTakeBackIdOrderByIdDesc(
+            takeBackId);
+
+        if (goodsEntityList.isEmpty()){
+            throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
+        }
+        return goodsEntityList;
+    }
+
+    //TODO 출고 시스템 완료 후 구현 예정
+    /*public List<GoodsEntity> findAllByShippingIdWithThrow(Long shippingId) {
+
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByShippingIdOrderByIdDesc(
+            shippingId);
+
+        if (goodsEntityList.isEmpty()){
+            throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
+        }
+        return goodsEntityList;
+    }*/
 }
