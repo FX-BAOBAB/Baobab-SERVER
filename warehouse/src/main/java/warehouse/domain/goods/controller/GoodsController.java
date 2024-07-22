@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.goods.business.GoodsBusiness;
+import warehouse.domain.goods.controller.enums.GetGoodsStrategy;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 
 @RestController
@@ -19,9 +20,9 @@ public class GoodsController {
 
     private final GoodsBusiness goodsBusiness;
 
-    @GetMapping("/receiving/{requestId}")
-    public Api<List<List<GoodsResponse>>> receiving(@PathVariable Long requestId) {
-        List<List<GoodsResponse>> response = goodsBusiness.getGoodsList(requestId);
+    @GetMapping("/{strategy}/{requestId}")
+    public Api<List<List<GoodsResponse>>> receiving(@PathVariable GetGoodsStrategy strategy, @PathVariable Long requestId) {
+        List<List<GoodsResponse>> response = goodsBusiness.getGoodsList(strategy,requestId);
         return Api.OK(response);
     }
 
