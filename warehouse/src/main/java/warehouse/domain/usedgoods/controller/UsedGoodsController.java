@@ -23,6 +23,13 @@ import warehouse.domain.usedgoods.service.UsedGoodsService;
 public class UsedGoodsController {
 
     private final UsedGoodsBusiness usedGoodsBusiness;
+
+    @PostMapping("/{goodsId}")
+    public Api<GoodsStatusChangeResponse> convertToSaleRequest(@PathVariable Long goodsId) {
+        GoodsStatusChangeResponse response = usedGoodsBusiness.convertToSaleRequest(goodsId);
+        return Api.OK(response);
+    }
+
     @PostMapping("/forms")
     public Api<UsedGoodsFormsResponse> postSaleForm(@AuthenticationPrincipal User user,
         @RequestBody @ApiValid Api<UsedGoodsFormsRequest> request) {

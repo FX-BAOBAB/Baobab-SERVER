@@ -25,6 +25,20 @@ public class UsedGoodsBusiness {
     private final UsedGoodsConverter usedGoodsConverter;
     private final UsersService usersService;
     private final UsedGoodsService usedGoodsService;
+
+    public GoodsStatusChangeResponse convertToSaleRequest(Long goodsId) {
+
+        // GoodsStatus 가 STORAGE 가 아닌 경우 예외
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.STORAGE);
+
+        // GoodsStatus 를 USED 로 변경
+        goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.USED);
+
+        GoodsEntity goodsEntity = goodsService.getGoodsListBy(goodsId);
+
+        return usedGoodsConverter.toResponse(goodsEntity);
+    }
+
     public UsedGoodsFormsResponse postSaleForm(UsedGoodsFormsRequest request, String email) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(), GoodsStatus.USED);

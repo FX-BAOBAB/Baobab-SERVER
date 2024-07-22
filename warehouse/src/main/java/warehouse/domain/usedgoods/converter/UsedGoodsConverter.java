@@ -21,6 +21,19 @@ public class UsedGoodsConverter {
             .build();
     }
 
+
+    public GoodsStatusChangeResponse toResponse(GoodsEntity goodsEntity) {
+        return GoodsStatusChangeResponse.builder()
+            .goodsId(goodsEntity.getId())
+            .goodsStatus(goodsEntity.getStatus())
+            .build();
+    }
+
+    public List<GoodsStatusChangeResponse> toResponse(List<GoodsEntity> goodsEntityList) {
+            return goodsEntityList.stream().map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
     public UsedGoodsFormsResponse toResponse(UsedGoodsEntity usedGoodsEntity) {
         return UsedGoodsFormsResponse.builder()
             .title(usedGoodsEntity.getTitle())

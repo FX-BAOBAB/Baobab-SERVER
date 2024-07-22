@@ -107,4 +107,12 @@ public class GoodsService {
         }
     }
 
+    public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
+        goodsEntityList.forEach(goodsEntity -> {
+            goodsEntity.setStatus(status);
+            goodsRepository.save(goodsEntity);
+        });
+    }
+
 }
