@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GoodsStatusChangeResponse {
+public class TransformUsedGoodsResponse {
 
     private Long goodsId;
     private GoodsStatus goodsStatus;

@@ -1,17 +1,17 @@
 package warehouse.domain.usedgoods.controller.model.response;
 
-import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import warehouse.domain.goods.controller.model.GoodsResponse;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsedGoodsFormsResponse {
+public class UsedGoodsPostResponse {
 
     private String title;
 
@@ -20,5 +20,7 @@ public class UsedGoodsFormsResponse {
     private String description;
 
     private LocalDateTime postedAt;
+
+    private GoodsResponse goods;
 
 }

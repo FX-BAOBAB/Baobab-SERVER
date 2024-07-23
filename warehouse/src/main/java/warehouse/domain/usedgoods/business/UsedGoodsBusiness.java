@@ -2,16 +2,22 @@ package warehouse.domain.usedgoods.business;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.enums.GoodsStatus;
+import db.domain.image.ImageEntity;
+import db.domain.image.enums.ImageKind;
 import db.domain.usedgoods.UsedGoodsEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
+import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
-import warehouse.domain.usedgoods.controller.model.request.UsedGoodsFormsRequest;
-import warehouse.domain.usedgoods.controller.model.response.GoodsStatusChangeResponse;
-import warehouse.domain.usedgoods.controller.model.response.UsedGoodsFormsResponse;
+import warehouse.domain.image.controller.model.ImageListResponse;
+import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.image.service.ImageService;
+import warehouse.domain.usedgoods.controller.model.request.UsedGoodsPostRequest;
+import warehouse.domain.usedgoods.controller.model.response.TransformUsedGoodsResponse;
+import warehouse.domain.usedgoods.controller.model.response.UsedGoodsPostResponse;
 import warehouse.domain.usedgoods.converter.UsedGoodsConverter;
 import warehouse.domain.usedgoods.service.UsedGoodsService;
 import warehouse.domain.users.service.UsersService;
@@ -22,11 +28,15 @@ import warehouse.domain.users.service.UsersService;
 public class UsedGoodsBusiness {
 
     private final GoodsService goodsService;
-    private final UsedGoodsConverter usedGoodsConverter;
     private final UsersService usersService;
     private final UsedGoodsService usedGoodsService;
+    private final ImageService imageService;
 
-    public GoodsStatusChangeResponse convertToSaleRequest(Long goodsId) {
+    private final UsedGoodsConverter usedGoodsConverter;
+    private final ImageConverter imageConverter;
+    private final GoodsConverter goodsConverter;
+
+    public TransformUsedGoodsResponse transformUsedGoods(Long goodsId) {
 
         // GoodsStatus 가 STORAGE 가 아닌 경우 예외
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.STORAGE);
@@ -39,7 +49,7 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(goodsEntity);
     }
 
-    public List<GoodsStatusChangeResponse> convertToSaleRequest(List<Long> goodsIdList) {
+    public List<TransformUsedGoodsResponse> transformUsedGoods(List<Long> goodsIdList) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.STORAGE);
 
@@ -50,7 +60,7 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(goodsEntityList);
     }
 
-    public GoodsStatusChangeResponse cancelSaleRequest(Long goodsId) {
+    public TransformUsedGoodsResponse cancelUsedGoodsRequest(Long goodsId) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.USED);
 
@@ -61,7 +71,7 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(goodsEntity);
     }
 
-    public List<GoodsStatusChangeResponse> cancelSaleRequest(List<Long> goodsIdList) {
+    public List<TransformUsedGoodsResponse> cancelUsedGoodsRequest(List<Long> goodsIdList) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.USED);
 
@@ -72,7 +82,7 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(goodsEntityList);
     }
 
-    public UsedGoodsFormsResponse postSaleForm(UsedGoodsFormsRequest request, String email) {
+    public UsedGoodsPostResponse post(UsedGoodsPostRequest request, String email) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(), GoodsStatus.USED);
 
@@ -80,9 +90,25 @@ public class UsedGoodsBusiness {
 
         UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request);
 
-        UsedGoodsEntity savedEntity = usedGoodsService.save(usedGoodsEntity, userId);
+        UsedGoodsEntity savedEntity = usedGoodsService.post(usedGoodsEntity, userId);
 
-        return usedGoodsConverter.toResponse(savedEntity);
+        GoodsEntity goodsEntity = goodsService.getGoodsListBy(request.getGoodsId());
+
+        GoodsResponse goodsResponse = getGoodsResponse(
+            goodsEntity);
+
+        return usedGoodsConverter.toResponse(savedEntity, goodsResponse);
+    }
+
+
+    private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
+        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+            ImageKind.BASIC);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+            ImageKind.FAULT);
+        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+            basicImageEntityList, faultImageEntityList);
+        return goodsConverter.toResponse(goodsEntity, imageListResponse);
     }
 
 }

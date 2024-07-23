@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.usedgoods.business.UsedGoodsBusiness;
-import warehouse.domain.usedgoods.controller.model.request.UsedGoodsFormsRequest;
-import warehouse.domain.usedgoods.controller.model.response.GoodsStatusChangeResponse;
-import warehouse.domain.usedgoods.controller.model.response.UsedGoodsFormsResponse;
+import warehouse.domain.usedgoods.controller.model.request.UsedGoodsPostRequest;
+import warehouse.domain.usedgoods.controller.model.response.TransformUsedGoodsResponse;
+import warehouse.domain.usedgoods.controller.model.response.UsedGoodsPostResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,38 +24,38 @@ public class UsedGoodsApiController {
     private final UsedGoodsBusiness usedGoodsBusiness;
 
     @PostMapping("/{goodsId}")
-    public Api<GoodsStatusChangeResponse> convertToSaleRequest(@PathVariable Long goodsId) {
-        GoodsStatusChangeResponse response = usedGoodsBusiness.convertToSaleRequest(goodsId);
+    public Api<TransformUsedGoodsResponse> transformUsedGoods(@PathVariable Long goodsId) {
+        TransformUsedGoodsResponse response = usedGoodsBusiness.transformUsedGoods(goodsId);
         return Api.OK(response);
     }
 
     @PostMapping
-    public Api<List<GoodsStatusChangeResponse>> convertToSaleRequest(
+    public Api<List<TransformUsedGoodsResponse>> transformUsedGoods(
         @RequestBody Api<List<Long>> goodsIdList
     ) {
-        List<GoodsStatusChangeResponse> responses = usedGoodsBusiness.convertToSaleRequest(
+        List<TransformUsedGoodsResponse> responses = usedGoodsBusiness.transformUsedGoods(
             goodsIdList.getBody());
         return Api.OK(responses);
     }
 
     @PostMapping("/cancel/{goodsId}")
-    public Api<GoodsStatusChangeResponse> cancelSaleRequest(@PathVariable Long goodsId) {
-        GoodsStatusChangeResponse response = usedGoodsBusiness.cancelSaleRequest(goodsId);
+    public Api<TransformUsedGoodsResponse> cancelUsedGoodsRequest(@PathVariable Long goodsId) {
+        TransformUsedGoodsResponse response = usedGoodsBusiness.cancelUsedGoodsRequest(goodsId);
         return Api.OK(response);
     }
 
     @PostMapping("/cancel")
-    public Api<List<GoodsStatusChangeResponse>> cancelSaleRequest(
+    public Api<List<TransformUsedGoodsResponse>> cancelUsedGoodsRequest(
         @RequestBody Api<List<Long>> goodsIdList) {
-        List<GoodsStatusChangeResponse> response = usedGoodsBusiness.cancelSaleRequest(
+        List<TransformUsedGoodsResponse> response = usedGoodsBusiness.cancelUsedGoodsRequest(
             goodsIdList.getBody());
         return Api.OK(response);
     }
 
-    @PostMapping("/forms")
-    public Api<UsedGoodsFormsResponse> postSaleForm(@AuthenticationPrincipal User user,
-        @RequestBody @ApiValid Api<UsedGoodsFormsRequest> request) {
-        UsedGoodsFormsResponse response = usedGoodsBusiness.postSaleForm(
+    @PostMapping("/post")
+    public Api<UsedGoodsPostResponse> post(@AuthenticationPrincipal User user,
+        @RequestBody @ApiValid Api<UsedGoodsPostRequest> request) {
+        UsedGoodsPostResponse response = usedGoodsBusiness.post(
             request.getBody(), user.getUsername());
         return Api.OK(response);
     }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsedGoodsFormsRequest {
+public class UsedGoodsPostRequest {
 
     @NotBlank @Size(min=2)
     private String title;
