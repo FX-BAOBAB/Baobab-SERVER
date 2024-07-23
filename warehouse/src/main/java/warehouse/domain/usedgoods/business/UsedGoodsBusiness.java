@@ -39,7 +39,7 @@ public class UsedGoodsBusiness {
     public TransformUsedGoodsResponse transformUsedGoods(Long goodsId) {
 
         // GoodsStatus 가 STORAGE 가 아닌 경우 예외
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.STORAGE);
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(List.of(goodsId), GoodsStatus.STORAGE);
 
         // GoodsStatus 를 USED 로 변경
         goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.USED);
