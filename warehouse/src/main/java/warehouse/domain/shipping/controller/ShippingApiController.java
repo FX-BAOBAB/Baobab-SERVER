@@ -38,5 +38,10 @@ public class ShippingApiController {
         return Api.OK(response);
     }
 
+    @GetMapping("/{shippingId}") //상세조회
+    public Api<ShippingDetailResponse> getShippingDetail(@PathVariable Long shippingId) {
+        ShippingDetailResponse response = shippingBusiness.getShippingDetail(shippingId);
+        return Api.OK(response);
+    }
 
 }

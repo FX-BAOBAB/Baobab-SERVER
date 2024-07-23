@@ -25,3 +25,9 @@ public class ShippingService {
         return shippingRepository.findAllByUserIdOrderByIdDesc(userId);
     }
 
+    public ShippingEntity getShippingDetail(Long shippingId) {
+        return shippingRepository.findFirstById(shippingId).orElseThrow(
+            () -> new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
+    }
+
+}

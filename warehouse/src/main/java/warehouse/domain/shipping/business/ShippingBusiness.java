@@ -70,5 +70,34 @@ public class ShippingBusiness {
 
     }
 
+    public ShippingDetailResponse getShippingDetail(Long shippingId) {
+
+        ShippingEntity shippingEntity = shippingService.getShippingDetail(shippingId);
+
+        ShippingResponse shippingResponse = shippingConverter.toResponse(shippingEntity);
+
+        List<Long> goodsIdList = goodsService.findAllByShippingIdWithThrow(shippingId).stream()
+            .map(entity -> entity.getId()).collect(Collectors.toList());
+
+        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
+
+        List<GoodsResponse> goodsResponse = goodsEntityList.stream()
+            .map(entity -> getGoodsResponse(entity)).collect(Collectors.toList());
+
+        return shippingConverter.toResponse(shippingResponse, goodsResponse);
+
+    }
+
+
+    private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
+        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+            ImageKind.BASIC);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+            ImageKind.FAULT);
+        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+            basicImageEntityList, faultImageEntityList);
+        return goodsConverter.toResponse(goodsEntity, imageListResponse);
+    }
+
 
 }

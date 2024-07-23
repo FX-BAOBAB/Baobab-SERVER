@@ -46,4 +46,13 @@ public class ShippingConverter {
             .deliveryMan(entity.getDeliveryMan())
             .build();
     }
+
+    public ShippingDetailResponse toResponse(ShippingResponse shippingResponse,
+        List<GoodsResponse> goodsResponses) {
+        return ShippingDetailResponse.builder()
+            .shipping(shippingResponse)
+            .goods(goodsResponses)
+            .build();
+    }
+
 }
