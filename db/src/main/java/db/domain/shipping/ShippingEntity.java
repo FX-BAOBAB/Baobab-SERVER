@@ -25,12 +25,14 @@ public class ShippingEntity extends BaseEntity {
 
     private LocalDateTime deliveryDate;
 
+    @Column(nullable = false, length = 200)
     private String deliveryAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
     private ShippingStatus status;
 
+    @Column(nullable = false)
     private Long userId;
 
     private Long deliveryMan;
