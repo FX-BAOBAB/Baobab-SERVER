@@ -21,3 +21,7 @@ public class ShippingService {
         return shippingRepository.save(shippingEntity);
     }
 
+    public List<ShippingEntity> getShippingList(Long userId) {
+        return shippingRepository.findAllByUserIdOrderByIdDesc(userId);
+    }
+

@@ -32,5 +32,11 @@ public class ShippingApiController {
         return Api.OK(response);
     }
 
+    @GetMapping() //목록조회
+    public Api<ShippingListResponse> getShippingList(@AuthenticationPrincipal User user) {
+        ShippingListResponse response = shippingBusiness.getShippingList(user.getUsername());
+        return Api.OK(response);
+    }
+
 
 }

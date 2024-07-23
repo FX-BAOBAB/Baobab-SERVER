@@ -26,4 +26,24 @@ public class ShippingConverter {
             .message(message)
             .build();
     }
+
+    public ShippingListResponse toResponseList(List<ShippingEntity> entityList) {
+
+        List<ShippingResponse> shippingResponses = entityList.stream()
+            .map(entity -> this.toResponse(entity)).collect(Collectors.toList());
+
+        return ShippingListResponse.builder()
+            .shipping(shippingResponses)
+            .build();
+    }
+
+    public ShippingResponse toResponse(ShippingEntity entity) {
+        return ShippingResponse.builder()
+            .shippingId(entity.getId())
+            .deliveryDate(entity.getDeliveryDate())
+            .deliveryAddress(entity.getDeliveryAddress())
+            .status(entity.getStatus())
+            .deliveryMan(entity.getDeliveryMan())
+            .build();
+    }
 }

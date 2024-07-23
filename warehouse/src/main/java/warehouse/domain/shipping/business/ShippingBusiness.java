@@ -60,5 +60,15 @@ public class ShippingBusiness {
     }
 
 
+    public ShippingListResponse getShippingList(String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId();
+
+        List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
+
+        return shippingConverter.toResponseList(shippingEntityList);
+
+    }
+
 
 }
