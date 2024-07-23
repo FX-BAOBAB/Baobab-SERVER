@@ -98,7 +98,7 @@ public class GoodsService {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
     }
-    
+
     public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
         goodsEntityList.forEach(goodsEntity -> {
@@ -106,7 +106,6 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
-
 
     public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByStatusOrderByIdDesc(status);
@@ -145,5 +144,5 @@ public class GoodsService {
         }
         return goodsEntityList;
     }*/
-
+  
 }
