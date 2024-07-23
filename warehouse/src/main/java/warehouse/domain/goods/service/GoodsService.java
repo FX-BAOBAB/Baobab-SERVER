@@ -98,7 +98,7 @@ public class GoodsService {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
     }
-
+    
     public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
         goodsEntityList.forEach(goodsEntity -> {
@@ -106,6 +106,7 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
+
 
     public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByStatusOrderByIdDesc(status);
@@ -116,29 +117,30 @@ public class GoodsService {
     public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
             receivingId);
-        if (goodsEntityList.isEmpty()) {
+        if (goodsEntityList.isEmpty()){
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
     }
 
     public List<GoodsEntity> findAllByTakeBackIdWithThrow(Long takeBackId) {
+
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByTakeBackIdOrderByIdDesc(
             takeBackId);
 
-        if (goodsEntityList.isEmpty()) {
+        if (goodsEntityList.isEmpty()){
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
     }
 
-    // TODO 출고 시스템 완료 후 구현 예정
+    //TODO 출고 시스템 완료 후 구현 예정
     /*public List<GoodsEntity> findAllByShippingIdWithThrow(Long shippingId) {
 
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByShippingIdOrderByIdDesc(
             shippingId);
 
-        if (goodsEntityList.isEmpty()) {
+        if (goodsEntityList.isEmpty()){
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
