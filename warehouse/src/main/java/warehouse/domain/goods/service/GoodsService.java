@@ -99,6 +99,13 @@ public class GoodsService {
         }
     }
 
+    public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
+        goodsEntityList.forEach(goodsEntity -> {
+            goodsEntity.setStatus(status);
+            goodsRepository.save(goodsEntity);
+        });
+    }
 
     public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByStatusOrderByIdDesc(status);
@@ -137,5 +144,5 @@ public class GoodsService {
         }
         return goodsEntityList;
     }*/
-
+  
 }
