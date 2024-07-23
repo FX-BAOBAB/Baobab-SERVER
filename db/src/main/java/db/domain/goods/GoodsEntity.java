@@ -52,4 +52,6 @@ public class GoodsEntity extends BaseEntity {
     @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
     private GoodsStatus status;
 
+    private Long shippingId;
+
 }
