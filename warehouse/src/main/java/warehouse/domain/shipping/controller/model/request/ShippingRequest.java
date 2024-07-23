@@ -22,6 +22,6 @@ public class ShippingRequest {
 
     @NotNull
     @Size(min = 1)
-    private List<Long> goodsId;
+    private List<Long> goodsIdList;
 
 }

@@ -40,7 +40,7 @@ public class ShippingBusiness {
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
 
         // 상품이 STORAGE 인지 확인
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(),
+        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsIdList(),
             GoodsStatus.STORAGE);
 
         Long userId = usersService.getUserWithThrow(email).getId();
@@ -50,10 +50,10 @@ public class ShippingBusiness {
         ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity, userId);
 
         // GoodsStatus 를 SHIPPING_ING 으로 변경
-        goodsService.setGoodsStatusBy(request.getGoodsId(), GoodsStatus.SHIPPING_ING);
+        goodsService.setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
 
         // goods 컬럼에 shipping_id 부여
-        goodsService.setShippingId(request.getGoodsId(), savedShippingEntity.getId());
+        goodsService.setShippingId(request.getGoodsIdList(), savedShippingEntity.getId());
 
         return shippingConverter.toMessageResponse("출고 신청이 완료되었습니다.");
 
