@@ -21,14 +21,14 @@ public class GoodsController {
     private final GoodsBusiness goodsBusiness;
 
     @GetMapping("/{strategy}/{requestId}")
-    public Api<List<List<GoodsResponse>>> receiving(@PathVariable GetGoodsStrategy strategy, @PathVariable Long requestId) {
-        List<List<GoodsResponse>> response = goodsBusiness.getGoodsList(strategy,requestId);
+    public Api<List<GoodsResponse>> receiving(@PathVariable GetGoodsStrategy strategy, @PathVariable Long requestId) {
+        List<GoodsResponse> response = goodsBusiness.getGoodsList(strategy,requestId);
         return Api.OK(response);
     }
 
     @GetMapping()
-    public Api<List<List<GoodsResponse>>> getGoodsByStatus(@RequestParam GoodsStatus status) {
-        List<List<GoodsResponse>> response = goodsBusiness.getGoodsList(status);
+    public Api<List<GoodsResponse>> getGoodsByStatus(@RequestParam GoodsStatus status) {
+        List<GoodsResponse> response = goodsBusiness.getGoodsList(status);
         return Api.OK(response);
     }
 

@@ -29,23 +29,23 @@ public class GoodsBusiness {
     private final ImageService imageService;
     private final ImageConverter imageConverter;
 
-    public List<List<GoodsResponse>> getGoodsList(GetGoodsStrategy strategy,Long requestId) {
+    public List<GoodsResponse> getGoodsList(GetGoodsStrategy strategy,Long requestId) {
 
         List<GoodsEntity> goodsList = findGoodsListById(strategy,requestId);
 
         return getGoodsResponsesBy(goodsList);
     }
 
-    public List<List<GoodsResponse>> getGoodsList(GoodsStatus status) {
+    public List<GoodsResponse> getGoodsList(GoodsStatus status) {
 
         List<GoodsEntity> goodsList = goodsService.findAllByGoodsStatusWithThrow(status);
 
         return getGoodsResponsesBy(goodsList);
     }
 
-    private List<List<GoodsResponse>> getGoodsResponsesBy(List<GoodsEntity> goodsList) {
+    private List<GoodsResponse> getGoodsResponsesBy(List<GoodsEntity> goodsList) {
 
-        List<List<GoodsResponse>> goodsResponse = new ArrayList<>();
+        List<GoodsResponse> goodsResponse = new ArrayList<>();
 
         goodsList.forEach(goodsEntity -> {
 
@@ -63,7 +63,7 @@ public class GoodsBusiness {
             ImageListResponse imageListResponse = imageConverter.toImageListResponse(basicList,
                 faultList);
 
-            goodsResponse.add(goodsConverter.toResponseListBy(goodsList, imageListResponse));
+            goodsResponse.add(goodsConverter.toResponse(goodsEntity, imageListResponse));
 
         });
 

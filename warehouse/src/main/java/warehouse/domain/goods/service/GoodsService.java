@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.GoodsErrorCode;
+import warehouse.common.exception.Goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
-import warehouse.common.exception.goods.InvalidGoodsStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -133,8 +133,7 @@ public class GoodsService {
         return goodsEntityList;
     }
 
-    //TODO 출고 시스템 완료 후 구현 예정
-    /*public List<GoodsEntity> findAllByShippingIdWithThrow(Long shippingId) {
+    public List<GoodsEntity> findAllByShippingIdWithThrow(Long shippingId) {
 
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByShippingIdOrderByIdDesc(
             shippingId);
@@ -143,6 +142,13 @@ public class GoodsService {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
-    }*/
+    }
+
+    public void setShippingId(List<GoodsEntity> goodsEntityList, Long shippingId) {
+        goodsEntityList.forEach(goodsEntity -> {
+            goodsEntity.setShippingId(shippingId);
+            goodsRepository.save(goodsEntity);
+        });
+    }
   
 }
