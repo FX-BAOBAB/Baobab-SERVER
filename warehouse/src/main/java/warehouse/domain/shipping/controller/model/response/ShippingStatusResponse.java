@@ -18,7 +18,4 @@ public class ShippingStatusResponse {
 
     private String description;
 
-    //TODO deliveryMan name
-//    private String deliveryMan;
-
 }
