@@ -20,6 +20,7 @@ import warehouse.domain.shipping.controller.model.response.ShippingDetailRespons
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 import warehouse.domain.shipping.converter.ShippingConverter;
 import warehouse.domain.shipping.service.ShippingService;
 import warehouse.domain.users.service.UsersService;
@@ -74,7 +75,7 @@ public class ShippingBusiness {
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
 
-        ShippingEntity shippingEntity = shippingService.getShippingDetail(shippingId);
+        ShippingEntity shippingEntity = shippingService.getShippingById(shippingId);
 
         ShippingResponse shippingResponse = shippingConverter.toResponse(shippingEntity);
 
@@ -90,6 +91,13 @@ public class ShippingBusiness {
 
     }
 
+    public ShippingStatusResponse getCurrentStatusBy(Long shippingId) {
+
+        ShippingEntity shippingEntity = shippingService.getShippingById(shippingId);
+
+        return shippingConverter.toCurrentStatusResponse(shippingEntity);
+
+    }
 
     private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
         List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),

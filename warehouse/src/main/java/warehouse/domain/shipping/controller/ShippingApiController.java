@@ -16,6 +16,7 @@ import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,4 +45,9 @@ public class ShippingApiController {
         return Api.OK(response);
     }
 
+    @GetMapping("/process/{shippingId}")
+    public Api<ShippingStatusResponse> getCurrentStatusBy(@PathVariable Long shippingId) {
+        ShippingStatusResponse response = shippingBusiness.getCurrentStatusBy(shippingId);
+        return Api.OK(response);
+    }
 }
