@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.GoodsErrorCode;
+import warehouse.common.exception.Goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
-import warehouse.common.exception.goods.InvalidGoodsStatusException;
 
 @Service
 @RequiredArgsConstructor
