@@ -1,7 +1,9 @@
 package warehouse.domain.shipping.converter;
 
 import db.domain.shipping.ShippingEntity;
+import db.domain.shipping.enums.ShippingStatus;
 import global.annotation.Converter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import warehouse.domain.goods.controller.model.GoodsResponse;
@@ -59,8 +61,10 @@ public class ShippingConverter {
     public ShippingStatusResponse toCurrentStatusResponse(ShippingEntity shippingEntity) {
         return ShippingStatusResponse.builder()
             .shippingId(shippingEntity.getId())
+            .total(Arrays.stream(ShippingStatus.values()).count())
             .status(shippingEntity.getStatus())
             .description(shippingEntity.getStatus().getDescription())
+            .current(shippingEntity.getStatus().getCurrent())
             .build();
     }
 
