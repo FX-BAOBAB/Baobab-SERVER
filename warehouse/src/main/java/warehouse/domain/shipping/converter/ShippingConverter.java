@@ -10,6 +10,7 @@ import warehouse.domain.shipping.controller.model.response.MessageResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 
 @Converter
 public class ShippingConverter {
@@ -52,6 +53,14 @@ public class ShippingConverter {
         return ShippingDetailResponse.builder()
             .shipping(shippingResponse)
             .goods(goodsResponses)
+            .build();
+    }
+
+    public ShippingStatusResponse toCurrentStatusResponse(ShippingEntity shippingEntity) {
+        return ShippingStatusResponse.builder()
+            .shippingId(shippingEntity.getId())
+            .status(shippingEntity.getStatus())
+            .description(shippingEntity.getStatus().getDescription())
             .build();
     }
 
