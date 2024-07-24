@@ -144,8 +144,8 @@ public class GoodsService {
         return goodsEntityList;
     }
 
-    public void setShippingId(List<Long> goodsIdList, Long shippingId) {
-        goodsRepository.findAllByIdIn(goodsIdList).forEach(goodsEntity -> {
+    public void setShippingId(List<GoodsEntity> goodsEntityList, Long shippingId) {
+        goodsEntityList.forEach(goodsEntity -> {
             goodsEntity.setShippingId(shippingId);
             goodsRepository.save(goodsEntity);
         });

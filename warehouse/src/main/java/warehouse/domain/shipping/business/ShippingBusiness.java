@@ -52,8 +52,10 @@ public class ShippingBusiness {
         // GoodsStatus 를 SHIPPING_ING 으로 변경
         goodsService.setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
 
+        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(request.getGoodsIdList());
+
         // goods 컬럼에 shipping_id 부여
-        goodsService.setShippingId(request.getGoodsIdList(), savedShippingEntity.getId());
+        goodsService.setShippingId(goodsEntityList, savedShippingEntity.getId());
 
         return shippingConverter.toMessageResponse("출고 신청이 완료되었습니다.");
 
