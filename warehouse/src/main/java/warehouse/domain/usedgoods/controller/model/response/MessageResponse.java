@@ -1,6 +1,5 @@
 package warehouse.domain.usedgoods.controller.model.response;
 
-import db.domain.goods.enums.GoodsStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransformUsedGoodsResponse {
+public class MessageResponse {
 
-    private Long goodsId;
-    private GoodsStatus goodsStatus;
+    String message;
 
 }

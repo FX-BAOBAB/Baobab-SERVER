@@ -72,6 +72,11 @@ public class GoodsService {
             .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
     }
 
+    public GoodsEntity getGoodsById(Long goodsId) {
+        return goodsRepository.findFirstById(goodsId)
+            .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
+    }
+
     public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId, GoodsStatus status) {
         List<GoodsEntity> goodsList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
             receivingId);
@@ -102,9 +107,13 @@ public class GoodsService {
     public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
         goodsEntityList.forEach(goodsEntity -> {
-            goodsEntity.setStatus(status);
-            goodsRepository.save(goodsEntity);
+            this.setGoodsStatusBy(goodsEntity, status);
         });
+    }
+
+    public void setGoodsStatusBy(GoodsEntity goodsEntity, GoodsStatus status) {
+        goodsEntity.setStatus(status);
+        goodsRepository.save(goodsEntity);
     }
 
     public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
@@ -150,5 +159,10 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
-  
+
+    public void setUserId(GoodsEntity goodsEntity, Long userId) {
+        goodsEntity.setUserId(userId);
+        goodsRepository.save(goodsEntity);
+    }
+
 }
