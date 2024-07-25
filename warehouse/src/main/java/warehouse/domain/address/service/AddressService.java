@@ -23,27 +23,22 @@ public class AddressService {
     }
 
     public AddressEntity getBasicAddress(Long userId) {
-        boolean basic = true;
-        return addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(userId,basic).orElseThrow(() -> new AddressNotFoundException(
-            UserErrorCode.ADDRESS_NOT_FOUND));
+        return addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(userId, true)
+            .orElseThrow(() -> new AddressNotFoundException(UserErrorCode.ADDRESS_NOT_FOUND));
     }
 
     public AddressEntity setAddress(AddressEntity addressEntity) {
-
-        if (addressEntity.isBasicAddress()){
+        if (addressEntity.isBasicAddress()) {
             setFalseOldBasicAddress(addressEntity.getUserId());
         }
-
         return addressRepository.save(addressEntity);
-
     }
 
     private void setFalseOldBasicAddress(Long userId) {
         AddressEntity oldBasicEntity = addressRepository.findFirstByUserIdAndBasicAddressOrderByIdDesc(
-            userId, true).orElseThrow(() -> new AddressNotFoundException(UserErrorCode.ADDRESS_NOT_FOUND));
-
+                userId, true)
+            .orElseThrow(() -> new AddressNotFoundException(UserErrorCode.ADDRESS_NOT_FOUND));
         oldBasicEntity.setBasicAddress(false);
-
         addressRepository.save(oldBasicEntity);
     }
 
