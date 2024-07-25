@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.exception.Goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
+import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class GoodsService {
     public void abandonment(List<Long> goodsIdList) {
         // TODO 회사 아이디 생성 후 Matching 필요
         goodsIdList.forEach(goodsId -> {
-            GoodsEntity goodsEntity = getGoodsListBy(goodsId);
+            GoodsEntity goodsEntity = getGoodsBy(goodsId);
             setAbandonmentAtAndUserId(goodsEntity);
         });
     }
@@ -67,7 +68,7 @@ public class GoodsService {
         return goodsRepository.findAllByIdIn(goodsIdList);
     }
 
-    public GoodsEntity getGoodsListBy(Long goodsId) {
+    public GoodsEntity getGoodsBy(Long goodsId) {
         return goodsRepository.findFirstById(goodsId)
             .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
     }
@@ -146,7 +147,12 @@ public class GoodsService {
         return goodsEntityList;
     }
 
-    public void setShippingId(List<GoodsEntity> goodsEntityList, Long shippingId) {
+    public void setShippingId(ShippingRequest request,Long shippingId) {
+        // GoodsStatus 를 SHIPPING_ING 으로 변경
+        setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
+
+        List<GoodsEntity> goodsEntityList = getGoodsListBy(request.getGoodsIdList());
+
         goodsEntityList.forEach(goodsEntity -> {
             goodsEntity.setShippingId(shippingId);
             goodsRepository.save(goodsEntity);

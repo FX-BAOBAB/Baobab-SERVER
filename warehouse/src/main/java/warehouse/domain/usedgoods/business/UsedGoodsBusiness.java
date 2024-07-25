@@ -43,7 +43,7 @@ public class UsedGoodsBusiness {
         // GoodsStatus 를 USED 로 변경
         goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.USED);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsListBy(goodsId);
+        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
 
         return usedGoodsConverter.toResponse(goodsEntity);
     }
@@ -65,7 +65,7 @@ public class UsedGoodsBusiness {
 
         goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.STORAGE);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsListBy(goodsId);
+        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
 
         return usedGoodsConverter.toResponse(goodsEntity);
     }
@@ -91,7 +91,7 @@ public class UsedGoodsBusiness {
 
         UsedGoodsEntity savedEntity = usedGoodsService.post(usedGoodsEntity, userId);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsListBy(request.getGoodsId());
+        GoodsEntity goodsEntity = goodsService.getGoodsBy(request.getGoodsId());
 
         ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
 
