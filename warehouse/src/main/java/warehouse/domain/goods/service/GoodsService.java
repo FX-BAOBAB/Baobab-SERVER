@@ -99,11 +99,11 @@ public class GoodsService {
         }
     }
 
-    public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
-        List<GoodsEntity> goodsEntityList = getGoodsListBy(goodsIdList);
-        goodsEntityList.forEach(goodsEntity -> {
-            setGoodsStatusBy(status, goodsEntity);
-        });
+    public void setGoodsStatusBy(Long goodsId, GoodsStatus status) {
+        // GoodsStatus 가 STORAGE 가 아닌 경우 예외
+        checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.STORAGE);
+        GoodsEntity goodsEntity = getGoodsBy(goodsId);
+        setGoodsStatusBy(status, goodsEntity);
     }
 
     private void setGoodsStatusBy(GoodsStatus status, GoodsEntity goodsEntity) {
@@ -149,7 +149,9 @@ public class GoodsService {
 
     public void setShippingId(ShippingRequest request,Long shippingId) {
         // GoodsStatus 를 SHIPPING_ING 으로 변경
-        setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
+        request.getGoodsIdList().forEach(goodsId -> {
+            setGoodsStatusBy(goodsId,GoodsStatus.SHIPPING_ING);
+        });
 
         List<GoodsEntity> goodsEntityList = getGoodsListBy(request.getGoodsIdList());
 

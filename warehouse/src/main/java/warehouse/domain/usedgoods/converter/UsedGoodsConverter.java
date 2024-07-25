@@ -13,8 +13,9 @@ import warehouse.domain.usedgoods.controller.model.response.UsedGoodsPostRespons
 @Converter
 public class UsedGoodsConverter {
 
-    public UsedGoodsEntity toEntity(UsedGoodsPostRequest request) {
+    public UsedGoodsEntity toEntity(UsedGoodsPostRequest request, Long userId) {
         return UsedGoodsEntity.builder()
+            .userId(userId)
             .title(request.getTitle())
             .price(request.getPrice())
             .description(request.getDescription())

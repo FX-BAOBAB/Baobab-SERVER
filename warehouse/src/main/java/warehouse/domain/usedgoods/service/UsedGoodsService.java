@@ -12,8 +12,7 @@ public class UsedGoodsService {
 
     private final UsedGoodsRepository usedGoodsRepository;
 
-    public UsedGoodsEntity post(UsedGoodsEntity usedGoodsEntity, Long userId) {
-        usedGoodsEntity.setUserId(userId);
+    public UsedGoodsEntity post(UsedGoodsEntity usedGoodsEntity) {
         usedGoodsEntity.setPostedAt(LocalDateTime.now());
         return usedGoodsRepository.save(usedGoodsEntity);
     }

@@ -37,35 +37,25 @@ public class UsedGoodsBusiness {
 
     public TransformUsedGoodsResponse transformUsedGoods(Long goodsId) {
 
-        // GoodsStatus 가 STORAGE 가 아닌 경우 예외
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(List.of(goodsId), GoodsStatus.STORAGE);
-
         // GoodsStatus 를 USED 로 변경
-        goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.USED);
+        setGoodsStatusUsedBy(goodsId,GoodsStatus.USED);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+        GoodsEntity goodsEntity = getGoodsBy(goodsId);
 
         return usedGoodsConverter.toResponse(goodsEntity);
     }
 
     public List<TransformUsedGoodsResponse> transformUsedGoods(List<Long> goodsIdList) {
-
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.STORAGE);
-
-        goodsService.setGoodsStatusBy(goodsIdList, GoodsStatus.USED);
-
-        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
-
-        return usedGoodsConverter.toResponse(goodsEntityList);
+        return goodsIdList.stream().map(goodsId -> transformUsedGoods(goodsId)).toList();
     }
 
     public TransformUsedGoodsResponse cancelUsedGoodsRequest(Long goodsId) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.USED);
 
-        goodsService.setGoodsStatusBy(List.of(goodsId), GoodsStatus.STORAGE);
+        setGoodsStatusUsedBy(goodsId,GoodsStatus.STORAGE);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+        GoodsEntity goodsEntity = getGoodsBy(goodsId);
 
         return usedGoodsConverter.toResponse(goodsEntity);
     }
@@ -74,7 +64,7 @@ public class UsedGoodsBusiness {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.USED);
 
-        goodsService.setGoodsStatusBy(goodsIdList, GoodsStatus.STORAGE);
+        goodsIdList.forEach(goodsId -> setGoodsStatusUsedBy(goodsId,GoodsStatus.STORAGE));
 
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
 
@@ -87,17 +77,25 @@ public class UsedGoodsBusiness {
 
         Long userId = usersService.getUserWithThrow(email).getId();
 
-        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request);
+        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request,userId);
 
-        UsedGoodsEntity savedEntity = usedGoodsService.post(usedGoodsEntity, userId);
+        UsedGoodsEntity savedEntity = usedGoodsService.post(usedGoodsEntity);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsBy(request.getGoodsId());
+        GoodsEntity goodsEntity = getGoodsBy(request.getGoodsId());
 
         ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
 
         GoodsResponse goodsResponse = goodsConverter.toResponse(goodsEntity, imageListResponse);
 
         return usedGoodsConverter.toResponse(savedEntity, goodsResponse);
+    }
+
+    private void setGoodsStatusUsedBy(Long goodId,GoodsStatus status) {
+        goodsService.setGoodsStatusBy(goodId, status);
+    }
+
+    private GoodsEntity getGoodsBy(Long goodsId) {
+        return goodsService.getGoodsBy(goodsId);
     }
 
 }
