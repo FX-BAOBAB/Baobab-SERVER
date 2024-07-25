@@ -2,8 +2,6 @@ package warehouse.domain.usedgoods.business;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.enums.GoodsStatus;
-import db.domain.image.ImageEntity;
-import db.domain.image.enums.ImageKind;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
 import global.annotation.Business;
@@ -15,7 +13,6 @@ import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.image.service.ImageService;
 import warehouse.domain.usedgoods.controller.model.request.CancelUsedGoodsRequest;
 import warehouse.domain.usedgoods.controller.model.request.RegisterUsedGoods;
 import warehouse.domain.usedgoods.controller.model.response.MessageResponse;
@@ -32,7 +29,6 @@ public class UsedGoodsBusiness {
     private final UsedGoodsService usedGoodsService;
     private final GoodsService goodsService;
     private final UsersService usersService;
-    private final ImageService imageService;
 
     private final UsedGoodsConverter usedGoodsConverter;
     private final ImageConverter imageConverter;
@@ -103,7 +99,9 @@ public class UsedGoodsBusiness {
 
         GoodsEntity goodsEntity = goodsService.getGoodsById(usedGoodsEntity.getGoodsId());
 
-        GoodsResponse goodsResponse = this.getGoodsResponse(goodsEntity);
+        ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+
+        GoodsResponse goodsResponse = goodsConverter.toResponse(goodsEntity, imageListResponse);
 
         return usedGoodsConverter.toResponse(usedGoodsEntity, goodsResponse);
     }
@@ -132,16 +130,6 @@ public class UsedGoodsBusiness {
         usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.SOLD); // 4
 
         return usedGoodsConverter.toMessageResponse("중고 물품 거래가 완료되었습니다.");
-    }
-
-    private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.FAULT);
-        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
-            basicImageEntityList, faultImageEntityList);
-        return goodsConverter.toResponse(goodsEntity, imageListResponse);
     }
 
 }

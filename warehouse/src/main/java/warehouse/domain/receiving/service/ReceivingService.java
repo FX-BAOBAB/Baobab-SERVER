@@ -15,15 +15,13 @@ public class ReceivingService {
 
     private final ReceivingRepository receivingRepository;
 
-    public ReceivingEntity receivingRequest(ReceivingEntity receivingEntity, Long userId) {
+    public ReceivingEntity receivingRequest(ReceivingEntity receivingEntity) {
 
         if (receivingEntity.getGuaranteeAt() == null) {
             receivingEntity.setGuaranteeAt(LocalDateTime.now());
         }
 
         receivingEntity.setStatus(ReceivingStatus.TAKING);
-
-        receivingEntity.setUserId(userId);
 
         return receivingRepository.save(receivingEntity);
     }
