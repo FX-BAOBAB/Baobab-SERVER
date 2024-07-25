@@ -7,6 +7,7 @@ import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.takeback.TakeBackEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import warehouse.domain.receiving.service.ReceivingService;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
 import warehouse.domain.takeback.converter.TakeBackConverter;
 import warehouse.domain.takeback.service.TakeBackService;
+import warehouse.domain.users.service.UsersService;
 
 @Slf4j
 @Business
@@ -36,14 +38,17 @@ public class TakeBackBusiness {
     private final GoodsConverter goodsConverter;
     private final ImageService imageService;
     private final ImageConverter imageConverter;
+    private final UsersService usersService;
 
-    public TakeBackResponse takeBackRequest(Long receivingId) {
+    public TakeBackResponse takeBackRequest(Long receivingId, String email) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(receivingId, GoodsStatus.RECEIVING);
 
         receivingService.initReceivingStatus(receivingId);
 
-        TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
+        UserEntity userEntity = usersService.getUserWithThrow(email);
+
+        TakeBackEntity takeBackEntity = takeBackConverter.toEntity(userEntity.getId());
 
         TakeBackEntity newTakeBackEntity = takeBackService.takeBackRequest(takeBackEntity);
 
@@ -61,11 +66,13 @@ public class TakeBackBusiness {
         return takeBackConverter.toResponse(takeResponse, goodsResponseList);
     }
 
-    public TakeBackResponse takeBackRequest(List<Long> goodsIdList) {
+    public TakeBackResponse takeBackRequest(List<Long> goodsIdList,String email) {
 
         goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.RECEIVING);
 
-        TakeBackEntity takeBackEntity = takeBackConverter.toEntity();
+        UserEntity userEntity = usersService.getUserWithThrow(email);
+
+        TakeBackEntity takeBackEntity = takeBackConverter.toEntity(userEntity.getId());
 
         TakeBackEntity newTakeBackEntity = takeBackService.takeBackRequest(takeBackEntity);
 

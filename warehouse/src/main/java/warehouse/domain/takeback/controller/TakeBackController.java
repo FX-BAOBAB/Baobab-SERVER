@@ -3,6 +3,7 @@ package warehouse.domain.takeback.controller;
 import global.api.Api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,17 +21,21 @@ public class TakeBackController {
     private final TakeBackBusiness takeBackBusiness;
 
     @PostMapping("/{receivingId}")
-    public Api<TakeBackResponse> takeBackRequest(@PathVariable Long receivingId) {
+    public Api<TakeBackResponse> takeBackRequest(
+        @PathVariable Long receivingId,
+        @AuthenticationPrincipal String email
+    ) {
         TakeBackResponse response = takeBackBusiness.takeBackRequest(
-            receivingId);
+            receivingId,email);
         return Api.OK(response);
     }
 
     @PostMapping
     public Api<TakeBackResponse> takeBackRequest(
-        @RequestBody Api<List<Long>> goodsIdList
+        @RequestBody Api<List<Long>> goodsIdList,
+        @AuthenticationPrincipal String email
     ){
-        TakeBackResponse response = takeBackBusiness.takeBackRequest(goodsIdList.getBody());
+        TakeBackResponse response = takeBackBusiness.takeBackRequest(goodsIdList.getBody(),email);
         return Api.OK(response);
     }
 
