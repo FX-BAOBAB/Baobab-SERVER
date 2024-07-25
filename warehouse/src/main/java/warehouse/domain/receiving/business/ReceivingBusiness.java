@@ -4,7 +4,6 @@ import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
-import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,12 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import warehouse.common.error.ReceivingErrorCode;
-import warehouse.common.exception.ApiException;
 import warehouse.common.exception.receiving.NoOwnershipException;
+import warehouse.common.utils.ImageUtils;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
-import warehouse.domain.image.common.ImageUtils;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
@@ -32,7 +30,6 @@ import warehouse.domain.receiving.converter.guarantee.GuaranteeConverter;
 import warehouse.domain.receiving.converter.message.MessageConverter;
 import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
-import warehouse.domain.users.business.UsersBusiness;
 import warehouse.domain.users.service.UsersService;
 
 @Slf4j
@@ -115,10 +112,10 @@ public class ReceivingBusiness {
         Long userId = usersService.getUserWithThrow(email).getId();
 
         goodsIdList.forEach(it -> {
-                GoodsEntity goodsEntity = goodsService.getGoodsListBy(it);
-                if (!Objects.equals(goodsEntity.getUserId(), userId)){
-                    throw new NoOwnershipException(ReceivingErrorCode.NO_OWNERSHIP);
-                }
+            GoodsEntity goodsEntity = goodsService.getGoodsListBy(it);
+            if (!Objects.equals(goodsEntity.getUserId(), userId)) {
+                throw new NoOwnershipException(ReceivingErrorCode.NO_OWNERSHIP);
+            }
         });
         goodsService.abandonment(goodsIdList);
         return messageConverter.toMassageResponse("소유권 전환이 완료되었습니다.");

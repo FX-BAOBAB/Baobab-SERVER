@@ -9,6 +9,7 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import warehouse.common.utils.ImageUtils;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
@@ -30,8 +31,6 @@ public class UsedGoodsBusiness {
     private final GoodsService goodsService;
     private final UsersService usersService;
     private final UsedGoodsService usedGoodsService;
-    private final ImageService imageService;
-
     private final UsedGoodsConverter usedGoodsConverter;
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
@@ -94,21 +93,11 @@ public class UsedGoodsBusiness {
 
         GoodsEntity goodsEntity = goodsService.getGoodsListBy(request.getGoodsId());
 
-        GoodsResponse goodsResponse = getGoodsResponse(
-            goodsEntity);
+        ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+
+        GoodsResponse goodsResponse = goodsConverter.toResponse(goodsEntity, imageListResponse);
 
         return usedGoodsConverter.toResponse(savedEntity, goodsResponse);
-    }
-
-
-    private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.FAULT);
-        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
-            basicImageEntityList, faultImageEntityList);
-        return goodsConverter.toResponse(goodsEntity, imageListResponse);
     }
 
 }

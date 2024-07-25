@@ -9,6 +9,7 @@ import global.annotation.Business;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import warehouse.common.utils.ImageUtils;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
@@ -32,10 +33,9 @@ public class ShippingBusiness {
     private final UsersService usersService;
     private final GoodsService goodsService;
     private final ShippingService shippingService;
-    private final ImageService imageService;
     private final ShippingConverter shippingConverter;
-    private final GoodsConverter goodsConverter;
     private final ImageConverter imageConverter;
+    private final GoodsConverter goodsConverter;
 
 
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
@@ -48,7 +48,8 @@ public class ShippingBusiness {
 
         ShippingEntity shippingEntity = shippingConverter.toEntity(request);
 
-        ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity, userId);
+        ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity,
+            userId);
 
         // GoodsStatus 를 SHIPPING_ING 으로 변경
         goodsService.setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
@@ -85,7 +86,10 @@ public class ShippingBusiness {
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
 
         List<GoodsResponse> goodsResponse = goodsEntityList.stream()
-            .map(entity -> getGoodsResponse(entity)).collect(Collectors.toList());
+            .map(goodsEntity -> {
+                ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+                return goodsConverter.toResponse(goodsEntity, imageListResponse);
+            }).collect(Collectors.toList());
 
         return shippingConverter.toResponse(shippingResponse, goodsResponse);
 
@@ -97,16 +101,6 @@ public class ShippingBusiness {
 
         return shippingConverter.toCurrentStatusResponse(shippingEntity);
 
-    }
-
-    private GoodsResponse getGoodsResponse(GoodsEntity goodsEntity) {
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
-            ImageKind.FAULT);
-        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
-            basicImageEntityList, faultImageEntityList);
-        return goodsConverter.toResponse(goodsEntity, imageListResponse);
     }
 
 
