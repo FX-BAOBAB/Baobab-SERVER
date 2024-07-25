@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.exception.Goods.GoodsStrategyException;
 import warehouse.common.exception.receiving.NotOwnerException;
@@ -34,24 +35,26 @@ public class GoodsBusiness {
 
     private final GoodsConverter goodsConverter;
     private final GoodsService goodsService;
-    private final ImageService imageService;
     private final ImageConverter imageConverter;
-    private final UsersService  usersService;
+    private final UsersService usersService;
     private final ReceivingService receivingService;
     private final TakeBackService takeBackService;
 
-    public List<GoodsResponse> getGoodsList(GetGoodsStrategy strategy,Long requestId,String email) {
+    @Transactional
+    public List<GoodsResponse> getGoodsList(GetGoodsStrategy strategy, Long requestId,
+        String email) {
 
-        List<GoodsEntity> goodsList = findGoodsListById(strategy,requestId,email);
+        List<GoodsEntity> goodsList = findGoodsListById(strategy, requestId, email);
 
-        return getGoodsResponsesBy(goodsList,email);
+        return getGoodsResponsesBy(goodsList, email);
     }
 
-    public List<GoodsResponse> getGoodsList(GoodsStatus status,  String email) {
+    @Transactional
+    public List<GoodsResponse> getGoodsList(GoodsStatus status, String email) {
 
         List<GoodsEntity> goodsList = goodsService.findAllByGoodsStatusWithThrow(status);
 
-        return getGoodsResponsesBy(goodsList,email);
+        return getGoodsResponsesBy(goodsList, email);
     }
 
     private List<GoodsResponse> getGoodsResponsesBy(List<GoodsEntity> goodsList, String email) {
@@ -62,13 +65,7 @@ public class GoodsBusiness {
 
             goodsOwnerCheckWithThrow(email, goodsEntity);
 
-            List<ImageEntity> basicList = imageService.getImageUrlListBy(goodsEntity.getId(),
-                ImageKind.BASIC);
-            List<ImageEntity> faultList = imageService.getImageUrlListBy(goodsEntity.getId(),
-                ImageKind.FAULT);
-
-            ImageListResponse imageListResponse = imageConverter.toImageListResponse(basicList,
-                faultList);
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
 
             goodsResponse.add(goodsConverter.toResponse(goodsEntity, imageListResponse));
 
@@ -84,7 +81,8 @@ public class GoodsBusiness {
         }
     }
 
-    private List<GoodsEntity> findGoodsListById(GetGoodsStrategy strategy, Long requestId, String email) {
+    private List<GoodsEntity> findGoodsListById(GetGoodsStrategy strategy, Long requestId,
+        String email) {
         switch (strategy) {
             case RECEIVING -> {
                 receivingOwnerCheckWithThrow(requestId, email);

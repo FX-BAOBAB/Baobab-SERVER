@@ -28,9 +28,7 @@ public class GoodsService {
     }
 
     public void abandonment(ReceivingEntity receiving) {
-
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receiving.getId());
+        List<GoodsEntity> goodsEntityList = findAllBy(receiving.getId());
         checkEmptyGoodsListWithThrow(goodsEntityList);
         // TODO 회사 아이디 생성 후 Matching 필요
         goodsEntityList.forEach(goodsEntity -> {
@@ -39,16 +37,19 @@ public class GoodsService {
         });
     }
 
+    private List<GoodsEntity> findAllBy(Long receivingId) {
+        return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
+    }
+
     public void abandonment(List<Long> goodsIdList) {
         // TODO 회사 아이디 생성 후 Matching 필요
         goodsIdList.forEach(goodsId -> {
-            GoodsEntity goodsEntity = goodsRepository.findFirstById(goodsId)
-                .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
+            GoodsEntity goodsEntity = getGoodsListBy(goodsId);
             setAbandonmentAtAndUserId(goodsEntity);
         });
     }
 
-    public void setAbandonmentAtAndUserId(GoodsEntity goodsEntity) {
+    private void setAbandonmentAtAndUserId(GoodsEntity goodsEntity) {
         goodsEntity.setUserId(0L);
         goodsEntity.setAbandonmentAt(LocalDateTime.now());
         goodsRepository.save(goodsEntity);
@@ -58,8 +59,7 @@ public class GoodsService {
         GoodsStatus goodsStatus) {
         goodsEntityList.forEach(goodsEntity -> {
             goodsEntity.setTakeBackId(id);
-            goodsEntity.setStatus(goodsStatus);
-            goodsRepository.save(goodsEntity);
+            setGoodsStatusBy(goodsStatus, goodsEntity);
         });
     }
 
@@ -73,14 +73,13 @@ public class GoodsService {
     }
 
     public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId, GoodsStatus status) {
-        List<GoodsEntity> goodsList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receivingId);
+        List<GoodsEntity> goodsList = findAllBy(receivingId);
         checkEmptyGoodsListWithThrow(goodsList);
         checkGoodsStatusWithThrow(goodsList, status);
     }
 
     public void checkStoredGoodsAndStatusWithThrowBy(List<Long> goodsIdList, GoodsStatus status) {
-        List<GoodsEntity> goodsList = goodsRepository.findAllByIdIn(goodsIdList);
+        List<GoodsEntity> goodsList = getGoodsListBy(goodsIdList);
         checkEmptyGoodsListWithThrow(goodsList);
         checkGoodsStatusWithThrow(goodsList, status);
     }
@@ -100,11 +99,15 @@ public class GoodsService {
     }
 
     public void setGoodsStatusBy(List<Long> goodsIdList, GoodsStatus status) {
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByIdIn(goodsIdList);
+        List<GoodsEntity> goodsEntityList = getGoodsListBy(goodsIdList);
         goodsEntityList.forEach(goodsEntity -> {
-            goodsEntity.setStatus(status);
-            goodsRepository.save(goodsEntity);
+            setGoodsStatusBy(status, goodsEntity);
         });
+    }
+
+    private void setGoodsStatusBy(GoodsStatus status, GoodsEntity goodsEntity) {
+        goodsEntity.setStatus(status);
+        goodsRepository.save(goodsEntity);
     }
 
     public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
@@ -114,9 +117,8 @@ public class GoodsService {
     }
 
     public List<GoodsEntity> findAllByReceivingIdWithThrow(Long receivingId) {
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
-            receivingId);
-        if (goodsEntityList.isEmpty()){
+        List<GoodsEntity> goodsEntityList = findAllBy(receivingId);
+        if (goodsEntityList.isEmpty()) {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
@@ -127,7 +129,7 @@ public class GoodsService {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByTakeBackIdOrderByIdDesc(
             takeBackId);
 
-        if (goodsEntityList.isEmpty()){
+        if (goodsEntityList.isEmpty()) {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
@@ -138,7 +140,7 @@ public class GoodsService {
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByShippingIdOrderByIdDesc(
             shippingId);
 
-        if (goodsEntityList.isEmpty()){
+        if (goodsEntityList.isEmpty()) {
             throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
         }
         return goodsEntityList;
@@ -150,5 +152,5 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
-  
+
 }
