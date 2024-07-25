@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import warehouse.common.error.ReceivingErrorCode;
 import warehouse.common.exception.receiving.NoOwnershipException;
 import warehouse.common.utils.ImageUtils;
@@ -47,33 +49,47 @@ public class ReceivingBusiness {
     private final MessageConverter messageConverter;
     private final UsersService usersService;
 
+    @Transactional
     public ReceivingResponse receivingRequest(ReceivingRequest request, String email) {
 
+        // 1. 사용자 ID 추출
         Long userId = usersService.getUserWithThrow(email).getId();
 
-        ReceivingEntity receivingEntity = receivingConverter.toEntity(request);
+        // 2. 입고 요청서 작성
+        ReceivingEntity receivingEntity = receivingConverter.toEntity(request, userId);
 
+        // 4. Goods 정보 작성
+        List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(
+            request.getGoodsRequests());
+
+        // 5. 입고 요청서 저장
         ReceivingEntity registeredReceivingEntity = receivingService.receivingRequest(
-            receivingEntity, userId);
+            receivingEntity);
 
-        List<GoodsRequest> goodsRequests = request.getGoodsRequests();
+        // 6. goods 정보 저장
+        List<GoodsEntity> savedGoodsList = saveGoodsList(goodsEntityList, registeredReceivingEntity,
+            userId);
 
-        List<GoodsEntity> goodsEntityList = goodsConverter.toEntityListBy(goodsRequests);
+        // 7.Goods <-> Image 연결
+        savedGoodsList.forEach(goodsEntity -> {
+            goodsEntity.setReceivingId(registeredReceivingEntity.getId());
+            goodsEntity.setUserId(userId);
+            request.getGoodsRequests().forEach(goodsRequest -> {
+                imageService.receivingRequest(goodsRequest, goodsEntity.getId());
+            });
+        });
 
-        List<GoodsEntity> newGoodsEntityList = saveGoodsList(goodsEntityList,
-            registeredReceivingEntity, userId);
+        // 8. 저장된 goodsList 받기
+        List<GoodsEntity> goodsList = goodsService.findAllByReceivingIdWithThrow(
+            registeredReceivingEntity.getId());
 
-        Long goodsId = ImageUtils.getFirstGoodsId(newGoodsEntityList);
+        // 9. Response 반환
+        List<GoodsResponse> goodsResponseList = goodsList.stream().map(goodsEntity -> {
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+            return goodsConverter.toResponse(goodsEntity, imageListResponse);
+        }).toList();
 
-        Map<ImageKind, List<ImageEntity>> imageMap = imageService.receivingRequest(goodsRequests,
-            goodsId);
-
-        ImageListResponse imageListResponse = imageConverter.toImageListResponse(
-            imageMap.get(ImageKind.BASIC), imageMap.get(ImageKind.FAULT));
-
-        List<GoodsResponse> goodsResponseList = goodsConverter.toResponseListBy(goodsEntityList,
-            imageListResponse);
-
+        // 10. 입고 완료 Response 반환
         return receivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);
     }
 
