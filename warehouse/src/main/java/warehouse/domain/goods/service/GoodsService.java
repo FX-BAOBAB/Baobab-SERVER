@@ -73,24 +73,19 @@ public class GoodsService {
             .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
     }
 
-    public void checkStoredGoodsAndStatusWithThrowBy(Long receivingId, GoodsStatus status) {
-        List<GoodsEntity> goodsList = findAllBy(receivingId);
-        checkEmptyGoodsListWithThrow(goodsList);
-        checkGoodsStatusWithThrow(goodsList, status);
+    public void checkGoodsStatusWithThrow(Long goodsId, GoodsStatus status) {
+        GoodsEntity goodsEntity = this.getGoodsBy(goodsId);
+        checkGoodsStatusWithThrow(goodsEntity, status);
     }
 
-    public void checkStoredGoodsAndStatusWithThrowBy(List<Long> goodsIdList, GoodsStatus status) {
-        List<GoodsEntity> goodsList = getGoodsListBy(goodsIdList);
-        checkEmptyGoodsListWithThrow(goodsList);
-        checkGoodsStatusWithThrow(goodsList, status);
+    public void checkGoodsStatusWithThrow(List<Long> goodsIdList, GoodsStatus status) {
+        goodsIdList.forEach((goodsId) -> this.checkGoodsStatusWithThrow(goodsId, status));
     }
 
-    private void checkGoodsStatusWithThrow(List<GoodsEntity> goodsList, GoodsStatus status) {
-        goodsList.forEach(goodsEntity -> {
-            if (goodsEntity.getStatus() != status) {
-                throw new InvalidGoodsStatusException(GoodsErrorCode.INVALID_GOODS_STRATEGY);
-            }
-        });
+    private void checkGoodsStatusWithThrow(GoodsEntity goodsEntity, GoodsStatus status) {
+        if (goodsEntity.getStatus() != status) {
+            throw new InvalidGoodsStatusException(GoodsErrorCode.INVALID_GOODS_STRATEGY);
+        }
     }
 
     private void checkEmptyGoodsListWithThrow(List<GoodsEntity> goodsList) {
@@ -100,8 +95,6 @@ public class GoodsService {
     }
 
     public void setGoodsStatusBy(Long goodsId, GoodsStatus status) {
-        // GoodsStatus 가 STORAGE 가 아닌 경우 예외
-        checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.STORAGE);
         GoodsEntity goodsEntity = getGoodsBy(goodsId);
         setGoodsStatusBy(status, goodsEntity);
     }
@@ -147,10 +140,10 @@ public class GoodsService {
         return goodsEntityList;
     }
 
-    public void setShippingId(ShippingRequest request,Long shippingId) {
+    public void setShippingId(ShippingRequest request, Long shippingId) {
         // GoodsStatus 를 SHIPPING_ING 으로 변경
         request.getGoodsIdList().forEach(goodsId -> {
-            setGoodsStatusBy(goodsId,GoodsStatus.SHIPPING_ING);
+            setGoodsStatusBy(goodsId, GoodsStatus.SHIPPING_ING);
         });
 
         List<GoodsEntity> goodsEntityList = getGoodsListBy(request.getGoodsIdList());
@@ -160,5 +153,4 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
-
 }
