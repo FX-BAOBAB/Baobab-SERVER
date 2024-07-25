@@ -36,7 +36,7 @@ public class ShippingBusiness {
     @Transactional
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
         // 상품이 STORAGE 인지 확인
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsIdList(),
+        goodsService.checkGoodsStatusWithThrow(request.getGoodsIdList(),
             GoodsStatus.STORAGE);
         Long userId = getUserWithThrow(email).getId();
         ShippingEntity shippingEntity = shippingConverter.toEntity(request, userId);

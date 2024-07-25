@@ -38,7 +38,11 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(Long receivingId, String email) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(receivingId, GoodsStatus.RECEIVING);
+        List<GoodsEntity> goodsEntityList = goodsService.findAllByReceivingIdWithThrow(receivingId);
+
+        List<Long> goodsIdList = goodsEntityList.stream().map((goodsEntity) -> goodsEntity.getId()).toList();
+
+        goodsService.checkGoodsStatusWithThrow(goodsIdList, GoodsStatus.RECEIVING);
 
         receivingService.initReceivingStatus(receivingId);
 
@@ -47,8 +51,6 @@ public class TakeBackBusiness {
         TakeBackEntity takeBackEntity = takeBackConverter.toEntity(userEntity.getId());
 
         TakeBackEntity newTakeBackEntity = takeBackService.takeBackRequest(takeBackEntity);
-
-        List<GoodsEntity> goodsEntityList = goodsService.findAllByReceivingIdWithThrow(receivingId);
 
         goodsService.setTakeBackIdAndStatus(goodsEntityList, newTakeBackEntity.getId(),
             GoodsStatus.TAKE_BACK_ING);
@@ -62,7 +64,7 @@ public class TakeBackBusiness {
 
     public TakeBackResponse takeBackRequest(List<Long> goodsIdList, String email) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.RECEIVING);
+        goodsService.checkGoodsStatusWithThrow(goodsIdList, GoodsStatus.RECEIVING);
 
         UserEntity userEntity = usersService.getUserWithThrow(email);
 

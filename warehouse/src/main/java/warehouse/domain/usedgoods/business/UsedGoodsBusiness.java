@@ -38,7 +38,7 @@ public class UsedGoodsBusiness {
     public TransformUsedGoodsResponse transformUsedGoods(Long goodsId) {
 
         // GoodsStatus 를 USED 로 변경
-        setGoodsStatusUsedBy(goodsId,GoodsStatus.USED);
+        setGoodsStatusUsedBy(goodsId, GoodsStatus.USED);
 
         GoodsEntity goodsEntity = getGoodsBy(goodsId);
 
@@ -51,9 +51,9 @@ public class UsedGoodsBusiness {
 
     public TransformUsedGoodsResponse cancelUsedGoodsRequest(Long goodsId) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsId, GoodsStatus.USED);
+        goodsService.checkGoodsStatusWithThrow(goodsId, GoodsStatus.USED);
 
-        setGoodsStatusUsedBy(goodsId,GoodsStatus.STORAGE);
+        setGoodsStatusUsedBy(goodsId, GoodsStatus.STORAGE);
 
         GoodsEntity goodsEntity = getGoodsBy(goodsId);
 
@@ -62,9 +62,9 @@ public class UsedGoodsBusiness {
 
     public List<TransformUsedGoodsResponse> cancelUsedGoodsRequest(List<Long> goodsIdList) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(goodsIdList, GoodsStatus.USED);
+        goodsService.checkGoodsStatusWithThrow(goodsIdList, GoodsStatus.USED);
 
-        goodsIdList.forEach(goodsId -> setGoodsStatusUsedBy(goodsId,GoodsStatus.STORAGE));
+        goodsIdList.forEach(goodsId -> setGoodsStatusUsedBy(goodsId, GoodsStatus.STORAGE));
 
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
 
@@ -73,11 +73,11 @@ public class UsedGoodsBusiness {
 
     public UsedGoodsPostResponse post(UsedGoodsPostRequest request, String email) {
 
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(), GoodsStatus.USED);
+        goodsService.checkGoodsStatusWithThrow(request.getGoodsId(), GoodsStatus.USED);
 
         Long userId = usersService.getUserWithThrow(email).getId();
 
-        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request,userId);
+        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request, userId);
 
         UsedGoodsEntity savedEntity = usedGoodsService.post(usedGoodsEntity);
 
@@ -90,7 +90,7 @@ public class UsedGoodsBusiness {
         return usedGoodsConverter.toResponse(savedEntity, goodsResponse);
     }
 
-    private void setGoodsStatusUsedBy(Long goodId,GoodsStatus status) {
+    private void setGoodsStatusUsedBy(Long goodId, GoodsStatus status) {
         goodsService.setGoodsStatusBy(goodId, status);
     }
 
