@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum UsedGoodsErrorCode implements ErrorCodeIfs {
 
-    USED_GOODS_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 1600, "중고 물품을 찾을 수 없습니다.")
+    USED_GOODS_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 1600, "중고 물품을 찾을 수 없습니다."),
+    GOODS_NOT_IN_USED_STATUS(HttpStatus.BAD_REQUEST.value(), 1601, "물품이 중고 전환 상태가 아닙니다.");
     ;
 
     private final Integer httpCode;

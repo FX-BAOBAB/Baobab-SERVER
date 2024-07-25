@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.UsedGoodsErrorCode;
-import warehouse.common.exception.usedGoods.UsedGoodsNotFoundException;
+import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class UsedGoodsService {
 
     public UsedGoodsEntity getUsedGoodsBy(Long usedGoodsId, UsedGoodsStatus status) {
         return usedGoodsRepository.findFirstByIdAndStatus(usedGoodsId, status).orElseThrow(
-            () -> new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND));
+            () -> new GoodsNotInUsedStatus(UsedGoodsErrorCode.GOODS_NOT_IN_USED_STATUS));
     }
 
     public List<UsedGoodsEntity> getUsedGoodsListBy(List<Long> usedGoodsIdList,
