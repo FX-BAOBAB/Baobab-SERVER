@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.exception.Goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
+import warehouse.common.exception.receiving.NotOwnerException;
 
 @Slf4j
 @RestControllerAdvice
@@ -28,4 +29,12 @@ public class GoodsExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(GoodsErrorCode.INVALID_GOODS_STATUS));
-    }}
+    }
+
+    @ExceptionHandler(value = NotOwnerException.class)
+    public ResponseEntity<Api<Object>> notOwnerException(NotOwnerException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.NOT_OWNER));
+    }
+}

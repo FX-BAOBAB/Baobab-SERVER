@@ -4,6 +4,7 @@ import db.domain.goods.enums.GoodsStatus;
 import global.api.Api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,21 @@ public class GoodsController {
     private final GoodsBusiness goodsBusiness;
 
     @GetMapping("/{strategy}/{requestId}")
-    public Api<List<GoodsResponse>> receiving(@PathVariable GetGoodsStrategy strategy, @PathVariable Long requestId) {
-        List<GoodsResponse> response = goodsBusiness.getGoodsList(strategy,requestId);
+    public Api<List<GoodsResponse>> receiving(
+        @PathVariable GetGoodsStrategy strategy,
+        @PathVariable Long requestId,
+        @AuthenticationPrincipal String email
+    ) {
+        List<GoodsResponse> response = goodsBusiness.getGoodsList(strategy, requestId,email);
         return Api.OK(response);
     }
 
     @GetMapping()
-    public Api<List<GoodsResponse>> getGoodsByStatus(@RequestParam GoodsStatus status) {
-        List<GoodsResponse> response = goodsBusiness.getGoodsList(status);
+    public Api<List<GoodsResponse>> getGoodsByStatus(
+        @RequestParam GoodsStatus status,
+        @AuthenticationPrincipal String email
+    ) {
+        List<GoodsResponse> response = goodsBusiness.getGoodsList(status,email);
         return Api.OK(response);
     }
 
