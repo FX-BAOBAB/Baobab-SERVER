@@ -4,6 +4,7 @@ import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingListResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
@@ -80,17 +82,7 @@ public class ReceivingBusiness {
         });
 
         // 8. 저장된 goodsList 받기
-        List<GoodsEntity> goodsList = goodsService.findAllByReceivingIdWithThrow(
-            registeredReceivingEntity.getId());
-
-        // 9. Response 반환
-        List<GoodsResponse> goodsResponseList = goodsList.stream().map(goodsEntity -> {
-            ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
-            return goodsConverter.toResponse(goodsEntity, imageListResponse);
-        }).toList();
-
-        // 10. 입고 완료 Response 반환
-        return receivingConverter.toResponse(registeredReceivingEntity, goodsResponseList);
+        return getReceivingResponse(registeredReceivingEntity);
     }
 
     private List<GoodsEntity> saveGoodsList(List<GoodsEntity> goodsEntityList,
@@ -135,5 +127,29 @@ public class ReceivingBusiness {
         });
         goodsService.abandonment(goodsIdList);
         return messageConverter.toMassageResponse("소유권 전환이 완료되었습니다.");
+    }
+
+    public ReceivingListResponse getReceivingResponse(String username) {
+        UserEntity userEntity = usersService.getUserWithThrow(username);
+        List<ReceivingEntity> receivingEntityList = receivingService.getReceivingListBy(userEntity.getId());
+
+        List<ReceivingResponse> receivingResponseList = receivingEntityList.stream().map(receivingEntity -> {
+            return getReceivingResponse(receivingEntity);
+        }).toList();
+
+        return receivingConverter.toListResponse(receivingResponseList);
+    }
+
+    private ReceivingResponse getReceivingResponse(ReceivingEntity receivingEntity) {
+        List<GoodsEntity> goodsList = goodsService.findAllByReceivingIdWithThrow(
+            receivingEntity.getId());
+
+        List<GoodsResponse> goodsResponseList = goodsList.stream().map(goodsEntity -> {
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+                goodsEntity);
+            return goodsConverter.toResponse(goodsEntity, imageListResponse);
+        }).toList();
+
+        return receivingConverter.toResponse(receivingEntity, goodsResponseList);
     }
 }
