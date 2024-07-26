@@ -17,6 +17,7 @@ import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
+import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
 import warehouse.domain.takeback.converter.TakeBackConverter;
 import warehouse.domain.takeback.service.TakeBackService;
@@ -89,5 +90,27 @@ public class TakeBackBusiness {
             ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
             return goodsConverter.toResponse(goodsEntity, imageListResponse);
         }).toList();
+    }
+
+    public TakeBackListResponse getTakeBackListBy(String email) {
+        UserEntity userEntity = usersService.getUserWithThrow(email);
+
+        List<TakeBackEntity> takeBackEntityList = takeBackService.getTakeBackList(userEntity.getId());
+
+        List<TakeBackResponse> takeBackResponseList = takeBackEntityList.stream().map(takeBackEntity -> {
+            TakeBackResponse takeBackResponse = takeBackConverter.toResponse(takeBackEntity);
+
+            List<GoodsEntity> goodsList = goodsService.findAllByTakeBackIdWithThrow(
+                takeBackEntity.getId());
+
+            List<GoodsResponse> goodsResponseList = goodsList.stream().map(goodsEntity -> {
+                ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+                return goodsConverter.toResponse(goodsEntity, imageListResponse);
+            }).toList();
+
+            return takeBackConverter.toResponse(takeBackResponse, goodsResponseList);
+        }).toList();
+
+        return takeBackConverter.toListResponse(takeBackResponseList);
     }
 }
