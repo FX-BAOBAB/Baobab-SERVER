@@ -20,5 +20,6 @@ public class TakeBackResponse {
     private TakeBackStatus status;
     private LocalDateTime takeBackRequestAt;
     private List<GoodsResponse> goods;
+    private Long userId;
 
 }

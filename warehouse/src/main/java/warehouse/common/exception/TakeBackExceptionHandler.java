@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import warehouse.common.error.TakeBackErrorCode;
+import warehouse.common.exception.takeback.NotFoundRequestException;
 import warehouse.common.exception.takeback.TakeBackNotAllowedException;
 
 
@@ -20,6 +21,13 @@ public class TakeBackExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(TakeBackErrorCode.TAKE_BAKE_NOT_ALLOWED));
+    }
+
+    @ExceptionHandler(value = NotFoundRequestException.class)
+    public ResponseEntity<Api<Object>> notFoundRequestException(NotFoundRequestException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(TakeBackErrorCode.NOT_FOUNT_REQUEST));
     }
 
 }

@@ -15,8 +15,7 @@ public class ShippingService {
 
     private final ShippingRepository shippingRepository;
 
-    public ShippingEntity shippingRequest(ShippingEntity shippingEntity, Long userId) {
-        shippingEntity.setUserId(userId);
+    public ShippingEntity shippingRequest(ShippingEntity shippingEntity) {
         shippingEntity.setStatus(ShippingStatus.PENDING); // PENDING(출고 대기) 으로 변경
         return shippingRepository.save(shippingEntity);
     }
@@ -25,7 +24,7 @@ public class ShippingService {
         return shippingRepository.findAllByUserIdOrderByIdDesc(userId);
     }
 
-    public ShippingEntity getShippingDetail(Long shippingId) {
+    public ShippingEntity getShippingById(Long shippingId) {
         return shippingRepository.findFirstById(shippingId).orElseThrow(
             () -> new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
     }

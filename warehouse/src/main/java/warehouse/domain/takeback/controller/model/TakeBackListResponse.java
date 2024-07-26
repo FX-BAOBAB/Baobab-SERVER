@@ -1,4 +1,4 @@
-package warehouse.domain.shipping.controller.model.response;
+package warehouse.domain.takeback.controller.model;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ShippingListResponse {
-    List<ShippingDetailResponse> shipping;
+public class TakeBackListResponse {
+
+    List<TakeBackResponse> takeBackResponseList;
+
 }

@@ -11,7 +11,7 @@ import warehouse.domain.goods.controller.model.GoodsResponse;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsedGoodsPostResponse {
+public class UsedGoodsDetailResponse {
 
     private String title;
 

@@ -2,6 +2,7 @@ package warehouse.domain.image.service;
 
 import static db.domain.image.enums.ImageKind.*;
 
+import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
 import db.domain.image.enums.ImageKind;
@@ -18,16 +19,15 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageNotFoundException;
 import warehouse.common.exception.image.ImageStorageException;
+import warehouse.common.utils.ImageUtils;
 import warehouse.domain.goods.controller.model.GoodsRequest;
 import warehouse.domain.goods.service.GoodsService;
-import warehouse.domain.image.common.ImageUtils;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -76,15 +76,17 @@ public class ImageService {
             entity.setGoodsId(0L);
         }
 
-        return Optional.of(entity).map(imageRepository::save).orElseThrow(() ->
-            new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
+        return Optional.of(entity).map(imageRepository::save)
+            .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }
 
     public void updateImageDB(ImageEntity th) {
         saveImageDataToDB(th);
     }
 
-    public void deleteImageDB(ImageEntity th) { imageRepository.deleteById(th.getId()); }
+    public void deleteImageDB(ImageEntity th) {
+        imageRepository.deleteById(th.getId());
+    }
 
     public List<ImageEntity> getImagesByImageIdList(List<Long> ids) {
         return ids.stream().map(this::getImageByImageId).collect(Collectors.toList());
@@ -103,8 +105,8 @@ public class ImageService {
         return uploadDir + filepath;
     }
 
-    public ImageEntity getImageByImageId(Long id) {
-        return imageRepository.findFirstByIdOrderByIdDesc(id);
+    public ImageEntity getImageByImageId(Long imageId) {
+        return imageRepository.findFirstByIdOrderByIdDesc(imageId).orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
     public List<ImageEntity> getImageUrlListBy(Long goodsId, ImageKind kind) {
@@ -131,27 +133,15 @@ public class ImageService {
         return result;
     }
 
-    public Map<ImageKind, List<ImageEntity>> receivingRequest(List<GoodsRequest> goodsRequests,
-        Long goodsId) {
-        Map<ImageKind, List<ImageEntity>> imageMap = new ConcurrentHashMap<>();
-        setGoodsId(goodsRequests, goodsId);
-        List<ImageEntity> basicImageEntityList = getImageUrlListBy(goodsId, BASIC);
-        List<ImageEntity> faultImageEntityList = getImageUrlListBy(goodsId, FAULT);
-        imageMap.put(BASIC, basicImageEntityList);
-        imageMap.put(FAULT, faultImageEntityList);
-        return imageMap;
+    public void receivingRequest(GoodsRequest goodsRequest,Long goodsId) {
+        updateImage(goodsRequest,goodsId);
     }
 
-    private void setGoodsId(List<GoodsRequest> goodsRequests, Long goodsId) {
-        goodsRequests.forEach(
-            goodsRequest -> getImagesByImageIdList(goodsRequest.getImageIdList()).forEach(
-                imageEntity -> {
-                    imageEntity.setGoodsId(goodsId);
-                    updateImageDB(imageEntity);
-                }));
-    }
-
-    public List<ImageEntity> getImagesByGoodsId(Long goodsId) {
-        return imageRepository.findAllByGoodsIdOrderByIdDesc(goodsId);
+    private void updateImage(GoodsRequest goodsRequest, Long goodsId) {
+        goodsRequest.getImageIdList().forEach(imageId -> {
+            ImageEntity imageEntity = getImageByImageId(imageId);
+            imageEntity.setGoodsId(goodsId);
+            imageRepository.save(imageEntity);
+        });
     }
 }

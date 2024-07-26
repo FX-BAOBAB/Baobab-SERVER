@@ -6,13 +6,15 @@ import global.annotation.Converter;
 import java.time.LocalDateTime;
 import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
 
 @Converter
 public class TakeBackConverter {
 
-    public TakeBackEntity toEntity() {
+    public TakeBackEntity toEntity(Long userId) {
         return TakeBackEntity.builder()
+            .userId(userId)
             .status(TakeBackStatus.TAKE_BACK_REGISTERING)
             .takeBackRequestAt(LocalDateTime.now())
             .build();
@@ -21,6 +23,7 @@ public class TakeBackConverter {
     public TakeBackResponse toResponse(TakeBackEntity entity) {
         return TakeBackResponse.builder()
             .id(entity.getId())
+            .userId(entity.getUserId())
             .status(entity.getStatus())
             .takeBackRequestAt(entity.getTakeBackRequestAt())
             .build();
@@ -30,6 +33,7 @@ public class TakeBackConverter {
 
         return TakeBackResponse.builder()
             .id(takeResponse.getId())
+            .userId(takeResponse.getUserId())
             .takeBackRequestAt(takeResponse.getTakeBackRequestAt())
             .status(takeResponse.getStatus())
             .goods(goodsResponseList)
@@ -37,4 +41,9 @@ public class TakeBackConverter {
 
     }
 
+    public TakeBackListResponse toListResponse(List<TakeBackResponse> takeBackResponseList) {
+        return TakeBackListResponse.builder()
+            .takeBackResponseList(takeBackResponseList)
+            .build();
+    }
 }

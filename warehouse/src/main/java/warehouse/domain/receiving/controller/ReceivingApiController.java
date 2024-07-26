@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.receiving.business.ReceivingBusiness;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingListResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
@@ -64,6 +65,14 @@ public class ReceivingApiController {
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @RequestBody Api<List<Long>> goodsIdList) {
         MessageResponse response = receivingBusiness.abandonment(goodsIdList.getBody(),user.getUsername());
+        return Api.OK(response);
+    }
+
+    @GetMapping
+    public Api<ReceivingListResponse> getReceivingList(
+        @AuthenticationPrincipal User user
+    ) {
+        ReceivingListResponse response = receivingBusiness.getReceivingResponse(user.getUsername());
         return Api.OK(response);
     }
 

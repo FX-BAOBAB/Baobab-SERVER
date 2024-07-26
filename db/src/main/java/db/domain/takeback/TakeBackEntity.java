@@ -31,4 +31,7 @@ public class TakeBackEntity extends BaseEntity {
 
     private LocalDateTime takeBackRequestAt;
 
+    @Column(nullable = false)
+    private Long userId;
+
 }
