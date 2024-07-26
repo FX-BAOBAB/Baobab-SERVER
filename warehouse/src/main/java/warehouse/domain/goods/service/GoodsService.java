@@ -153,4 +153,10 @@ public class GoodsService {
             goodsRepository.save(goodsEntity);
         });
     }
+
+    public void setUserId(GoodsEntity goodsEntity, Long userId) {
+        goodsEntity.setUserId(userId);
+        goodsRepository.save(goodsEntity);
+    }
+
 }
