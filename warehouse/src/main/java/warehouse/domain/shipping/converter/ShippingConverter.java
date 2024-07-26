@@ -31,13 +31,9 @@ public class ShippingConverter {
             .build();
     }
 
-    public ShippingListResponse toResponseList(List<ShippingEntity> entityList) {
-
-        List<ShippingResponse> shippingResponses = entityList.stream()
-            .map(entity -> this.toResponse(entity)).collect(Collectors.toList());
-
+    public ShippingListResponse toResponseList(List<ShippingDetailResponse> shippingDetailResponseList) {
         return ShippingListResponse.builder()
-            .shipping(shippingResponses)
+            .shipping(shippingDetailResponseList)
             .build();
     }
 

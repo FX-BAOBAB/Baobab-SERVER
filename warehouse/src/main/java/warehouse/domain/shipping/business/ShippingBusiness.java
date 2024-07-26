@@ -1,5 +1,6 @@
 package warehouse.domain.shipping.business;
 
+import db.domain.goods.GoodsEntity;
 import db.domain.goods.enums.GoodsStatus;
 import db.domain.shipping.ShippingEntity;
 import db.domain.users.UserEntity;
@@ -48,8 +49,14 @@ public class ShippingBusiness {
 
     public ShippingListResponse getShippingList(String email) {
         Long userId = getUserWithThrow(email).getId();
+
         List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
-        return shippingConverter.toResponseList(shippingEntityList);
+
+        List<ShippingDetailResponse> shippingDetailResponseList = shippingEntityList.stream().map(shippingEntity -> {
+            return getShippingDetail(shippingEntity.getId());
+        }).toList();
+
+        return shippingConverter.toResponseList(shippingDetailResponseList);
     }
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
