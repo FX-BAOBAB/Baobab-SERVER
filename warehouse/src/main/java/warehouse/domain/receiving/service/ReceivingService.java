@@ -5,6 +5,8 @@ import db.domain.receiving.ReceivingRepository;
 import db.domain.receiving.enums.ReceivingStatus;
 import global.errorcode.ErrorCode;
 import java.time.LocalDateTime;
+import java.util.List;
+import javax.swing.ListModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.exception.receiving.ReceivingNotFoundException;
@@ -44,4 +46,7 @@ public class ReceivingService {
         receivingRepository.save(receivingEntity);
     }
 
+    public List<ReceivingEntity> getReceivingListBy(Long userId) {
+        return receivingRepository.findAllByUserIdOrderByIdDesc(userId);
+    }
 }

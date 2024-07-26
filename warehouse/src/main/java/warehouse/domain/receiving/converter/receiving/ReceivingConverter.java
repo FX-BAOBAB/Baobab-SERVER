@@ -8,6 +8,7 @@ import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
+import warehouse.domain.receiving.controller.model.receiving.ReceivingListResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingRequest;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingStatusResponse;
@@ -44,5 +45,9 @@ public class ReceivingConverter {
             .total(Arrays.stream(ReceivingStatus.values()).count()).status(entity.getStatus())
             .description(ReceivingStatus.valueOf(entity.getStatus().toString()).getDescription())
             .current(ReceivingStatus.valueOf(entity.getStatus().toString()).getCurrent()).build();
+    }
+
+    public ReceivingListResponse toListResponse(List<ReceivingResponse> receivingResponseList) {
+        return ReceivingListResponse.builder().receivingResponseList(receivingResponseList).build();
     }
 }
