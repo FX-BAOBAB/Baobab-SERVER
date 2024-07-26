@@ -17,8 +17,7 @@ public class UsedGoodsService {
 
     private final UsedGoodsRepository usedGoodsRepository;
 
-    public void register(UsedGoodsEntity usedGoodsEntity, Long userId) {
-        usedGoodsEntity.setUserId(userId);
+    public void register(UsedGoodsEntity usedGoodsEntity) {
         usedGoodsEntity.setPostedAt(LocalDateTime.now());
         usedGoodsEntity.setStatus(UsedGoodsStatus.REGISTERED);
         usedGoodsRepository.save(usedGoodsEntity);

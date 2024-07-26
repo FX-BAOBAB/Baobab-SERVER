@@ -1,25 +1,21 @@
 package warehouse.domain.shipping.business;
 
-import db.domain.goods.GoodsEntity;
 import db.domain.goods.enums.GoodsStatus;
-import db.domain.image.ImageEntity;
-import db.domain.image.enums.ImageKind;
 import db.domain.shipping.ShippingEntity;
+import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import warehouse.common.utils.ImageUtils;
+import org.springframework.transaction.annotation.Transactional;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.image.service.ImageService;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
+import warehouse.domain.shipping.controller.model.response.MessageResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
-import warehouse.domain.shipping.controller.model.response.MessageResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 import warehouse.domain.shipping.converter.ShippingConverter;
@@ -37,71 +33,49 @@ public class ShippingBusiness {
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
 
-
+    @Transactional
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
-
         // 상품이 STORAGE 인지 확인
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsIdList(),
+        goodsService.checkGoodsStatusWithThrow(request.getGoodsIdList(),
             GoodsStatus.STORAGE);
-
-        Long userId = usersService.getUserWithThrow(email).getId();
-
-        ShippingEntity shippingEntity = shippingConverter.toEntity(request);
-
-        ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity,
-            userId);
-
-        // GoodsStatus 를 SHIPPING_ING 으로 변경
-        goodsService.setGoodsStatusBy(request.getGoodsIdList(), GoodsStatus.SHIPPING_ING);
-
-        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(request.getGoodsIdList());
-
+        Long userId = getUserWithThrow(email).getId();
+        ShippingEntity shippingEntity = shippingConverter.toEntity(request, userId);
+        ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity);
         // goods 컬럼에 shipping_id 부여
-        goodsService.setShippingId(goodsEntityList, savedShippingEntity.getId());
-
+        goodsService.setShippingId(request, savedShippingEntity.getId());
         return shippingConverter.toMessageResponse("출고 신청이 완료되었습니다.");
-
     }
 
-
     public ShippingListResponse getShippingList(String email) {
-
-        Long userId = usersService.getUserWithThrow(email).getId();
-
+        Long userId = getUserWithThrow(email).getId();
         List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
-
         return shippingConverter.toResponseList(shippingEntityList);
-
     }
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
 
         ShippingEntity shippingEntity = shippingService.getShippingById(shippingId);
 
+        List<GoodsResponse> goodsResponseList = goodsService.findAllByShippingIdWithThrow(
+                shippingId).stream().map(entity -> goodsService.getGoodsBy(entity.getId()))
+            .map(goodsEntity -> {
+                ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+                    goodsEntity);
+                return goodsConverter.toResponse(goodsEntity, imageListResponse);
+            }).toList();
+
         ShippingResponse shippingResponse = shippingConverter.toResponse(shippingEntity);
 
-        List<Long> goodsIdList = goodsService.findAllByShippingIdWithThrow(shippingId).stream()
-            .map(entity -> entity.getId()).collect(Collectors.toList());
-
-        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
-
-        List<GoodsResponse> goodsResponse = goodsEntityList.stream()
-            .map(goodsEntity -> {
-                ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
-                return goodsConverter.toResponse(goodsEntity, imageListResponse);
-            }).collect(Collectors.toList());
-
-        return shippingConverter.toResponse(shippingResponse, goodsResponse);
-
+        return shippingConverter.toResponse(shippingResponse, goodsResponseList);
     }
 
     public ShippingStatusResponse getCurrentStatusBy(Long shippingId) {
-
         ShippingEntity shippingEntity = shippingService.getShippingById(shippingId);
-
         return shippingConverter.toCurrentStatusResponse(shippingEntity);
-
     }
 
+    private UserEntity getUserWithThrow(String email) {
+        return usersService.getUserWithThrow(email);
+    }
 
 }

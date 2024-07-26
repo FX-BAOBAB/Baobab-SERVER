@@ -20,30 +20,30 @@ public class AddressBusiness {
     private final AddressService addressService;
     private final AddressConverter addressConverter;
     private final UsersService usersService;
-    private final UsersConverter usersConverter;
 
     public AddressResponses getAddressList(String username) {
-        UserEntity user = usersService.getUserWithThrow(username);
-        List<AddressResponse> addressResponseList = addressService.getAddressList(user.getId()).stream()
-            .map(addressEntity -> {
+        UserEntity user = getUserWithThrow(username);
+        return addressConverter.toResponseList(
+            addressService.getAddressList(user.getId()).stream().map(addressEntity -> {
                 return addressConverter.toResponse(addressEntity);
-            }).toList();
-        return AddressResponses.builder()
-            .addressDtoList(addressResponseList)
-            .build();
+            }).toList());
     }
 
     public AddressResponse getBasicAddressList(String username) {
-        UserEntity user = usersService.getUserWithThrow(username);
+        UserEntity user = getUserWithThrow(username);
         AddressEntity addressEntity = addressService.getBasicAddress(user.getId());
         return addressConverter.toResponse(addressEntity);
     }
 
     public AddressResponse setAddress(String username, AddressRequest addressRequest) {
-        UserEntity user = usersService.getUserWithThrow(username);
-        AddressEntity addressEntity = addressConverter.toEntity(addressRequest,user.getId());
+        UserEntity user = getUserWithThrow(username);
+        AddressEntity addressEntity = addressConverter.toEntity(addressRequest, user.getId());
         AddressEntity newAddressEntity = addressService.setAddress(addressEntity);
-        return addressConverter.toResponse(addressEntity);
+        return addressConverter.toResponse(newAddressEntity);
+    }
+
+    private UserEntity getUserWithThrow(String username) {
+        return usersService.getUserWithThrow(username);
     }
 
 }

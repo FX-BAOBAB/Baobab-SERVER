@@ -2,8 +2,10 @@ package warehouse.domain.address.converter;
 
 import db.domain.users.address.AddressEntity;
 import global.annotation.Converter;
+import java.util.List;
 import warehouse.domain.address.controller.model.AddressRequest;
 import warehouse.domain.address.controller.model.AddressResponse;
+import warehouse.domain.address.controller.model.AddressResponses;
 import warehouse.domain.users.controller.model.register.UsersRegisterRequest;
 
 @Converter
@@ -36,6 +38,12 @@ public class AddressConverter {
             .detailAddress(addressEntity.getDetailAddress())
             .post(addressEntity.getPost())
             .basicAddress(addressEntity.isBasicAddress())
+            .build();
+    }
+
+    public AddressResponses toResponseList(List<AddressResponse> addressResponseList) {
+        return AddressResponses.builder()
+            .addressDtoList(addressResponseList)
             .build();
     }
 }

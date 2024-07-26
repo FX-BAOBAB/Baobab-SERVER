@@ -128,7 +128,7 @@ public class ReceivingBusiness {
         Long userId = usersService.getUserWithThrow(email).getId();
 
         goodsIdList.forEach(it -> {
-            GoodsEntity goodsEntity = goodsService.getGoodsListBy(it);
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(it);
             if (!Objects.equals(goodsEntity.getUserId(), userId)) {
                 throw new NoOwnershipException(ReceivingErrorCode.NO_OWNERSHIP);
             }

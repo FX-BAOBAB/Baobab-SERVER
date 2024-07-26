@@ -40,18 +40,17 @@ public class UsedGoodsBusiness {
         Long userId = usersService.getUserWithThrow(email).getId();
 
         // GoodsStatus 가 STORAGE 인지 확인
-        goodsService.checkStoredGoodsAndStatusWithThrowBy(request.getGoodsId(),
-            GoodsStatus.STORAGE);
+        goodsService.checkGoodsStatusWithThrow(request.getGoodsId(), GoodsStatus.STORAGE);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsById(request.getGoodsId());
+        GoodsEntity goodsEntity = getGoodsBy(request.getGoodsId());
 
         // GoodsStatus 를 USED 로 변경
-        goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.USED);
+        setGoodsStatusBy(goodsEntity.getId(), GoodsStatus.USED);
 
-        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request);
+        UsedGoodsEntity usedGoodsEntity = usedGoodsConverter.toEntity(request, userId);
 
         // 요청으로 받은 중고 거래 폼을 저장
-        usedGoodsService.register(usedGoodsEntity, userId);
+        usedGoodsService.register(usedGoodsEntity);
 
         return usedGoodsConverter.toMessageResponse("중고 물품 등록이 완료되었습니다.");
     }
@@ -62,10 +61,10 @@ public class UsedGoodsBusiness {
         UsedGoodsEntity usedGoodsEntity = usedGoodsService.getUsedGoodsBy(usedGoodsId,
             UsedGoodsStatus.REGISTERED);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsById(usedGoodsEntity.getGoodsId());
+        GoodsEntity goodsEntity = getGoodsBy(usedGoodsEntity.getGoodsId());
 
         // goods 상태를 STORAGE(보관) 으로 변경
-        goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.STORAGE);
+        setGoodsStatusBy(goodsEntity.getId(), GoodsStatus.STORAGE);
 
         // usedGoodsStatus 를 UNREGISTERED 로 변경
         usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.UNREGISTERED);
@@ -83,9 +82,10 @@ public class UsedGoodsBusiness {
             .map(usedGoodsEntity -> usedGoodsEntity.getGoodsId()).toList();
 
         // goodsIdList 로 goods 상태를 STORAGE(보관) 으로 변경
-        goodsService.setGoodsStatusBy(goodsIdList, GoodsStatus.STORAGE);
+        usedGoodsEntityList.stream().map(usedGoodsEntity -> usedGoodsEntity.getGoodsId())
+            .forEach(goodsId -> setGoodsStatusBy(goodsId, GoodsStatus.STORAGE));
 
-        // usedGoodsStatus 를 갇 로 변경
+        // usedGoodsStatus 를 UNREGISTERED 로 변경
         usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntityList, UsedGoodsStatus.UNREGISTERED);
 
         return usedGoodsConverter.toMessageResponse("중고 물품 등록이 취소되었습니다.");
@@ -97,7 +97,7 @@ public class UsedGoodsBusiness {
         UsedGoodsEntity usedGoodsEntity = usedGoodsService.getUsedGoodsBy(usedGoodsId,
             UsedGoodsStatus.REGISTERED);
 
-        GoodsEntity goodsEntity = goodsService.getGoodsById(usedGoodsEntity.getGoodsId());
+        GoodsEntity goodsEntity = getGoodsBy(usedGoodsEntity.getGoodsId());
 
         ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
 
@@ -107,12 +107,10 @@ public class UsedGoodsBusiness {
     }
 
     //TODO 구매 프로세스 재정립
+
     /**
-     * 구매자의 userId
-     * 1. usedGoodsStatus 가 REGISTERED 인지 확인
-     * 2. goods 의 userId 를 구매자의 userId 로 변경
-     * 3. goods 의 status 를 보관(STORAGE) 로 변경
-     * 4. usedGoodsStatus 를 SOLD 로 변경
+     * 구매자의 userId 1. usedGoodsStatus 가 REGISTERED 인지 확인 2. goods 의 userId 를 구매자의 userId 로 변경 3.
+     * goods 의 status 를 보관(STORAGE) 로 변경 4. usedGoodsStatus 를 SOLD 로 변경
      */
     public MessageResponse buyUsedGoods(Long usedGoodsId, String email) {
 
@@ -121,15 +119,23 @@ public class UsedGoodsBusiness {
         UsedGoodsEntity usedGoodsEntity = usedGoodsService.getUsedGoodsBy(usedGoodsId,
             UsedGoodsStatus.REGISTERED); // 1
 
-        GoodsEntity goodsEntity = goodsService.getGoodsById(usedGoodsEntity.getGoodsId());
+        GoodsEntity goodsEntity = getGoodsBy(usedGoodsEntity.getGoodsId());
 
         goodsService.setUserId(goodsEntity, userId); // 2
 
-        goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.STORAGE); // 3
+        setGoodsStatusBy(goodsEntity.getId(), GoodsStatus.STORAGE); // 3
 
         usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.SOLD); // 4
 
         return usedGoodsConverter.toMessageResponse("중고 물품 거래가 완료되었습니다.");
+    }
+
+    private void setGoodsStatusBy(Long goodId, GoodsStatus status) {
+        goodsService.setGoodsStatusBy(goodId, status);
+    }
+
+    private GoodsEntity getGoodsBy(Long goodsId) {
+        return goodsService.getGoodsBy(goodsId);
     }
 
 }

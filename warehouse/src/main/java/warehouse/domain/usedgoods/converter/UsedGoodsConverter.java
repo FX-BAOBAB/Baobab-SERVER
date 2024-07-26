@@ -10,12 +10,13 @@ import warehouse.domain.usedgoods.controller.model.response.UsedGoodsDetailRespo
 @Converter
 public class UsedGoodsConverter {
 
-    public UsedGoodsEntity toEntity(RegisterUsedGoods request) {
+    public UsedGoodsEntity toEntity(RegisterUsedGoods request, Long userId) {
         return UsedGoodsEntity.builder()
             .title(request.getTitle())
             .price(request.getPrice())
             .description(request.getDescription())
             .goodsId(request.getGoodsId())
+            .userId(userId)
             .build();
     }
 

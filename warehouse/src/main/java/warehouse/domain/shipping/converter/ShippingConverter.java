@@ -17,8 +17,9 @@ import warehouse.domain.shipping.controller.model.response.ShippingStatusRespons
 @Converter
 public class ShippingConverter {
 
-    public ShippingEntity toEntity(ShippingRequest request) {
+    public ShippingEntity toEntity(ShippingRequest request, Long userId) {
         return ShippingEntity.builder()
+            .userId(userId)
             .deliveryDate(request.getDeliveryDate())
             .deliveryAddress(request.getDeliveryAddress())
             .build();
