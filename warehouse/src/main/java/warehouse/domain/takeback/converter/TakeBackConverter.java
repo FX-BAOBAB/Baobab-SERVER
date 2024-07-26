@@ -6,6 +6,7 @@ import global.annotation.Converter;
 import java.time.LocalDateTime;
 import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
+import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
 
 @Converter
@@ -40,4 +41,9 @@ public class TakeBackConverter {
 
     }
 
+    public TakeBackListResponse toListResponse(List<TakeBackResponse> takeBackResponseList) {
+        return TakeBackListResponse.builder()
+            .takeBackResponseList(takeBackResponseList)
+            .build();
+    }
 }

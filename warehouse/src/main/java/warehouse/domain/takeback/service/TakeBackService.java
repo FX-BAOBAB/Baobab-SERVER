@@ -2,6 +2,7 @@ package warehouse.domain.takeback.service;
 
 import db.domain.takeback.TakeBackEntity;
 import db.domain.takeback.TakeBackRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.TakeBackErrorCode;
@@ -20,6 +21,10 @@ public class TakeBackService {
     public TakeBackEntity getTakeBackById(Long requestId) {
         return takeBackRepository.findFirstById(requestId).orElseThrow(() -> new NotFoundRequestException(
             TakeBackErrorCode.NOT_FOUNT_REQUEST));
+    }
+
+    public List<TakeBackEntity> getTakeBackList(Long userId) {
+        return takeBackRepository.findAllByUserIdOrderByIdDesc(userId);
     }
 
 }
