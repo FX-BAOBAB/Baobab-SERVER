@@ -2,6 +2,7 @@ package warehouse.domain.usedgoods.controller;
 
 import global.annotation.ApiValid;
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -25,6 +26,7 @@ public class UsedGoodsApiController {
     private final UsedGoodsBusiness usedGoodsBusiness;
 
     @PostMapping() // 중고 물품 등록
+    @Operation(summary = "[중고 물품 등록]", description = "중고 전환 신청 + 판매글 작성")
     public Api<MessageResponse> registerUsedGoods(@AuthenticationPrincipal User user,
         @RequestBody @ApiValid Api<RegisterUsedGoods> request) {
         MessageResponse response = usedGoodsBusiness.registerUsedGoods(
@@ -33,12 +35,14 @@ public class UsedGoodsApiController {
     }
 
     @PostMapping("/cancel/{usedGoodsId}") // usedGoodsId 로 중고 물품 취소
+    @Operation(summary = "[중고 아이디로 물품 취소]")
     public Api<MessageResponse> cancelUsedGoods(@PathVariable Long usedGoodsId) {
         MessageResponse response = usedGoodsBusiness.cancelUsedGoods(usedGoodsId);
         return Api.OK(response);
     }
 
     @PostMapping("/cancel") // usedGoodsIdList 로 중고 물품 취소
+    @Operation(summary = "[중고 아이디 리스트로 물품 취소]")
     public Api<MessageResponse> cancelUsedGoodsList(
         @RequestBody @ApiValid Api<CancelUsedGoodsRequest> request) {
         MessageResponse response = usedGoodsBusiness.cancelUsedGoods(request.getBody());
@@ -46,12 +50,14 @@ public class UsedGoodsApiController {
     }
 
     @GetMapping("/{usedGoodsId}") // usedGoodsId 로 중고 상세 조회
+    @Operation(summary = "[중고 아이디로 상세 조회]")
     public Api<UsedGoodsDetailResponse> getUsedGoodsDetail(@PathVariable Long usedGoodsId) {
         UsedGoodsDetailResponse response = usedGoodsBusiness.getUsedGoodsDetail(usedGoodsId);
         return Api.OK(response);
     }
 
     @PostMapping("/{usedGoodsId}") // usedGoodsId 로 중고 물품 구매
+    @Operation(summary = "[물품 구매]", description = "usedGoodsId로 중고 물품 구매(개발중)")
     public Api<MessageResponse> buyUsedGoods(@AuthenticationPrincipal User user, @PathVariable Long usedGoodsId) {
         MessageResponse response = usedGoodsBusiness.buyUsedGoods(usedGoodsId, user.getUsername());
         return Api.OK(response);

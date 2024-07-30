@@ -1,6 +1,7 @@
 package warehouse.domain.takeback.controller;
 
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ public class TakeBackController {
     private final TakeBackBusiness takeBackBusiness;
 
     @PostMapping("/{receivingId}")
+    @Operation(summary = "[입고 아이디로 반품 요청]")
     public Api<TakeBackResponse> takeBackRequest(
         @PathVariable Long receivingId,
         @AuthenticationPrincipal User user
@@ -34,6 +36,7 @@ public class TakeBackController {
     }
 
     @PostMapping
+    @Operation(summary = "[상품 아이디 리스트로 반품 요청]")
     public Api<TakeBackResponse> takeBackRequest(
         @RequestBody Api<List<Long>> goodsIdList,
         @AuthenticationPrincipal User user
@@ -43,6 +46,7 @@ public class TakeBackController {
     }
 
     @GetMapping
+    @Operation(summary = "[반품 요청서 목록 조회]")
     public Api<TakeBackListResponse> getTakeBackRequestList(
         @AuthenticationPrincipal User user
     ){

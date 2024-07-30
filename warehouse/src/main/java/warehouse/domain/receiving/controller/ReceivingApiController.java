@@ -2,6 +2,7 @@ package warehouse.domain.receiving.controller;
 
 import global.annotation.ApiValid;
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class ReceivingApiController {
     private final ReceivingBusiness receivingBusiness;
 
     @PostMapping
+    @Operation(summary = "[입고 신청]")
     public Api<ReceivingResponse> receivingRequest(
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @RequestBody @ApiValid Api<ReceivingRequest> request) {
@@ -41,18 +43,21 @@ public class ReceivingApiController {
     }
 
     @GetMapping("/{receivingId}")
+    @Operation(summary = "[입고 진행 현황 조회]")
     public Api<ReceivingStatusResponse> getCurrentStatusBy(@PathVariable Long receivingId) {
         ReceivingStatusResponse response = receivingBusiness.getCurrentStatusBy(receivingId);
         return Api.OK(response);
     }
 
     @PostMapping("/guarantee/{receivingId}")
+    @Operation(summary = "[결합 인정]")
     public Api<GuaranteeResponse> setGuarantee(@PathVariable Long receivingId) {
         GuaranteeResponse response = receivingBusiness.setGuarantee(receivingId);
         return Api.OK(response);
     }
 
     @PostMapping("/abandonment/{receivingId}")
+    @Operation(summary = "[입고 요청서 물품 전체 소유권 포기]")
     public Api<MessageResponse> abandonment(
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @PathVariable Long receivingId) {
@@ -61,6 +66,7 @@ public class ReceivingApiController {
     }
 
     @PostMapping("/abandonment")
+    @Operation(summary = "[물품 아이디 리스트로 물품 소유권 포기]")
     public Api<MessageResponse> abandonment(
         @Parameter(hidden = true) @AuthenticationPrincipal User user,
         @RequestBody Api<List<Long>> goodsIdList) {
@@ -69,6 +75,7 @@ public class ReceivingApiController {
     }
 
     @GetMapping
+    @Operation(summary = "[입고 요청서 목록 조회]")
     public Api<ReceivingListResponse> getReceivingList(
         @AuthenticationPrincipal User user
     ) {
