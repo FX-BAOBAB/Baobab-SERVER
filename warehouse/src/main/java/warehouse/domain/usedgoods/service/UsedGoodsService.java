@@ -1,5 +1,7 @@
 package warehouse.domain.usedgoods.service;
 
+import db.domain.usedgoods.EntitySearchCondition;
+import db.domain.usedgoods.QueryUsedGoodsRepository;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.UsedGoodsRepository;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
@@ -16,6 +18,7 @@ import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
 public class UsedGoodsService {
 
     private final UsedGoodsRepository usedGoodsRepository;
+    private final QueryUsedGoodsRepository queryUsedGoodsRepository;
 
     public void register(UsedGoodsEntity usedGoodsEntity) {
         usedGoodsEntity.setPostedAt(LocalDateTime.now());
@@ -46,4 +49,9 @@ public class UsedGoodsService {
             this.setUsedGoodsStatusBy(usedGoodsEntity, status);
         });
     }
+
+    public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
+        return queryUsedGoodsRepository.usedGoodsSearchBy(condition);
+    }
+
 }
