@@ -50,7 +50,7 @@ public class ReceivingApiController {
     }
 
     @PostMapping("/guarantee/{receivingId}")
-    @Operation(summary = "[결합 인정]")
+    @Operation(summary = "[결함 인정]")
     public Api<GuaranteeResponse> setGuarantee(@PathVariable Long receivingId) {
         GuaranteeResponse response = receivingBusiness.setGuarantee(receivingId);
         return Api.OK(response);
