@@ -1,6 +1,7 @@
 package warehouse.domain.users.controller;
 
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ public class UsersOpenApiController {
     private final UsersBusiness usersBusiness;
 
     @PostMapping()
+    @Operation(summary = "[회원가입]")
     public Api<UsersRegisteredResponse> register(
         @RequestBody @ApiValid Api<UsersRegisterRequest> request
     ) {
@@ -33,6 +35,7 @@ public class UsersOpenApiController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "[로그인]")
     public Api<TokenResponse> login(
         @RequestBody @ApiValid Api<UserLoginRequest> request, Errors errors
     ) {
@@ -41,6 +44,7 @@ public class UsersOpenApiController {
     }
 
     @PostMapping("/duplication/email")
+    @Operation(summary = "[email 중복 확인]")
     public Api<DuplicationResponse> duplicationEmailCheck(
         @RequestBody @ApiValid Api<DuplicationEmailRequest> request
     ){
@@ -49,6 +53,7 @@ public class UsersOpenApiController {
     }
 
     @PostMapping("/duplication/name")
+    @Operation(summary = "[name 중복 확인]")
     public Api<DuplicationResponse> duplicationNameCheck(
         @RequestBody @ApiValid Api<DuplicationNameRequest> request
     ){

@@ -2,6 +2,7 @@ package warehouse.domain.goods.controller;
 
 import db.domain.goods.enums.GoodsStatus;
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +24,7 @@ public class GoodsController {
     private final GoodsBusiness goodsBusiness;
 
     @GetMapping("/{strategy}/{requestId}")
+    @Operation(summary = "[입고/출고/반품 요청서 내 상품 목록 조회]")
     public Api<List<GoodsResponse>> receiving(@PathVariable GetGoodsStrategy strategy,
         @PathVariable Long requestId, @AuthenticationPrincipal User user) {
         List<GoodsResponse> response = goodsBusiness.getGoodsList(strategy, requestId,
@@ -31,6 +33,7 @@ public class GoodsController {
     }
 
     @GetMapping()
+    @Operation(summary = "[물품 상태로 물품 목록 조회]")
     public Api<List<GoodsResponse>> getGoodsByStatus(@RequestParam GoodsStatus status,
         @AuthenticationPrincipal User user) {
         List<GoodsResponse> response = goodsBusiness.getGoodsList(status, user.getUsername());

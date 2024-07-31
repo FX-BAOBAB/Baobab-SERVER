@@ -1,6 +1,7 @@
 package warehouse.domain.users.security.jwt.controller;
 
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,6 +18,7 @@ public class JwtOpenApiController {
     private final TokenBusiness tokenBusiness;
 
     @PostMapping("/reissue")
+    @Operation(summary = "[refreshToken으로 accessToken 재발급]")
     public Api<TokenDto> reIssueAccessToken(
         @RequestHeader("Authorization") String refreshToken
     ){
