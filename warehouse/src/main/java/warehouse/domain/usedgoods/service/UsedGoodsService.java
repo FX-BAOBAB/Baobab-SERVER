@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.UsedGoodsErrorCode;
 import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
+import warehouse.common.exception.usedGoods.UsedGoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +52,11 @@ public class UsedGoodsService {
     }
 
     public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
-        return queryUsedGoodsRepository.usedGoodsSearchBy(condition);
+        List<UsedGoodsEntity> searchList = queryUsedGoodsRepository.usedGoodsSearchBy(condition);
+        if(searchList.isEmpty()) {
+            throw new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND);
+        }
+        return searchList;
     }
 
 }
