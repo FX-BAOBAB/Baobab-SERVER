@@ -2,21 +2,28 @@ package warehouse.domain.usedgoods.business;
 
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.enums.GoodsStatus;
+import db.domain.usedgoods.EntitySearchCondition;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
 import global.annotation.Business;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.image.service.ImageService;
+import warehouse.domain.usedgoods.controller.model.request.SearchCondition;
 import warehouse.domain.usedgoods.controller.model.request.CancelUsedGoodsRequest;
 import warehouse.domain.usedgoods.controller.model.request.RegisterUsedGoods;
 import warehouse.domain.usedgoods.controller.model.response.MessageResponse;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsDetailResponse;
+import warehouse.domain.usedgoods.controller.model.response.UsedGoodsSearchResponse;
 import warehouse.domain.usedgoods.converter.UsedGoodsConverter;
 import warehouse.domain.usedgoods.service.UsedGoodsService;
 import warehouse.domain.users.service.UsersService;
@@ -33,6 +40,7 @@ public class UsedGoodsBusiness {
     private final UsedGoodsConverter usedGoodsConverter;
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
+    private final ImageService imageService;
 
     public MessageResponse registerUsedGoods(RegisterUsedGoods request,
         String email) {
@@ -128,6 +136,47 @@ public class UsedGoodsBusiness {
         usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.SOLD); // 4
 
         return usedGoodsConverter.toMessageResponse("중고 물품 거래가 완료되었습니다.");
+    }
+
+    public List<UsedGoodsSearchResponse> usedGoodsSearchBy(SearchCondition condition,
+        Pageable page) {
+
+        return this.usedGoodsSearchBy(condition, page, null);
+
+    }
+
+    public List<UsedGoodsSearchResponse> usedGoodsSearchBy(SearchCondition condition, Pageable page,
+        String email) {
+
+        Long userId = email != null ? usersService.getUserWithThrow(email).getId() : null;
+
+        EntitySearchCondition entitySearchCondition = usedGoodsConverter.toEntitySearchCondition(
+            condition, page, userId);
+
+        List<UsedGoodsEntity> usedGoodsEntityList = usedGoodsService.usedGoodsSearchBy(
+            entitySearchCondition);
+
+        Map<Long, GoodsEntity> goodsEntityMap = getGoodsEntityMap(usedGoodsEntityList);
+
+        return usedGoodsEntityList.stream().map(usedGoodsEntity -> {
+            Long goodsId = usedGoodsEntity.getGoodsId();
+            GoodsEntity goodsEntity = goodsEntityMap.get(goodsId);
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+            GoodsResponse response = goodsConverter.toResponse(goodsEntity, imageListResponse);
+            return usedGoodsConverter.toSearchResponse(usedGoodsEntity, response);
+        }).toList();
+
+    }
+
+    private Map<Long, GoodsEntity> getGoodsEntityMap(List<UsedGoodsEntity> usedGoodsEntityList) {
+        List<Long> goodsIdList = usedGoodsEntityList.stream()
+            .map(usedGoodsEntity -> usedGoodsEntity.getGoodsId()).toList();
+        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
+        Map<Long, GoodsEntity> goodsEntityMap = goodsEntityList.stream().collect(Collectors.toMap(
+            goodsEntity -> goodsEntity.getId(), // key
+            goodsEntity -> goodsEntity // value
+        ));
+        return goodsEntityMap;
     }
 
     private void setGoodsStatusBy(Long goodId, GoodsStatus status) {
