@@ -1,5 +1,7 @@
 package warehouse.domain.usedgoods.service;
 
+import db.domain.usedgoods.EntitySearchCondition;
+import db.domain.usedgoods.QueryUsedGoodsRepository;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.UsedGoodsRepository;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
@@ -10,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import warehouse.common.error.UsedGoodsErrorCode;
 import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
+import warehouse.common.exception.usedGoods.UsedGoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
 public class UsedGoodsService {
 
     private final UsedGoodsRepository usedGoodsRepository;
+    private final QueryUsedGoodsRepository queryUsedGoodsRepository;
 
     public void register(UsedGoodsEntity usedGoodsEntity) {
         usedGoodsEntity.setPostedAt(LocalDateTime.now());
@@ -46,4 +50,13 @@ public class UsedGoodsService {
             this.setUsedGoodsStatusBy(usedGoodsEntity, status);
         });
     }
+
+    public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
+        List<UsedGoodsEntity> searchList = queryUsedGoodsRepository.usedGoodsSearchBy(condition);
+        if(searchList.isEmpty()) {
+            throw new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND);
+        }
+        return searchList;
+    }
+
 }
