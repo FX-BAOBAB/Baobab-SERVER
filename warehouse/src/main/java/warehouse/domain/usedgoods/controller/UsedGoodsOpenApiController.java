@@ -22,7 +22,7 @@ public class UsedGoodsOpenApiController {
 
     private final UsedGoodsBusiness usedGoodsBusiness;
 
-    @GetMapping("/search")
+    @GetMapping()
     @Operation(summary = "[중고 물품 전체 검색]", description = "무한 스크롤 방식")
     public Api<List<UsedGoodsSearchResponse>> usedGoodsSearchBy(
         @ModelAttribute SearchCondition condition,

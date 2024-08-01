@@ -70,7 +70,7 @@ public class UsedGoodsApiController {
         return Api.OK(response);
     }
 
-    @GetMapping("/search")
+    @GetMapping()
     @Operation(summary = "[자신이 등록한 중고 물품 검색]", description = "무한 스크롤 방식")
     public Api<List<UsedGoodsSearchResponse>> usedGoodsSearchBy(
         @ModelAttribute SearchCondition condition,
