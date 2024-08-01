@@ -25,8 +25,6 @@ public class QueryUsedGoodsRepository { // JpaQueryFactory 가 존재하기 때�
     private final JPAQueryFactory queryFactory;
 
     public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
-        log.info("keyword : {}",condition.getKeyword());
-
         return queryFactory.selectFrom(usedGoodsEntity)
             .where(
                 likeKeyword(condition.getKeyword()), // keyword 를 가지고 있는지 (제목 기준)

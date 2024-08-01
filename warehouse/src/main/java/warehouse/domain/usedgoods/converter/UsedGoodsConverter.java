@@ -38,18 +38,16 @@ public class UsedGoodsConverter {
             .build();
     }
 
-    public List<UsedGoodsSearchResponse> toResponse(List<UsedGoodsEntity> usedGoodsEntityList,
-        List<GoodsResponse> goodsResponseList) {
-        Map<Long, GoodsResponse> goodsMap = goodsResponseList.stream().collect(Collectors.toMap(
-            (goodsResponse -> goodsResponse.getId()),
-            (goodsResponse -> goodsResponse)
-        ));
-
-        return usedGoodsEntityList.stream()
-            .map(usedGoodsEntity -> {
-                GoodsResponse goodsResponse = goodsMap.get(usedGoodsEntity.getGoodsId());
-                return this.toSearchResponse(usedGoodsEntity, goodsResponse);
-            }).toList();
+    public UsedGoodsSearchResponse toSearchResponse(UsedGoodsEntity usedGoodsEntity,
+        GoodsResponse goodsResponse) {
+        return UsedGoodsSearchResponse.builder()
+            .usedGoodsId(usedGoodsEntity.getId())
+            .title(usedGoodsEntity.getTitle())
+            .price(usedGoodsEntity.getPrice())
+            .postedAt(usedGoodsEntity.getPostedAt())
+            .status(usedGoodsEntity.getStatus())
+            .goods(goodsResponse)
+            .build();
     }
 
     public MessageResponse toMessageResponse(String message) {
@@ -71,18 +69,5 @@ public class UsedGoodsConverter {
             .userId(userId)
             .build();
     }
-
-    private UsedGoodsSearchResponse toSearchResponse(UsedGoodsEntity usedGoodsEntity,
-        GoodsResponse goodsResponse) {
-        return UsedGoodsSearchResponse.builder()
-            .usedGoodsId(usedGoodsEntity.getId())
-            .title(usedGoodsEntity.getTitle())
-            .price(usedGoodsEntity.getPrice())
-            .postedAt(usedGoodsEntity.getPostedAt())
-            .status(usedGoodsEntity.getStatus())
-            .goods(goodsResponse)
-            .build();
-    }
-
 
 }

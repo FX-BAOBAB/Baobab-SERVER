@@ -7,6 +7,8 @@ import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
 import global.annotation.Business;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -154,9 +156,27 @@ public class UsedGoodsBusiness {
         List<UsedGoodsEntity> usedGoodsEntityList = usedGoodsService.usedGoodsSearchBy(
             entitySearchCondition);
 
-        List<GoodsResponse> goodsResponseList = getGoodsResponseList(usedGoodsEntityList);
+        Map<Long, GoodsEntity> goodsEntityMap = getGoodsEntityMap(usedGoodsEntityList);
 
-        return usedGoodsConverter.toResponse(usedGoodsEntityList, goodsResponseList);
+        return usedGoodsEntityList.stream().map(usedGoodsEntity -> {
+            Long goodsId = usedGoodsEntity.getGoodsId();
+            GoodsEntity goodsEntity = goodsEntityMap.get(goodsId);
+            ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
+            GoodsResponse response = goodsConverter.toResponse(goodsEntity, imageListResponse);
+            return usedGoodsConverter.toSearchResponse(usedGoodsEntity, response);
+        }).toList();
+
+    }
+
+    private Map<Long, GoodsEntity> getGoodsEntityMap(List<UsedGoodsEntity> usedGoodsEntityList) {
+        List<Long> goodsIdList = usedGoodsEntityList.stream()
+            .map(usedGoodsEntity -> usedGoodsEntity.getGoodsId()).toList();
+        List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(goodsIdList);
+        Map<Long, GoodsEntity> goodsEntityMap = goodsEntityList.stream().collect(Collectors.toMap(
+            goodsEntity -> goodsEntity.getId(), // key
+            goodsEntity -> goodsEntity // value
+        ));
+        return goodsEntityMap;
     }
 
     private void setGoodsStatusBy(Long goodId, GoodsStatus status) {
@@ -167,16 +187,4 @@ public class UsedGoodsBusiness {
         return goodsService.getGoodsBy(goodsId);
     }
 
-    private List<GoodsResponse> getGoodsResponseList(List<UsedGoodsEntity> usedGoodsEntityList) {
-        List<Long> goodsIdList = usedGoodsEntityList.stream().map(entity -> entity.getGoodsId())
-            .toList();
-
-        List<GoodsResponse> goodsResponseList = goodsService.getGoodsListBy(goodsIdList).stream()
-            .map(goodsEntity -> {
-                ImageListResponse imageListResponse = imageConverter.toImageListResponse(
-                    goodsEntity);
-                return goodsConverter.toResponse(goodsEntity, imageListResponse);
-            }).toList();
-        return goodsResponseList;
-    }
 }
