@@ -31,9 +31,14 @@ public class ShippingConverter {
             .build();
     }
 
-    public ShippingListResponse toResponseList(List<ShippingDetailResponse> shippingDetailResponseList) {
+    public ShippingListResponse toResponse(ShippingEntity entity, List<GoodsResponse> goodsResponses) {
         return ShippingListResponse.builder()
-            .shipping(shippingDetailResponseList)
+            .shippingId(entity.getId())
+            .deliveryDate(entity.getDeliveryDate())
+            .deliveryAddress(entity.getDeliveryAddress())
+            .status(entity.getStatus())
+            .deliveryMan(entity.getDeliveryMan())
+            .goods(goodsResponses)
             .build();
     }
 

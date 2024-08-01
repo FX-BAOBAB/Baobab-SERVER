@@ -13,6 +13,7 @@ import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.image.service.ImageService;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
@@ -33,6 +34,7 @@ public class ShippingBusiness {
     private final ShippingConverter shippingConverter;
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
+    private final ImageService imageService;
 
     @Transactional
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
@@ -47,16 +49,23 @@ public class ShippingBusiness {
         return shippingConverter.toMessageResponse("출고 신청이 완료되었습니다.");
     }
 
-    public ShippingListResponse getShippingList(String email) {
+    public List<ShippingListResponse> getShippingList(String email) {
         Long userId = getUserWithThrow(email).getId();
-
         List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
 
-        List<ShippingDetailResponse> shippingDetailResponseList = shippingEntityList.stream().map(shippingEntity -> {
-            return getShippingDetail(shippingEntity.getId());
-        }).toList();
+        return shippingEntityList.stream().map(shippingEntity -> {
+            List<GoodsEntity> goodsEntityList = goodsService.findAllByShippingIdWithThrow(
+                shippingEntity.getId());
 
-        return shippingConverter.toResponseList(shippingDetailResponseList);
+            List<GoodsResponse> goodsResponseList = goodsEntityList.stream()
+                .map(goodsEntity -> {
+                    ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+                        goodsEntity);
+                    return goodsConverter.toResponse(goodsEntity, imageListResponse);
+                }).toList();
+
+            return shippingConverter.toResponse(shippingEntity, goodsResponseList);
+        }).toList();
     }
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
