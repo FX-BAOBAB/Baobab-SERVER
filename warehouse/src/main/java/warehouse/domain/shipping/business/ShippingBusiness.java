@@ -16,9 +16,8 @@ import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 import warehouse.domain.shipping.converter.ShippingConverter;
 import warehouse.domain.shipping.service.ShippingService;
@@ -34,7 +33,6 @@ public class ShippingBusiness {
     private final ShippingConverter shippingConverter;
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
-    private final ImageService imageService;
 
     @Transactional
     public MessageResponse shippingRequest(ShippingRequest request, String email) {
@@ -49,11 +47,11 @@ public class ShippingBusiness {
         return shippingConverter.toMessageResponse("출고 신청이 완료되었습니다.");
     }
 
-    public List<ShippingListResponse> getShippingList(String email) {
+    public ShippingListResponse getShippingList(String email) {
         Long userId = getUserWithThrow(email).getId();
         List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
 
-        return shippingEntityList.stream().map(shippingEntity -> {
+        List<ShippingDetailResponse> shippingResponse = shippingEntityList.stream().map(shippingEntity -> {
             List<GoodsEntity> goodsEntityList = goodsService.findAllByShippingIdWithThrow(
                 shippingEntity.getId());
 
@@ -66,6 +64,8 @@ public class ShippingBusiness {
 
             return shippingConverter.toResponse(shippingEntity, goodsResponseList);
         }).toList();
+
+        return shippingConverter.toResponse(shippingResponse);
     }
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
@@ -80,9 +80,7 @@ public class ShippingBusiness {
                 return goodsConverter.toResponse(goodsEntity, imageListResponse);
             }).toList();
 
-        ShippingResponse shippingResponse = shippingConverter.toResponse(shippingEntity);
-
-        return shippingConverter.toResponse(shippingResponse, goodsResponseList);
+        return shippingConverter.toResponse(shippingEntity, goodsResponseList);
     }
 
     public ShippingStatusResponse getCurrentStatusBy(Long shippingId) {

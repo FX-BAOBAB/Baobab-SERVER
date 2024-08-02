@@ -1,13 +1,10 @@
 package warehouse.domain.shipping.controller.model.response;
 
-import db.domain.shipping.enums.ShippingStatus;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import warehouse.domain.goods.controller.model.GoodsResponse;
 
 @Data
 @NoArgsConstructor
@@ -15,16 +12,7 @@ import warehouse.domain.goods.controller.model.GoodsResponse;
 @Builder
 public class ShippingListResponse {
 
-    private Long shippingId;
+    private List<ShippingDetailResponse> shippingList;
 
-    private LocalDateTime deliveryDate;
-
-    private String deliveryAddress;
-
-    private ShippingStatus status;
-
-    private Long deliveryMan;
-
-    private List<GoodsResponse> goods;
 }
 

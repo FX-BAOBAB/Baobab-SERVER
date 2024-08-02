@@ -5,13 +5,11 @@ import db.domain.shipping.enums.ShippingStatus;
 import global.annotation.Converter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 
 @Converter
@@ -31,31 +29,19 @@ public class ShippingConverter {
             .build();
     }
 
-    public ShippingListResponse toResponse(ShippingEntity entity, List<GoodsResponse> goodsResponses) {
+    public ShippingListResponse toResponse(List<ShippingDetailResponse> shippingResponses) {
         return ShippingListResponse.builder()
-            .shippingId(entity.getId())
-            .deliveryDate(entity.getDeliveryDate())
-            .deliveryAddress(entity.getDeliveryAddress())
-            .status(entity.getStatus())
-            .deliveryMan(entity.getDeliveryMan())
-            .goods(goodsResponses)
+            .shippingList(shippingResponses)
             .build();
     }
 
-    public ShippingResponse toResponse(ShippingEntity entity) {
-        return ShippingResponse.builder()
-            .shippingId(entity.getId())
-            .deliveryDate(entity.getDeliveryDate())
-            .deliveryAddress(entity.getDeliveryAddress())
-            .status(entity.getStatus())
-            .deliveryMan(entity.getDeliveryMan())
-            .build();
-    }
-
-    public ShippingDetailResponse toResponse(ShippingResponse shippingResponse,
-        List<GoodsResponse> goodsResponses) {
+    public ShippingDetailResponse toResponse(ShippingEntity entity, List<GoodsResponse> goodsResponses) {
         return ShippingDetailResponse.builder()
-            .shipping(shippingResponse)
+            .shippingId(entity.getId())
+            .deliveryDate(entity.getDeliveryDate())
+            .deliveryAddress(entity.getDeliveryAddress())
+            .status(entity.getStatus())
+            .deliveryMan(entity.getDeliveryMan())
             .goods(goodsResponses)
             .build();
     }

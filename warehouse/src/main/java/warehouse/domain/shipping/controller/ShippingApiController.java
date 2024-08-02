@@ -3,7 +3,6 @@ package warehouse.domain.shipping.controller;
 import global.annotation.ApiValid;
 import global.api.Api;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.shipping.business.ShippingBusiness;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
-import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 
 @RestController
@@ -38,8 +37,8 @@ public class ShippingApiController {
 
     @GetMapping() //목록조회
     @Operation(summary = "[출고 요청서 목록 보기]")
-    public Api<List<ShippingListResponse>> getShippingList(@AuthenticationPrincipal User user) {
-        List<ShippingListResponse> response = shippingBusiness.getShippingList(
+    public Api<ShippingListResponse> getShippingList(@AuthenticationPrincipal User user) {
+        ShippingListResponse response = shippingBusiness.getShippingList(
             user.getUsername());
         return Api.OK(response);
     }
