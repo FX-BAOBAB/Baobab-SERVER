@@ -13,11 +13,11 @@ import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.image.service.ImageService;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
-import warehouse.domain.shipping.controller.model.response.ShippingResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 import warehouse.domain.shipping.converter.ShippingConverter;
 import warehouse.domain.shipping.service.ShippingService;
@@ -49,14 +49,23 @@ public class ShippingBusiness {
 
     public ShippingListResponse getShippingList(String email) {
         Long userId = getUserWithThrow(email).getId();
-
         List<ShippingEntity> shippingEntityList = shippingService.getShippingList(userId);
 
-        List<ShippingDetailResponse> shippingDetailResponseList = shippingEntityList.stream().map(shippingEntity -> {
-            return getShippingDetail(shippingEntity.getId());
+        List<ShippingDetailResponse> shippingResponse = shippingEntityList.stream().map(shippingEntity -> {
+            List<GoodsEntity> goodsEntityList = goodsService.findAllByShippingIdWithThrow(
+                shippingEntity.getId());
+
+            List<GoodsResponse> goodsResponseList = goodsEntityList.stream()
+                .map(goodsEntity -> {
+                    ImageListResponse imageListResponse = imageConverter.toImageListResponse(
+                        goodsEntity);
+                    return goodsConverter.toResponse(goodsEntity, imageListResponse);
+                }).toList();
+
+            return shippingConverter.toResponse(shippingEntity, goodsResponseList);
         }).toList();
 
-        return shippingConverter.toResponseList(shippingDetailResponseList);
+        return shippingConverter.toResponse(shippingResponse);
     }
 
     public ShippingDetailResponse getShippingDetail(Long shippingId) {
@@ -71,9 +80,7 @@ public class ShippingBusiness {
                 return goodsConverter.toResponse(goodsEntity, imageListResponse);
             }).toList();
 
-        ShippingResponse shippingResponse = shippingConverter.toResponse(shippingEntity);
-
-        return shippingConverter.toResponse(shippingResponse, goodsResponseList);
+        return shippingConverter.toResponse(shippingEntity, goodsResponseList);
     }
 
     public ShippingStatusResponse getCurrentStatusBy(Long shippingId) {

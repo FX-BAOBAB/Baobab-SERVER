@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import warehouse.domain.shipping.business.ShippingBusiness;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
-import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingListResponse;
 import warehouse.domain.shipping.controller.model.response.MessageResponse;
+import warehouse.domain.shipping.controller.model.response.ShippingDetailResponse;
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 
 @RestController
@@ -38,7 +38,8 @@ public class ShippingApiController {
     @GetMapping() //목록조회
     @Operation(summary = "[출고 요청서 목록 보기]")
     public Api<ShippingListResponse> getShippingList(@AuthenticationPrincipal User user) {
-        ShippingListResponse response = shippingBusiness.getShippingList(user.getUsername());
+        ShippingListResponse response = shippingBusiness.getShippingList(
+            user.getUsername());
         return Api.OK(response);
     }
 

@@ -11,5 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ShippingListResponse {
-    List<ShippingDetailResponse> shipping;
+
+    private List<ShippingDetailResponse> shippingList;
+
 }
+
