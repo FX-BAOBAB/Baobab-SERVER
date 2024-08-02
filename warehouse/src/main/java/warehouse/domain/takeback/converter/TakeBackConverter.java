@@ -4,10 +4,12 @@ import db.domain.takeback.TakeBackEntity;
 import db.domain.takeback.enums.TakeBackStatus;
 import global.annotation.Converter;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
+import warehouse.domain.takeback.controller.model.TakeBackStatusResponse;
 
 @Converter
 public class TakeBackConverter {
@@ -44,6 +46,16 @@ public class TakeBackConverter {
     public TakeBackListResponse toListResponse(List<TakeBackResponse> takeBackResponseList) {
         return TakeBackListResponse.builder()
             .takeBackResponseList(takeBackResponseList)
+            .build();
+    }
+
+    public TakeBackStatusResponse toCurrentStatusResponse(TakeBackEntity takeBackEntity) {
+        return TakeBackStatusResponse.builder()
+            .takeBackId(takeBackEntity.getId())
+            .total(Arrays.stream(TakeBackStatus.values()).count())
+            .status(takeBackEntity.getStatus())
+            .description(takeBackEntity.getStatus().getDescription())
+            .current(takeBackEntity.getStatus().getCurrent())
             .build();
     }
 }

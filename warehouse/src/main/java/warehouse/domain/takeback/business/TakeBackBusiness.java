@@ -8,20 +8,17 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import warehouse.common.utils.ImageUtils;
 import warehouse.domain.goods.controller.model.GoodsResponse;
 import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.image.service.ImageService;
-import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
 import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
+import warehouse.domain.takeback.controller.model.TakeBackStatusResponse;
 import warehouse.domain.takeback.converter.TakeBackConverter;
 import warehouse.domain.takeback.service.TakeBackService;
-import warehouse.domain.users.converter.UsersConverter;
 import warehouse.domain.users.service.UsersService;
 
 @Slf4j
@@ -112,5 +109,10 @@ public class TakeBackBusiness {
         }).toList();
 
         return takeBackConverter.toListResponse(takeBackResponseList);
+    }
+
+    public TakeBackStatusResponse getCurrentStatusBy(Long takeBackId) {
+        TakeBackEntity takeBackEntity = takeBackService.getTakeBackById(takeBackId);
+        return takeBackConverter.toCurrentStatusResponse(takeBackEntity);
     }
 }

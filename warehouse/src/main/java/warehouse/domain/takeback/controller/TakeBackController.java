@@ -16,6 +16,7 @@ import warehouse.domain.receiving.controller.model.receiving.ReceivingResponse;
 import warehouse.domain.takeback.business.TakeBackBusiness;
 import warehouse.domain.takeback.controller.model.TakeBackListResponse;
 import warehouse.domain.takeback.controller.model.TakeBackResponse;
+import warehouse.domain.takeback.controller.model.TakeBackStatusResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +52,13 @@ public class TakeBackController {
         @AuthenticationPrincipal User user
     ){
         TakeBackListResponse response = takeBackBusiness.getTakeBackListBy(user.getUsername());
+        return Api.OK(response);
+    }
+
+    @GetMapping("/process/{takeBackId}")
+    @Operation(summary = "[출고 상태 조회하기]")
+    public Api<TakeBackStatusResponse> getCurrentStatusBy(@PathVariable Long takeBackId) {
+        TakeBackStatusResponse response = takeBackBusiness.getCurrentStatusBy(takeBackId);
         return Api.OK(response);
     }
 
