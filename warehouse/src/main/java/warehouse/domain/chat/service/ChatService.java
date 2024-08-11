@@ -166,3 +166,35 @@ public class ChatService {
     }
 
 
+    /**
+     * ChatRoom 정보와 ChatMessage 정보를 저정하고 캐시에서 삭제
+     */
+    @Scheduled(cron = "0 0 2 ? * 7") // 매주 토요일 오전 2시 저장
+    private void saveRedisToRdb() {
+        // chatRoom 저장
+        List<ChatRoomEntity> chatRoomEntityList = opsHashChatRoom.values(CHAT_ROOMS);
+        chatRdbService.saveChatRoom(chatRoomEntityList);
+
+        // chatMessage 저장
+        List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
+        chatRoomEntityList.forEach(chatRoomEntity -> {
+            List<ChatMessageEntity> chatMessageList = opsListChatMessage.range(
+                chatRoomEntity.getId(), 0, -1);
+            if (chatMessageList != null) {
+                chatMessageEntityList.addAll(chatMessageList);
+            }
+        });
+        chatRdbService.saveChatMessage(chatMessageEntityList);
+        this.deleteRedisData();
+    }
+
+    private void deleteRedisData() {
+        log.info("Delete redis data ...");
+        List<ChatRoomEntity> chatRoomEntityList = opsHashChatRoom.values(CHAT_ROOMS);
+        chatRoomEntityList.forEach(chatRoomEntity ->
+            opsListChatMessage.getOperations().delete(chatRoomEntity.getId())
+        );
+        opsHashChatRoom.getOperations().delete(CHAT_ROOMS);
+    }
+
+}
