@@ -109,6 +109,14 @@ public class ChatService {
         return chatRoomEntity;
     }
 
+    /**
+     * 채팅방 입장 : redis 에 topic 을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
+     */
+    public void subscribe(Long chatRoomId) {
+        ChannelTopic topic = new ChannelTopic(String.valueOf(chatRoomId));
+        redisMessageListener.addMessageListener(redisSubscriber, topic);
+    }
+
     // TODO 메서드명 추천
     /**
      * usedGoodsId 와 userId 로 채팅방이 존재하는지 확인하고, 존재할 경우 예외 발생 Redis, RDB 둘 다 조회
@@ -128,4 +136,33 @@ public class ChatService {
 
         }
     }
+
+    /**
+     * Topic 을 구독한 사용자에게 message 전송 Redis 에 삽입
+     */
+    public void sendChatMessage(ChatMessageEntity message) {
+        ChannelTopic topic = new ChannelTopic(String.valueOf(message.getChatRoomId()));
+        Long chatMessageId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+        message.setId(chatMessageId);
+        redisPublisher.publish(topic, message);
+        opsListChatMessage.rightPush(message.getChatRoomId(), message);
+    }
+
+    public void quitChatRoomBy(ChatRoomEntity chatRoomEntity) {
+        chatRoomEntity.setStatus(ChatRoomStatus.INACTIVATE);
+        opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
+    }
+
+    /**
+     * 채팅 메시지 전체 조회
+     */
+    public List<ChatMessageEntity> getChatMessage(Long chatRoomId) {
+        List<ChatMessageEntity> chatMessageEntityList = opsListChatMessage.range(chatRoomId, 0,
+            -1);
+        if (chatMessageEntityList.isEmpty()) {
+            chatMessageEntityList = chatRdbService.getChatMessageBy(chatRoomId);
+        }
+        return chatMessageEntityList;
+    }
+
 

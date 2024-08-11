@@ -49,6 +49,21 @@ public class ChatBusiness {
         return chatConverter.toResponse(createdChatRoom);
 
     }
+
+    public MessageResponse subscribeChatRoom(Long chatRoomId) {
+        chatService.subscribe(chatRoomId);
+        return chatConverter.toMessageResponse("채팅방 구독이 완료되었습니다.");
+    }
+
+    public void sendChatMessage(ChatMessageRequest message, Long userId) {
+
+//        Long userId = usersService.getUserWithThrow(email).getId();
+        ChatMessageEntity chatMessageEntity = chatConverter.toChatMessage(message, null);
+
+        chatService.sendChatMessage(chatMessageEntity);
+
+    }
+
     public List<ChatRoomResponse> findAllChatRoom() { // 테스트용
         List<ChatRoomEntity> chatRoomEntity = chatService.findAllChatRoom();
         return chatConverter.toResponse(chatRoomEntity);
@@ -78,4 +93,10 @@ public class ChatBusiness {
 
         return chatConverter.toResponse(chatRoomEntityList);
     }
+
+    public List<ChatMessageResponse> getChatMessage(Long chatRoomId) {
+        List<ChatMessageEntity> chatMessageEntityList = chatService.getChatMessage(chatRoomId);
+        return chatConverter.toChatMessageResponse(chatMessageEntityList);
+    }
+
 }
