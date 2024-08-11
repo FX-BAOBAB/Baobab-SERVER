@@ -12,6 +12,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
+  data:
+    redis:
+      host: localhost
+      port: 6379
 file:
   upload-dir: /Users/yeongwoonshin/Desktop/Baobab-SERVER/warehouse/src/main/resources/static/images/
   path : /images/
