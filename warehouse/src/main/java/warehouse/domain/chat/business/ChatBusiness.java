@@ -1,0 +1,81 @@
+package warehouse.domain.chat.business;
+
+import db.domain.chat.room.ChatRoomEntity;
+import db.domain.usedgoods.UsedGoodsEntity;
+import db.domain.usedgoods.enums.UsedGoodsStatus;
+import global.annotation.Business;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import db.domain.chat.message.ChatMessageEntity;
+import org.springframework.security.core.userdetails.User;
+import warehouse.domain.chat.controller.model.request.ChatMessageRequest;
+import warehouse.domain.chat.controller.model.response.ChatMessageResponse;
+import warehouse.domain.chat.controller.model.response.ChatRoomResponse;
+import warehouse.domain.chat.controller.model.response.MessageResponse;
+import warehouse.domain.chat.converter.ChatConverter;
+import warehouse.domain.chat.service.ChatService;
+import warehouse.domain.usedgoods.service.UsedGoodsService;
+import warehouse.domain.users.service.UsersService;
+
+@Business
+@RequiredArgsConstructor
+@Slf4j
+public class ChatBusiness {
+
+    private final ChatService chatService;
+    private final UsedGoodsService usedGoodsService;
+    private final UsersService usersService;
+    private final ChatConverter chatConverter;
+
+
+    /**
+     * 1. 구매자 ID 존재하는지 확인.
+     * 2. 채팅방이 이미 존재하는지 확인 -> 있으면 예외
+     * 3. 채팅방 고유 ID 반환
+     */
+    public ChatRoomResponse createChatRoom(Long usedGoodsId, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId(); // 사용자 인증
+
+        chatService.existsChatRoomWithThrow(usedGoodsId, userId); // 채팅방이 존재하는지 확인 -> 있으면 error
+
+        ChatRoomEntity chatRoomEntity = chatConverter.toEntity(usedGoodsId, userId);
+
+        ChatRoomEntity createdChatRoom = chatService.createChatRoomBy(chatRoomEntity); // 채팅방 생성
+
+//        chatService.subscribe(createdChatRoom.getId()); // Topic 생성 후 채팅방 구독 -> 두 번 발송되는 문제 발생
+
+        return chatConverter.toResponse(createdChatRoom);
+
+    }
+    public List<ChatRoomResponse> findAllChatRoom() { // 테스트용
+        List<ChatRoomEntity> chatRoomEntity = chatService.findAllChatRoom();
+        return chatConverter.toResponse(chatRoomEntity);
+
+    }
+
+    public MessageResponse quitChatRoom(Long chatRoomId) { // 채팅 비활성화
+        ChatRoomEntity chatRoomEntity = chatService.getChatRoomBy(chatRoomId);
+        chatService.quitChatRoomBy(chatRoomEntity);
+        return chatConverter.toMessageResponse("채팅방이 비활성화 되었습니다.");
+    }
+
+    public List<ChatRoomResponse> getBuyerChatRoom(String email) {
+        Long userId = usersService.getUserWithThrow(email).getId(); // 사용자 인증
+        List<ChatRoomEntity> createdChatRooms = chatService.getChatRoomListBy(userId);
+        return chatConverter.toResponse(createdChatRooms);
+    }
+
+
+    public List<ChatRoomResponse> getSellerChatRoom(String email) {
+        Long userId = usersService.getUserWithThrow(email).getId(); // 사용자 인증
+
+        List<Long> usedGoodsIdList = usedGoodsService.getUsedGoodsListBy(userId).stream()
+            .map(usedGoodsEntity -> usedGoodsEntity.getId()).toList();
+
+        List<ChatRoomEntity> chatRoomEntityList = chatService.getChatRoomListBy(usedGoodsIdList);
+
+        return chatConverter.toResponse(chatRoomEntityList);
+    }
+}

@@ -59,4 +59,11 @@ public class UsedGoodsService {
         return searchList;
     }
 
+    public List<UsedGoodsEntity> getUsedGoodsListBy(Long userId) {
+        List<UsedGoodsEntity> usedGoodsList = usedGoodsRepository.findByUserId(userId);
+        if (usedGoodsList.isEmpty()) {
+            throw new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND);
+        }
+        return usedGoodsList;
+    }
 }
