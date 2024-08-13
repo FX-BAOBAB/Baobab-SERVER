@@ -148,8 +148,8 @@ public class ChatService {
         opsListChatMessage.rightPush(message.getChatRoomId(), message);
     }
 
-    public void quitChatRoomBy(ChatRoomEntity chatRoomEntity) {
-        chatRoomEntity.setStatus(ChatRoomStatus.INACTIVATE);
+    public void setChatRoomStatusBy(ChatRoomEntity chatRoomEntity, ChatRoomStatus status) {
+        chatRoomEntity.setStatus(status);
         opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
     }
 
