@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import db.domain.chat.message.ChatMessageEntity;
 import warehouse.common.error.ChatErrorCode;
 import warehouse.common.exception.chat.ChatRoomExistsException;
-import warehouse.common.exception.chat.ChatRoomNotFoundException;
 import warehouse.domain.chat.pusbsub.RedisPublisher;
 import warehouse.domain.chat.pusbsub.RedisSubscriber;
 
@@ -57,15 +56,14 @@ public class ChatService {
     public ChatRoomEntity getChatRoomBy(Long chatRoomId) {
         ChatRoomEntity chatRoomEntity = opsHashChatRoom.get(CHAT_ROOMS, chatRoomId);
         if (chatRoomEntity == null) {
-            chatRoomEntity = chatRdbService.getChatRoomBy(chatRoomId);
-            opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
+            chatRoomEntity = getChatRoomEntityFromRdb(chatRoomId);
         }
         return chatRoomEntity;
     }
 
     /**
-     * 판매 채팅방 조회 Redis 에 해당 채팅방 정보를 확인 Redis 에 채팅방 정보가 존재하지 않다면 RDB 에서 가져오고 Redis 에 저장 둘 다 존재하지 않을
-     * 경우 예외 발생
+     * 판매 채팅방 조회(Delete 제외) Redis 에 해당 채팅방 정보를 확인 Redis 에 채팅방 정보가 존재하지 않다면 RDB 에서 가져오고 Redis 에 저장 둘 다
+     * 존재하지 않을 경우 예외 발생
      */
     public List<ChatRoomEntity> getChatRoomListBy(List<Long> usedGoodsIdList) {
         List<ChatRoomEntity> chatRoomEntityList = opsHashChatRoom.entries(CHAT_ROOMS).values()
@@ -74,27 +72,20 @@ public class ChatService {
                 chatRoomEntity -> usedGoodsIdList.contains(chatRoomEntity.getUsedGoodsId()))
             .toList();
         if (chatRoomEntityList.isEmpty()) {
-            chatRoomEntityList = chatRdbService.getChatRoomBy(usedGoodsIdList);
-            chatRoomEntityList.forEach(chatRoomEntity -> {
-                opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
-            });
+            chatRoomEntityList = getChatRoomEntityListFromRdb(usedGoodsIdList);
         }
         return chatRoomEntityList;
     }
 
     /**
-     * 구매 채팅방 조회 Redis 에 해당 채팅방 정보를 확인 Redis 에 채팅방 정보가 존재하지 않다면 RDB 에서 가져오고 Redis 에 저장 둘 다 존재하지 않을
-     * 경우 예외 발생
+     * 구매 채팅방 조회(Delete 제외) Redis 에 해당 채팅방 정보를 확인 Redis 에 채팅방 정보가 존재하지 않다면 RDB 에서 가져오고 Redis 에 저장 둘 다
+     * 존재하지 않을 경우 예외 발생
      */
     public List<ChatRoomEntity> getChatRoomListBy(Long userId) {
         List<ChatRoomEntity> chatRoomEntityList = opsHashChatRoom.entries(CHAT_ROOMS).values()
             .stream().filter(chatRoomEntity -> chatRoomEntity.getUserId().equals(userId)).toList();
         if (chatRoomEntityList.isEmpty()) {
-            chatRoomEntityList = chatRdbService.getChatRoomListBy(userId);
-            chatRoomEntityList.forEach(chatRoomEntity -> {
-                opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
-            });
-            throw new ChatRoomNotFoundException(ChatErrorCode.CHAT_ROOM_NOT_FOUND);
+            chatRoomEntityList = getChatRoomEntityListFromRdb(userId);
         }
         return chatRoomEntityList;
     }
@@ -117,7 +108,6 @@ public class ChatService {
         redisMessageListener.addMessageListener(redisSubscriber, topic);
     }
 
-    // TODO 메서드명 추천
     /**
      * usedGoodsId 와 userId 로 채팅방이 존재하는지 확인하고, 존재할 경우 예외 발생 Redis, RDB 둘 다 조회
      */
@@ -128,13 +118,11 @@ public class ChatService {
         if (chatRoom) {
             throw new ChatRoomExistsException(ChatErrorCode.CHAT_ROOM_EXISTS);
         }
-        try { // TODO 로직 수정
+        try {
             if (chatRdbService.getChatRoomBy(usedGoodsId, userId) != null) {
                 throw new ChatRoomExistsException(ChatErrorCode.CHAT_ROOM_EXISTS);
             }
-        } catch (RuntimeException e) {
-
-        }
+        } catch (RuntimeException e) {}
     }
 
     /**
@@ -195,6 +183,31 @@ public class ChatService {
             opsListChatMessage.getOperations().delete(chatRoomEntity.getId())
         );
         opsHashChatRoom.getOperations().delete(CHAT_ROOMS);
+    }
+
+    private ChatRoomEntity getChatRoomEntityFromRdb(Long chatRoomId) {
+        ChatRoomEntity chatRoomEntity;
+        chatRoomEntity = chatRdbService.getChatRoomBy(chatRoomId);
+        opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
+        return chatRoomEntity;
+    }
+
+    private List<ChatRoomEntity> getChatRoomEntityListFromRdb(List<Long> usedGoodsIdList) {
+        List<ChatRoomEntity> chatRoomEntityList;
+        chatRoomEntityList = chatRdbService.getChatRoomBy(usedGoodsIdList).stream().toList();
+        chatRoomEntityList.forEach(chatRoomEntity -> {
+            opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
+        });
+        return chatRoomEntityList;
+    }
+
+    private List<ChatRoomEntity> getChatRoomEntityListFromRdb(Long userId) {
+        List<ChatRoomEntity> chatRoomEntityList;
+        chatRoomEntityList = chatRdbService.getChatRoomListBy(userId).stream().toList();
+        chatRoomEntityList.forEach(chatRoomEntity -> {
+            opsHashChatRoom.put(CHAT_ROOMS, chatRoomEntity.getId(), chatRoomEntity);
+        });
+        return chatRoomEntityList;
     }
 
 }

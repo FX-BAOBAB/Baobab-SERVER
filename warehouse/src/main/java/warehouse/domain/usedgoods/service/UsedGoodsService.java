@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.error.UsedGoodsErrorCode;
+import warehouse.common.exception.goods.GoodsNotFoundException;
 import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
 import warehouse.common.exception.usedGoods.UsedGoodsNotFoundException;
 
@@ -30,6 +32,11 @@ public class UsedGoodsService {
     public UsedGoodsEntity getUsedGoodsBy(Long usedGoodsId, UsedGoodsStatus status) {
         return usedGoodsRepository.findFirstByIdAndStatus(usedGoodsId, status).orElseThrow(
             () -> new GoodsNotInUsedStatus(UsedGoodsErrorCode.GOODS_NOT_IN_USED_STATUS));
+    }
+
+    public UsedGoodsEntity getUsedGoodsBy(Long usedGoodsId) {
+        return usedGoodsRepository.findFirstById(usedGoodsId).orElseThrow(
+            () -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
     }
 
     public List<UsedGoodsEntity> getUsedGoodsListBy(List<Long> usedGoodsIdList,
@@ -53,7 +60,7 @@ public class UsedGoodsService {
 
     public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
         List<UsedGoodsEntity> searchList = queryUsedGoodsRepository.usedGoodsSearchBy(condition);
-        if(searchList.isEmpty()) {
+        if (searchList.isEmpty()) {
             throw new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND);
         }
         return searchList;

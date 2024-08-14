@@ -11,4 +11,5 @@ public interface UsedGoodsRepository extends JpaRepository<UsedGoodsEntity, Long
 
     List<UsedGoodsEntity> findByUserId(Long userId);
 
+    Optional<UsedGoodsEntity> findFirstById(Long usedGoodsId);
 }

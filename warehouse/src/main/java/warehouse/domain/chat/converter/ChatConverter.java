@@ -20,7 +20,7 @@ public class ChatConverter {
             .userId(userId)
             .createdAt(LocalDateTime.now())
             .usedGoodsId(usedGoodsId)
-            .status(ChatRoomStatus.ACTIVATE)
+            .status(ChatRoomStatus.ACTIVE)
             .build();
     }
 
@@ -38,7 +38,7 @@ public class ChatConverter {
             .toList();
     }
 
-    public List<ChatMessageResponse> toChatMessageResponse(
+    public List<ChatMessageResponse> toChatMessageListResponse(
         List<ChatMessageEntity> chatMessageEntityList) {
         return chatMessageEntityList.stream().map(chatMessageEntity -> ChatMessageResponse.builder()
             .message(chatMessageEntity.getMessage())
@@ -50,13 +50,6 @@ public class ChatConverter {
     }
 
     public ChatMessageEntity toChatMessage(ChatMessageRequest message, Long userId) {
-        if (MessageType.ENTER.equals(message.getType())) {
-            message.setMessage("[알림]" + userId + "님이 입장하셨습니다.");
-        } else if (MessageType.QUIT.equals(message.getType())) {
-            message.setMessage("[알림]" + userId + "님이 퇴장하였습니다.");
-//            chatService.deleteChatRoomBy(message.getRoomId());
-        }
-
         return ChatMessageEntity.builder()
             .message(message.getMessage())
             .type(message.getType())
@@ -72,6 +65,5 @@ public class ChatConverter {
             .build();
 
     }
-
 
 }
