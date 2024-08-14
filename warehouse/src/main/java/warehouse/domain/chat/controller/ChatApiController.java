@@ -51,9 +51,6 @@ public class ChatApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/room/delete/{chatRoomId}") // 채팅방 삭제
-    public Api<MessageResponse> deleteChatRoom(@PathVariable Long chatRoomId) {
-        MessageResponse response = chatBusiness.deleteChatRoom(chatRoomId);
         return Api.OK(response);
     }
 

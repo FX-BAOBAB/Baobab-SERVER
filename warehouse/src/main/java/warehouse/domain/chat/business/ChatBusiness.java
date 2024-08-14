@@ -80,10 +80,7 @@ public class ChatBusiness {
         return chatConverter.toMessageResponse("채팅방이 비활성화 되었습니다.");
     }
 
-    public MessageResponse deleteChatRoom(Long chatRoomId) { // 채팅 비활성화
-        ChatRoomEntity chatRoomEntity = chatService.getChatRoomBy(chatRoomId);
-        chatService.setChatRoomStatusBy(chatRoomEntity, ChatRoomStatus.DELETED);
-        return chatConverter.toMessageResponse("채팅방이 삭제되었습니다.");
+        return chatConverter.toMessageResponse("채팅방이 비활성화 되었습니다.");
     }
 
     public List<ChatRoomResponse> getBuyerChatRoom(String email) {
