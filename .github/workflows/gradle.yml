@@ -21,9 +21,14 @@ jobs:
       - name: Make docker-compose.yml
         run: echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml   
 
-      - name: Make application.yml
+      - name: Make Warehouse application.yml
         run: |
           cd ./warehouse/src/main/resources
+          echo "${{ secrets.APPLICATION }}" > application.yml
+
+      - name: Make Delivery application.yml
+        run: |
+          cd ./delivery/src/main/resources
           echo "${{ secrets.APPLICATION }}" > application.yml
 
       - name: Build with Gradle
