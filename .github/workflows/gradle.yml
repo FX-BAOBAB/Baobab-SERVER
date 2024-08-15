@@ -24,12 +24,12 @@ jobs:
       - name: Make Warehouse application.yml
         run: |
           cd ./warehouse/src/main/resources
-          echo "${{ secrets.APPLICATION }}" > application.yml
+          echo "${{ secrets.WAREHOUSE_APPLICATION }}" > application.yml
 
       - name: Make Delivery application.yml
         run: |
           cd ./delivery/src/main/resources
-          echo "${{ secrets.APPLICATION }}" > application.yml
+          echo "${{ secrets.DELIVERY_APPLICATION }}" > application.yml
 
       - name: Build with Gradle
         run: ./gradlew build
