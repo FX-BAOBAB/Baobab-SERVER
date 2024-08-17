@@ -23,9 +23,7 @@ import warehouse.domain.usedgoods.controller.model.request.CancelUsedGoodsReques
 import warehouse.domain.usedgoods.controller.model.request.RegisterUsedGoods;
 import warehouse.domain.usedgoods.controller.model.response.MessageResponse;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsDetailResponse;
-import warehouse.domain.usedgoods.controller.model.response.UsedGoodsOrderResponse;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsSearchResponse;
-import warehouse.domain.usedgoods.controller.model.response.UsedGoodsStatusResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,63 +72,6 @@ public class UsedGoodsApiController {
     ) {
         List<UsedGoodsSearchResponse> response = usedGoodsBusiness.usedGoodsSearchBy(condition,
             page, user.getUsername());
-        return Api.OK(response);
-    }
-
-    /**
-     * ------- 중고 물품 구매 프로세스 -------
-     */
-    @PostMapping("/{usedGoodsId}") // usedGoodsId 로 중고 물품 구매 요청
-    @Operation(summary = "[물품 구매 요청]", description = "[구매자] usedGoodsId로 중고 물품 구매 요청")
-    public Api<UsedGoodsOrderResponse> requestTransaction(@PathVariable Long usedGoodsId,
-        @AuthenticationPrincipal User user) {
-        UsedGoodsOrderResponse response = usedGoodsBusiness.requestOrder(usedGoodsId,
-            user.getUsername());
-        return Api.OK(response);
-    }
-
-    @GetMapping("/order/{usedGoodsId}") // usedGoodsId 로 거래 요청서 목록 보기
-    @Operation(summary = "[물품 거래 요청 목록 조회]", description = "[판매자] 거래 요청 목록 조회")
-    public Api<List<UsedGoodsOrderResponse>> getTransactionList(@PathVariable Long usedGoodsId,
-        @AuthenticationPrincipal User user) {
-        List<UsedGoodsOrderResponse> response = usedGoodsBusiness.getOrderList(usedGoodsId,
-            user.getUsername());
-        return Api.OK(response);
-    }
-
-    @PostMapping("/order/{usedGoodsOrderId}") // usedGoodsOrderId 로 거래 승인
-    @Operation(summary = "[물품 거래 승인]", description = "[판매자] 거래 승인")
-    public Api<UsedGoodsStatusResponse> approveTransaction(@PathVariable Long usedGoodsOrderId,
-        @AuthenticationPrincipal User user) {
-        UsedGoodsStatusResponse response = usedGoodsBusiness.approveOrder(usedGoodsOrderId,
-            user.getUsername());
-        return Api.OK(response);
-    }
-
-    @PostMapping("/order/transfer/{usedGoodsOrderId}") // usedGoodsOrderId 로 송금하기
-    @Operation(summary = "[물품 거래 송금]", description = "[구매자] 송금")
-    public Api<UsedGoodsStatusResponse> transferTransaction(@PathVariable Long usedGoodsOrderId,
-        @AuthenticationPrincipal User user) {
-        UsedGoodsStatusResponse response = usedGoodsBusiness.transferOrder(usedGoodsOrderId,
-            user.getUsername());
-        return Api.OK(response);
-    }
-
-    @PostMapping("/order/receive/{usedGoodsOrderId}")
-    @Operation(summary = "[물품 확인]", description = "[구매자] 물품 확인")
-    public Api<UsedGoodsStatusResponse> receiveUsedGoods(@PathVariable Long usedGoodsOrderId,
-        @AuthenticationPrincipal User user) {
-        UsedGoodsStatusResponse response = usedGoodsBusiness.receiveUsedGoods(usedGoodsOrderId,
-            user.getUsername());
-        return Api.OK(response);
-    }
-
-    @PostMapping("/order/sold/{usedGoodsOrderId}")
-    @Operation(summary = "[거래 완료]", description = "[구매자] 거래 완료")
-    public Api<UsedGoodsStatusResponse> completeTransaction(@PathVariable Long usedGoodsOrderId,
-        @AuthenticationPrincipal User user) {
-        UsedGoodsStatusResponse response = usedGoodsBusiness.completeOrder(usedGoodsOrderId,
-            user.getUsername());
         return Api.OK(response);
     }
 

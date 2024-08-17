@@ -1,7 +1,6 @@
 package warehouse.domain.usedgoods.controller.model.response;
 
 import db.domain.usedgoods.enums.UsedGoodsStatus;
-import db.domain.usedgoodsorder.enums.UsedGoodsOrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
