@@ -19,7 +19,12 @@ jobs:
           distribution: 'temurin'
 
       - name: Make docker-compose.yml
-        run: echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml   
+        run: echo "${{ secrets.DOCKER_COMPOSE }}" > docker-compose.yml
+
+      - name: Make Warehouse application.yml
+        run: |
+          cd ./gateway/src/main/resources
+          echo "${{ secrets.GATEWAY_APPLICATION }}" > application.yml
 
       - name: Make Warehouse application.yml
         run: |
