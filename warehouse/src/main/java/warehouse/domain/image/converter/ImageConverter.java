@@ -125,9 +125,8 @@ public class ImageConverter {
             this.extension = ImageUtils.subStringExtension(
                 Objects.requireNonNull(this.originalFileName));
             this.fileName = StringUtils.cleanPath(this.serverName + this.extension);
-            this.imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .scheme("https")
-                .path(uploadDir + fileName)
+            this.imageUrl = ServletUriComponentsBuilder.fromHttpUrl("https://baobab.run")
+                .path("warehouse" + uploadDir + fileName)
                 .toUriString();
         }
     }
