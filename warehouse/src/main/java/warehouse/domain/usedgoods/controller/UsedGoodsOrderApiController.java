@@ -17,7 +17,7 @@ import warehouse.domain.usedgoods.controller.model.response.UsedGoodsStatusRespo
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/usedgoods/order")
+@RequestMapping("/api/order")
 public class UsedGoodsOrderApiController {
 
     private final UsedGoodsOrderBusiness usedGoodsOrderBusiness;
