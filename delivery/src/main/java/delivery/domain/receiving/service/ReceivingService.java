@@ -19,6 +19,7 @@ public class ReceivingService {
 
         List<ReceivingEntity> receivingEntityList = receivingRepository.findAllByStatusOrderByVisitDate(ReceivingStatus.TAKING);
 
+        // TODO Exception 처리 필요
         if(receivingEntityList.isEmpty()){
             throw new RuntimeException("존재하지 않음");
         }
