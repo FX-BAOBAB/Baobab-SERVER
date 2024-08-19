@@ -12,7 +12,11 @@ public class GoodsService {
 
     private final GoodsRepository goodsRepository;
 
-    public List<GoodsEntity> getGoodsList(Long receivingId) {
+    public List<GoodsEntity> getReceivingGoodsList(Long receivingId) {
+        return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
+    }
+
+    public List<GoodsEntity> getShippingGoodsList(Long receivingId) {
         return goodsRepository.findAllByShippingIdOrderByIdDesc(receivingId);
     }
 }

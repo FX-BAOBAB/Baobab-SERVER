@@ -41,7 +41,7 @@ public class ReceivingBusiness {
 
             log.info("receivingList Id : {} " , receivingEntity.getId());
 
-            List<Long> goodsIdList = goodsService.getGoodsList(receivingEntity.getId()).stream().map(
+            List<Long> goodsIdList = goodsService.getReceivingGoodsList(receivingEntity.getId()).stream().map(
                 goodsEntity -> {
                     return goodsEntity.getId();
                 }
@@ -61,7 +61,7 @@ public class ReceivingBusiness {
 
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
 
-        List<Long> goodsIdList = goodsService.getGoodsList(receivingEntity.getId()).stream().map(
+        List<Long> goodsIdList = goodsService.getReceivingGoodsList(receivingEntity.getId()).stream().map(
             goodsEntity -> {
                 return goodsEntity.getId();
             }

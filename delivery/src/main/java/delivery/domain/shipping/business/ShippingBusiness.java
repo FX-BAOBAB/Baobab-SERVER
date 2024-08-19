@@ -39,7 +39,7 @@ public class ShippingBusiness {
 
             log.info("receivingList Id : {} " , shippingEntity.getId());
 
-            List<Long> goodsIdList = goodsService.getGoodsList(shippingEntity.getId()).stream().map(
+            List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
                 goodsEntity -> {
                     return goodsEntity.getId();
                 }
@@ -59,7 +59,7 @@ public class ShippingBusiness {
     public ShippingResponse getReservation(Long requestId) {
         ShippingEntity shippingEntity = shippingService.getRequest(requestId);
 
-        List<Long> goodsIdList = goodsService.getGoodsList(shippingEntity.getId()).stream().map(
+        List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
             goodsEntity -> {
                 return goodsEntity.getId();
             }
