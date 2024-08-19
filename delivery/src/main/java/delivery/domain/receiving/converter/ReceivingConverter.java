@@ -19,7 +19,7 @@ public class ReceivingConverter {
             .build();
     }
 
-    private ReceivingResponse toResponse(ReceivingEntity receivingEntity) {
+    public ReceivingResponse toResponse(ReceivingEntity receivingEntity) {
         return ReceivingResponse.builder()
             .id(receivingEntity.getId())
             .guaranteeAt(receivingEntity.getGuaranteeAt())
