@@ -7,6 +7,7 @@ import db.domain.shipping.ShippingRepository;
 import db.domain.shipping.enums.ShippingStatus;
 import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.shipping.ShippingNotFoundException;
+import delivery.common.exception.shipping.ShippingNotInPendingException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,5 +34,18 @@ public class ShippingService {
 
     public ShippingEntity getRequest(Long requestId) {
         return shippingRepository.findFirstById(requestId).orElseThrow(() -> new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
+    }
+
+    public ShippingEntity reservationConfirmed(Long requestId) {
+        ShippingEntity shippingEntity = getRequest(requestId);
+
+        if (shippingEntity.getStatus() != ShippingStatus.PENDING) {
+            throw new ShippingNotInPendingException(ShippingErrorCode.SHIPPING_NOT_IN_PENDING);
+        }
+
+        shippingEntity.setStatus(ShippingStatus.REGISTERED);
+
+        return shippingRepository.save(shippingEntity);
+
     }
 }

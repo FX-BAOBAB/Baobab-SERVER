@@ -59,13 +59,28 @@ public class ShippingBusiness {
     public ShippingResponse getReservation(Long requestId) {
         ShippingEntity shippingEntity = shippingService.getRequest(requestId);
 
+        ShippingResponse response = getShippingResponse(shippingEntity);
+
+        return response;
+    }
+
+    public ShippingResponse shippingReservation(Long requestId) {
+        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId);
+
+        ShippingResponse response = getShippingResponse(shippingEntity);
+
+        return response;
+    }
+
+    private ShippingResponse getShippingResponse(ShippingEntity shippingEntity) {
+        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
+
         List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
             goodsEntity -> {
                 return goodsEntity.getId();
             }
         ).toList();
 
-        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
         UserEntity userEntity = userService.getUserBy(shippingEntity.getUserId());
 
         response.setUserName(userEntity.getName());
