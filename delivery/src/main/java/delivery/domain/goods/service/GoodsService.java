@@ -13,6 +13,6 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
 
     public List<GoodsEntity> getGoodsList(Long receivingId) {
-        return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
+        return goodsRepository.findAllByShippingIdOrderByIdDesc(receivingId);
     }
 }

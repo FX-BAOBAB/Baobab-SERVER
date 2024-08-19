@@ -2,9 +2,11 @@ package delivery.domain.shipping.business;
 
 import db.domain.receiving.ReceivingEntity;
 import db.domain.shipping.ShippingEntity;
+import db.domain.users.UserEntity;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
 import delivery.domain.receiving.controller.model.ReceivingResponseList;
+import delivery.domain.shipping.controller.model.ShippingResponse;
 import delivery.domain.shipping.controller.model.ShippingResponseList;
 import delivery.domain.shipping.converter.ShippingConverter;
 import delivery.domain.shipping.service.ShippingService;
@@ -52,5 +54,23 @@ public class ShippingBusiness {
 
         return responseList;
 
+    }
+
+    public ShippingResponse getReservation(Long requestId) {
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        List<Long> goodsIdList = goodsService.getGoodsList(shippingEntity.getId()).stream().map(
+            goodsEntity -> {
+                return goodsEntity.getId();
+            }
+        ).toList();
+
+        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
+        UserEntity userEntity = userService.getUserBy(shippingEntity.getUserId());
+
+        response.setUserName(userEntity.getName());
+        response.setGoodsIdList(goodsIdList);
+
+        return response;
     }
 }

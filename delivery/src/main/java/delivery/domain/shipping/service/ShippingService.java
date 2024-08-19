@@ -31,4 +31,7 @@ public class ShippingService {
         return shippingEntityList;
     }
 
+    public ShippingEntity getRequest(Long requestId) {
+        return shippingRepository.findFirstById(requestId).orElseThrow(() -> new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
+    }
 }
