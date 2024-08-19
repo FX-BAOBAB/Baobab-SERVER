@@ -27,4 +27,8 @@ public class ReceivingService {
 
         return receivingEntityList;
     }
+
+    public ReceivingEntity getRequestBy(Long requestId) {
+        return receivingRepository.findFirstById(requestId).orElseThrow(() -> new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
+    }
 }

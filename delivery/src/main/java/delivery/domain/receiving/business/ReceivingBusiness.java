@@ -5,6 +5,7 @@ import db.domain.receiving.ReceivingEntity;
 import db.domain.users.UserEntity;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
+import delivery.domain.receiving.controller.model.ReceivingResponse;
 import delivery.domain.receiving.controller.model.ReceivingResponseList;
 import delivery.domain.receiving.converter.ReceivingConverter;
 import delivery.domain.receiving.service.ReceivingService;
@@ -54,5 +55,10 @@ public class ReceivingBusiness {
         });
 
         return responseList;
+    }
+
+    public ReceivingResponse getReservation(Long requestId) {
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+        return receivingConverter.toResponse(receivingEntity);
     }
 }
