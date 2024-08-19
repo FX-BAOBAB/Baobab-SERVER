@@ -3,6 +3,8 @@ package delivery.domain.receiving.service;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.ReceivingRepository;
 import db.domain.receiving.enums.ReceivingStatus;
+import delivery.common.error.ReceivingErrorCode;
+import delivery.common.exception.receiving.ReceivingNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +21,8 @@ public class ReceivingService {
 
         List<ReceivingEntity> receivingEntityList = receivingRepository.findAllByStatusOrderByVisitDate(ReceivingStatus.TAKING);
 
-        // TODO Exception 처리 필요
         if(receivingEntityList.isEmpty()){
-            throw new RuntimeException("존재하지 않음");
+            throw new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND);
         }
 
         return receivingEntityList;
