@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum ReceivingErrorCode implements ErrorCodeIfs {
 
     RECEIVING_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 1250, "입고 요청서가 존재하지 않습니다."),
-    NO_OWNERSHIP(HttpStatus.BAD_REQUEST.value(), 1251, "사용자의 물품이 아닙니다.")
+    NO_OWNERSHIP(HttpStatus.BAD_REQUEST.value(), 1251, "사용자의 물품이 아닙니다."),
+    RECEIVING_NOT_IN_TAKING(HttpStatus.BAD_REQUEST.value(), 1252,"입고요청서 상태가 절적하지 않습니다.")
     ;
 
     private final Integer httpCode;

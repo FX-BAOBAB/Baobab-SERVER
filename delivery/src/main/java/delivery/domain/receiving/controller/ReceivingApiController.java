@@ -7,6 +7,7 @@ import global.api.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,14 @@ public class ReceivingApiController {
     @GetMapping("/{requestId}")
     public Api<ReceivingResponse> showReservation(@PathVariable Long requestId){
         ReceivingResponse response = receivingBusiness.getReservation(requestId);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/reservation/{requestId}")
+    public Api<ReceivingResponse> receivingReservation(
+        @PathVariable Long requestId
+    ){
+        ReceivingResponse response = receivingBusiness.reservationConfirmed(requestId);
         return Api.OK(response);
     }
 
