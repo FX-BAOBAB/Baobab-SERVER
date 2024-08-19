@@ -58,7 +58,20 @@ public class ReceivingBusiness {
     }
 
     public ReceivingResponse getReservation(Long requestId) {
+
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
-        return receivingConverter.toResponse(receivingEntity);
+
+        List<Long> goodsIdList = goodsService.getGoodsList(receivingEntity.getId()).stream().map(
+            goodsEntity -> {
+                return goodsEntity.getId();
+            }
+        ).toList();
+
+        ReceivingResponse response = receivingConverter.toResponse(receivingEntity);
+        UserEntity userEntity = userService.getUserBy(receivingEntity.getUserId());
+        response.setGoodsIdList(goodsIdList);
+        response.setUserName(userEntity.getName());
+
+        return response;
     }
 }
