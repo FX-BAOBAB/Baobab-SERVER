@@ -3,6 +3,7 @@ package delivery.common.exception;
 import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.receiving.NoOwnershipException;
 import delivery.common.exception.receiving.ReceivingNotFoundException;
+import delivery.common.exception.receiving.ReceivingNotInTakingException;
 import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -29,4 +30,12 @@ public class ReceivingExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(ReceivingErrorCode.NO_OWNERSHIP));
     }
+
+    @ExceptionHandler(value = ReceivingNotInTakingException.class)
+    public ResponseEntity<Api<Object>> receivingNotInTakingException(ReceivingNotInTakingException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(ReceivingErrorCode.RECEIVING_NOT_IN_TAKING));
+    }
+    
 }
