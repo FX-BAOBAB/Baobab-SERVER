@@ -19,7 +19,7 @@ public class ShippingConverter {
             .build();
     }
 
-    private ShippingResponse toResponse(ShippingEntity shippingEntity) {
+    public ShippingResponse toResponse(ShippingEntity shippingEntity) {
         return ShippingResponse.builder()
             .id(shippingEntity.getId())
             .status(shippingEntity.getStatus())
