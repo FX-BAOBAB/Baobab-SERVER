@@ -5,6 +5,7 @@ import db.domain.usedgoods.QueryUsedGoodsRepository;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.UsedGoodsRepository;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
+import db.domain.usedgoodsorder.UsedGoodsOrderRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,11 @@ public class UsedGoodsService {
             () -> new GoodsNotInUsedStatus(UsedGoodsErrorCode.GOODS_NOT_IN_USED_STATUS));
     }
 
+    public UsedGoodsEntity getUsedGoodsBy(Long usedGoodsId) {
+        return usedGoodsRepository.findFirstById(usedGoodsId).orElseThrow(
+            () -> new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND));
+    }
+
     public List<UsedGoodsEntity> getUsedGoodsListBy(List<Long> usedGoodsIdList,
         UsedGoodsStatus status) {
         return usedGoodsIdList.stream()
@@ -53,7 +59,7 @@ public class UsedGoodsService {
 
     public List<UsedGoodsEntity> usedGoodsSearchBy(EntitySearchCondition condition) {
         List<UsedGoodsEntity> searchList = queryUsedGoodsRepository.usedGoodsSearchBy(condition);
-        if(searchList.isEmpty()) {
+        if (searchList.isEmpty()) {
             throw new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND);
         }
         return searchList;

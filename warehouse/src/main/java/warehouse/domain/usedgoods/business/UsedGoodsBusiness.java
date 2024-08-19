@@ -17,7 +17,6 @@ import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.image.service.ImageService;
 import warehouse.domain.usedgoods.controller.model.request.SearchCondition;
 import warehouse.domain.usedgoods.controller.model.request.CancelUsedGoodsRequest;
 import warehouse.domain.usedgoods.controller.model.request.RegisterUsedGoods;
@@ -40,12 +39,11 @@ public class UsedGoodsBusiness {
     private final UsedGoodsConverter usedGoodsConverter;
     private final ImageConverter imageConverter;
     private final GoodsConverter goodsConverter;
-    private final ImageService imageService;
 
     public MessageResponse registerUsedGoods(RegisterUsedGoods request,
         String email) {
 
-        Long userId = usersService.getUserWithThrow(email).getId();
+        Long userId = getUserId(email);
 
         // GoodsStatus 가 STORAGE 인지 확인
         goodsService.checkGoodsStatusWithThrow(request.getGoodsId(), GoodsStatus.STORAGE);
@@ -75,7 +73,7 @@ public class UsedGoodsBusiness {
         setGoodsStatusBy(goodsEntity.getId(), GoodsStatus.STORAGE);
 
         // usedGoodsStatus 를 UNREGISTERED 로 변경
-        usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.UNREGISTERED);
+        setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.UNREGISTERED);
 
         return usedGoodsConverter.toMessageResponse("중고 물품 등록이 취소되었습니다.");
     }
@@ -112,30 +110,6 @@ public class UsedGoodsBusiness {
         GoodsResponse goodsResponse = goodsConverter.toResponse(goodsEntity, imageListResponse);
 
         return usedGoodsConverter.toResponse(usedGoodsEntity, goodsResponse);
-    }
-
-    //TODO 구매 프로세스 재정립
-
-    /**
-     * 구매자의 userId 1. usedGoodsStatus 가 REGISTERED 인지 확인 2. goods 의 userId 를 구매자의 userId 로 변경 3.
-     * goods 의 status 를 보관(STORAGE) 로 변경 4. usedGoodsStatus 를 SOLD 로 변경
-     */
-    public MessageResponse buyUsedGoods(Long usedGoodsId, String email) {
-
-        Long userId = usersService.getUserWithThrow(email).getId();
-
-        UsedGoodsEntity usedGoodsEntity = usedGoodsService.getUsedGoodsBy(usedGoodsId,
-            UsedGoodsStatus.REGISTERED); // 1
-
-        GoodsEntity goodsEntity = getGoodsBy(usedGoodsEntity.getGoodsId());
-
-        goodsService.setUserId(goodsEntity, userId); // 2
-
-        setGoodsStatusBy(goodsEntity.getId(), GoodsStatus.STORAGE); // 3
-
-        usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, UsedGoodsStatus.SOLD); // 4
-
-        return usedGoodsConverter.toMessageResponse("중고 물품 거래가 완료되었습니다.");
     }
 
     public List<UsedGoodsSearchResponse> usedGoodsSearchBy(SearchCondition condition,
@@ -185,6 +159,14 @@ public class UsedGoodsBusiness {
 
     private GoodsEntity getGoodsBy(Long goodsId) {
         return goodsService.getGoodsBy(goodsId);
+    }
+
+    private Long getUserId(String email) {
+        return usersService.getUserWithThrow(email).getId();
+    }
+
+    private void setUsedGoodsStatusBy(UsedGoodsEntity usedGoodsEntity, UsedGoodsStatus status) {
+        usedGoodsService.setUsedGoodsStatusBy(usedGoodsEntity, status);
     }
 
 }
