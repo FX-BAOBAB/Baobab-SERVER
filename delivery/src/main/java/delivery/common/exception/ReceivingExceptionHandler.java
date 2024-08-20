@@ -4,6 +4,7 @@ import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.receiving.NoOwnershipException;
 import delivery.common.exception.receiving.ReceivingNotFoundException;
 import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
+import delivery.common.exception.receiving.ReceivingNotInDeliveryException;
 import delivery.common.exception.receiving.ReceivingNotInTakingException;
 import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,13 @@ public class ReceivingExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(ReceivingErrorCode.RECEIVING_NOT_IN_CONFIRMATION));
+    }
+
+    @ExceptionHandler(value = ReceivingNotInDeliveryException.class)
+    public ResponseEntity<Api<Object>> receivingNotInDeliveryException(ReceivingNotInDeliveryException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(ReceivingErrorCode.RECEIVING_NOT_IN_DELIVERY));
     }
     
 }

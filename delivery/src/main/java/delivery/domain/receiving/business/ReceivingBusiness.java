@@ -136,4 +136,19 @@ public class ReceivingBusiness {
 
         return receivingResponse;
     }
+
+    public ReceivingResponse deliveryComplete(Long requestId) {
+
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+
+        if (receivingEntity.getStatus() != ReceivingStatus.DELIVERY) {
+            throw new ReceivingNotInConfirmationException(
+                ReceivingErrorCode.RECEIVING_NOT_IN_CONFIRMATION);
+        }
+
+        ReceivingEntity updateEntity = receivingService.deliveryComplete(receivingEntity);
+
+        return setGoodsIdAndUserNameReceivingResponse(updateEntity);
+
+    }
 }
