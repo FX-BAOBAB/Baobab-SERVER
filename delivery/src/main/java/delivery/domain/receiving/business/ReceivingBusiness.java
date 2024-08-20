@@ -1,10 +1,15 @@
 package delivery.domain.receiving.business;
 
+import db.domain.goods.GoodsEntity;
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.users.UserEntity;
+import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ReceivingErrorCode;
 import delivery.common.error.ShippingErrorCode;
+import delivery.common.exception.goods.GoodsNotInReceivingException;
+import delivery.common.exception.goods.GoodsNotInShippingIngException;
 import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
@@ -121,6 +126,13 @@ public class ReceivingBusiness {
         ReceivingEntity updateEntity = receivingService.startDelivery(receivingEntity);
 
         ReceivingResponse receivingResponse = setGoodsIdAndUserNameReceivingResponse(updateEntity);
+
+        receivingResponse.getGoodsIdList().forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+            if (goodsEntity.getStatus() != GoodsStatus.RECEIVING){
+                throw new GoodsNotInReceivingException(GoodsErrorCode.GOODS_NOT_IN_RECEIVING);
+            }
+        });
 
         return receivingResponse;
     }

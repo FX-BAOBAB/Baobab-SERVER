@@ -15,6 +15,7 @@ public enum GoodsErrorCode implements ErrorCodeIfs {
     NOT_OWNER(HttpStatus.NOT_ACCEPTABLE.value(), 1203, "소유자가 아닙니다."),
     GOODS_NOT_IN_STORAGE(HttpStatus.NOT_FOUND.value(),1253,"입고 확정 상태가 아닙니다."),
     GOODS_NOT_IN_SHIPPING_ING(HttpStatus.NOT_FOUND.value(),1253,"상품이 출고 진행 상태가 아닙니다."),
+    GOODS_NOT_IN_RECEIVING(HttpStatus.NOT_FOUND.value(),1253,"상품이 입고 진행 상태가 아닙니다."),
     ;
 
     private final Integer httpCode;

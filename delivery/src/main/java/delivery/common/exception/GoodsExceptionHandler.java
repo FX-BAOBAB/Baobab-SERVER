@@ -2,6 +2,7 @@ package delivery.common.exception;
 
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.exception.goods.GoodsNotFoundException;
+import delivery.common.exception.goods.GoodsNotInReceivingException;
 import delivery.common.exception.goods.GoodsNotInShippingIngException;
 import delivery.common.exception.goods.GoodsNotInStorageException;
 import delivery.common.exception.goods.InvalidGoodsStatusException;
@@ -52,5 +53,12 @@ public class GoodsExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_IN_SHIPPING_ING));
+    }
+
+    @ExceptionHandler(value = GoodsNotInReceivingException.class)
+    public ResponseEntity<Api<Object>> goodsNotInReceivingException(GoodsNotInReceivingException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_IN_RECEIVING));
     }
 }
