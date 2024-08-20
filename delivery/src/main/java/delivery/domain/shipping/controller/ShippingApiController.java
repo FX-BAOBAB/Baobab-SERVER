@@ -1,5 +1,6 @@
 package delivery.domain.shipping.controller;
 
+import delivery.domain.receiving.controller.model.ReceivingResponse;
 import delivery.domain.receiving.controller.model.ReceivingResponseList;
 import delivery.domain.shipping.business.ShippingBusiness;
 import delivery.domain.shipping.controller.model.ShippingResponse;
@@ -48,5 +49,14 @@ public class ShippingApiController {
         ShippingResponseList response = shippingBusiness.showReservationByDate(date);
         return Api.OK(response);
     }
+
+    // TODO Login DeliveryMan 정보 활용 필요
+    @PostMapping("/start/{requestId}")
+    public Api<ShippingResponse> deliveryStart(@PathVariable Long requestId) {
+        ShippingResponse response = shippingBusiness.deliveryStart(requestId);
+        return Api.OK(response);
+    }
+
+
 
 }

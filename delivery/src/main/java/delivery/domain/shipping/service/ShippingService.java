@@ -61,4 +61,9 @@ public class ShippingService {
         }
         return receivingEntityList;
     }
+
+    public ShippingEntity startDelivery(ShippingEntity shippingEntity) {
+        shippingEntity.setStatus(ShippingStatus.DELIVERY);
+        return shippingRepository.save(shippingEntity);
+    }
 }

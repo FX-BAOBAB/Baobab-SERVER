@@ -1,12 +1,25 @@
 package delivery.domain.shipping.business;
 
+import db.domain.goods.GoodsEntity;
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.ShippingEntity;
+import db.domain.shipping.enums.ShippingStatus;
 import db.domain.users.UserEntity;
+import delivery.common.error.GoodsErrorCode;
+import delivery.common.error.ReceivingErrorCode;
+import delivery.common.error.ShippingErrorCode;
+import delivery.common.exception.goods.GoodsNotFoundException;
+import delivery.common.exception.goods.GoodsNotInShippingIngException;
+import delivery.common.exception.goods.GoodsNotInStorageException;
+import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
+import delivery.common.exception.shipping.ShippingNotInRegisteredException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
+import delivery.domain.receiving.controller.model.ReceivingResponse;
 import delivery.domain.receiving.controller.model.ReceivingResponseList;
 import delivery.domain.shipping.controller.model.ShippingResponse;
 import delivery.domain.shipping.controller.model.ShippingResponseList;
@@ -16,6 +29,7 @@ import delivery.domain.users.converter.UserConverter;
 import delivery.domain.users.service.UserService;
 import global.annotation.Business;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,5 +115,28 @@ public class ShippingBusiness {
         });
 
         return responseList;
+    }
+
+    public ShippingResponse deliveryStart(Long requestId) {
+
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        if (shippingEntity.getStatus() != ShippingStatus.REGISTERED) {
+            throw new ShippingNotInRegisteredException(
+                ShippingErrorCode.SHIPPING_NOT_IN_REGISTERED);
+        }
+
+        ShippingEntity updateEntity = shippingService.startDelivery(shippingEntity);
+
+        ShippingResponse shippingResponse = getShippingResponse(updateEntity);
+
+        shippingResponse.getGoodsIdList().forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+            if (goodsEntity.getStatus() != GoodsStatus.SHIPPING_ING){
+                throw new GoodsNotInShippingIngException(GoodsErrorCode.GOODS_NOT_IN_SHIPPING_ING);
+            }
+        });
+
+        return shippingResponse;
     }
 }
