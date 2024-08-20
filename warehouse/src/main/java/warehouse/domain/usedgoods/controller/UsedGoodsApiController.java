@@ -63,13 +63,6 @@ public class UsedGoodsApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/{usedGoodsId}") // usedGoodsId 로 중고 물품 구매
-    @Operation(summary = "[물품 구매]", description = "usedGoodsId로 중고 물품 구매(개발중)")
-    public Api<MessageResponse> buyUsedGoods(@AuthenticationPrincipal User user, @PathVariable Long usedGoodsId) {
-        MessageResponse response = usedGoodsBusiness.buyUsedGoods(usedGoodsId, user.getUsername());
-        return Api.OK(response);
-    }
-
     @GetMapping()
     @Operation(summary = "[자신이 등록한 중고 물품 검색]", description = "무한 스크롤 방식")
     public Api<List<UsedGoodsSearchResponse>> usedGoodsSearchBy(

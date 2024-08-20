@@ -2,6 +2,7 @@ package delivery.common.exception;
 
 import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.shipping.ShippingNotFoundException;
+import delivery.common.exception.shipping.ShippingNotInPendingException;
 import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,5 +20,13 @@ public class ShippingExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Api.ERROR(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
     }
+
+    @ExceptionHandler(value = ShippingNotInPendingException.class)
+    public ResponseEntity<Api<Object>> shippingNotFoundException(ShippingNotInPendingException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Api.ERROR(ShippingErrorCode.SHIPPING_NOT_IN_PENDING));
+    }
+
 
 }
