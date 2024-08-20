@@ -3,6 +3,8 @@ package delivery.domain.shipping.business;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.shipping.ShippingEntity;
 import db.domain.users.UserEntity;
+import delivery.common.utils.datetime.DateTimeUtils;
+import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
 import delivery.domain.receiving.controller.model.ReceivingResponseList;
@@ -33,27 +35,7 @@ public class ShippingBusiness {
 
         List<ShippingEntity> shippingEntityList = shippingService.getRequestList();
 
-        ShippingResponseList responseList = shippingConverter.toResponseList(shippingEntityList);
-
-        shippingEntityList.forEach(shippingEntity -> {
-
-            log.info("receivingList Id : {} " , shippingEntity.getId());
-
-            List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
-                goodsEntity -> {
-                    return goodsEntity.getId();
-                }
-            ).toList();
-
-            responseList.getReservationResponseList().forEach(reservationResponse -> {
-                reservationResponse.setGoodsIdList(goodsIdList);
-                reservationResponse.setUserName(userService.getUserBy(shippingEntity.getUserId()).getName());
-            });
-
-        });
-
-        return responseList;
-
+        return getResponseList(shippingEntityList);
     }
 
     public ShippingResponse getReservation(Long requestId) {
@@ -87,5 +69,37 @@ public class ShippingBusiness {
         response.setGoodsIdList(goodsIdList);
 
         return response;
+    }
+
+    public ShippingResponseList showReservationByDate(String date) {
+
+        RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
+
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+
+        return getResponseList(shippingEntityList);
+    }
+
+    private ShippingResponseList getResponseList(List<ShippingEntity> shippingEntityList) {
+        ShippingResponseList responseList = shippingConverter.toResponseList(shippingEntityList);
+
+        shippingEntityList.forEach(shippingEntity -> {
+
+            log.info("receivingList Id : {} " , shippingEntity.getId());
+
+            List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
+                goodsEntity -> {
+                    return goodsEntity.getId();
+                }
+            ).toList();
+
+            responseList.getReservationResponseList().forEach(reservationResponse -> {
+                reservationResponse.setGoodsIdList(goodsIdList);
+                reservationResponse.setUserName(userService.getUserBy(shippingEntity.getUserId()).getName());
+            });
+
+        });
+
+        return responseList;
     }
 }

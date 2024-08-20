@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,6 +37,15 @@ public class ShippingApiController {
         @PathVariable Long requestId
     ){
         ShippingResponse response = shippingBusiness.shippingReservation(requestId);
+        return Api.OK(response);
+    }
+
+    // TODO Login DeliveryMan 정보 활용 필요
+    @GetMapping("/reservation")
+    public Api<ShippingResponseList> showReservationByDate(
+        @RequestParam String date
+    ){
+        ShippingResponseList response = shippingBusiness.showReservationByDate(date);
         return Api.OK(response);
     }
 

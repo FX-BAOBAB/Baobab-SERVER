@@ -5,9 +5,12 @@ import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.ShippingEntity;
 import db.domain.shipping.ShippingRepository;
 import db.domain.shipping.enums.ShippingStatus;
+import delivery.common.error.ReceivingErrorCode;
 import delivery.common.error.ShippingErrorCode;
+import delivery.common.exception.receiving.ReceivingNotFoundException;
 import delivery.common.exception.shipping.ShippingNotFoundException;
 import delivery.common.exception.shipping.ShippingNotInPendingException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,5 +50,15 @@ public class ShippingService {
 
         return shippingRepository.save(shippingEntity);
 
+    }
+
+    public List<ShippingEntity> getRequestListByDate(LocalDateTime startDate, LocalDateTime dueDate) {
+        List<ShippingEntity> receivingEntityList = shippingRepository.findAllByStatusAndDeliveryDateBetweenOrderByUserId(
+            ShippingStatus.REGISTERED, startDate, dueDate);
+
+        if (receivingEntityList.isEmpty()) {
+            throw new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND);
+        }
+        return receivingEntityList;
     }
 }
