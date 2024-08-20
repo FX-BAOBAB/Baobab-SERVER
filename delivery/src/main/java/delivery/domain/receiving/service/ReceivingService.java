@@ -57,4 +57,9 @@ public class ReceivingService {
         }
         return receivingEntityList;
     }
+
+    public ReceivingEntity startDelivery(ReceivingEntity receivingEntity) {
+        receivingEntity.setStatus(ReceivingStatus.DELIVERY);
+        return receivingRepository.save(receivingEntity);
+    }
 }
