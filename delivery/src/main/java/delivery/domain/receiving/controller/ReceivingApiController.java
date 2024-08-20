@@ -50,6 +50,7 @@ public class ReceivingApiController {
         return Api.OK(response);
     }
 
+    // TODO Login DeliveryMan 정보 활용 필요
     @PostMapping("/start/{requestId}")
     public Api<ReceivingResponse> deliveryStart(@PathVariable Long requestId) {
         ReceivingResponse response = receivingBusiness.deliveryStart(requestId);
