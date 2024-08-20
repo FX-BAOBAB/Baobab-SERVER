@@ -139,4 +139,26 @@ public class ShippingBusiness {
 
         return shippingResponse;
     }
+
+    public ShippingResponse deliveryComplete(Long requestId) {
+
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        if (shippingEntity.getStatus() != ShippingStatus.DELIVERY) {
+            throw new ShippingNotInRegisteredException(
+                ShippingErrorCode.SHIPPING_NOT_IN_DELIVERY);
+        }
+
+        ShippingEntity updateEntity = shippingService.deliveryComplete(shippingEntity);
+
+        ShippingResponse shippingResponse = getShippingResponse(updateEntity);
+
+        shippingResponse.getGoodsIdList().forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+            goodsService.changeShippingComplete(goodsEntity);
+        });
+
+        return shippingResponse;
+
+    }
 }

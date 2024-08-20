@@ -5,8 +5,8 @@ import db.domain.goods.GoodsRepository;
 import db.domain.goods.enums.GoodsStatus;
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.exception.goods.GoodsNotFoundException;
+import delivery.common.exception.goods.GoodsNotInShippingIngException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,16 @@ public class GoodsService {
 
     public GoodsEntity startShipping(GoodsEntity goodsEntity) {
         goodsEntity.setStatus(GoodsStatus.SHIPPING_ING);
+        return goodsRepository.save(goodsEntity);
+    }
+
+    public GoodsEntity changeShippingComplete(GoodsEntity goodsEntity) {
+
+        if (goodsEntity.getStatus() != GoodsStatus.SHIPPING_ING){
+            throw new GoodsNotInShippingIngException(GoodsErrorCode.GOODS_NOT_IN_SHIPPING_ING);
+        }
+
+        goodsEntity.setStatus(GoodsStatus.SHIPPING);
         return goodsRepository.save(goodsEntity);
     }
 }
