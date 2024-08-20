@@ -62,4 +62,9 @@ public class ReceivingService {
         receivingEntity.setStatus(ReceivingStatus.DELIVERY);
         return receivingRepository.save(receivingEntity);
     }
+
+    public ReceivingEntity deliveryComplete(ReceivingEntity receivingEntity) {
+        receivingEntity.setStatus(ReceivingStatus.RECEIVING);
+        return receivingRepository.save(receivingEntity);
+    }
 }

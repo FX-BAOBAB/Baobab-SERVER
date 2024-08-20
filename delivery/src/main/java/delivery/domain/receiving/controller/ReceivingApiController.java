@@ -57,4 +57,11 @@ public class ReceivingApiController {
         return Api.OK(response);
     }
 
+    // TODO Login DeliveryMan 정보 활용 필요
+    @PostMapping("/complete/{requestId}")
+    public Api<ReceivingResponse> deliveryComplete(@PathVariable Long requestId) {
+        ReceivingResponse response = receivingBusiness.deliveryComplete(requestId);
+        return Api.OK(response);
+    }
+
 }
