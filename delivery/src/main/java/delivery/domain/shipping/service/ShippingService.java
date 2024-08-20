@@ -66,4 +66,9 @@ public class ShippingService {
         shippingEntity.setStatus(ShippingStatus.DELIVERY);
         return shippingRepository.save(shippingEntity);
     }
+
+    public ShippingEntity deliveryComplete(ShippingEntity shippingEntity) {
+        shippingEntity.setStatus(ShippingStatus.SHIPPED);
+        return shippingRepository.save(shippingEntity);
+    }
 }

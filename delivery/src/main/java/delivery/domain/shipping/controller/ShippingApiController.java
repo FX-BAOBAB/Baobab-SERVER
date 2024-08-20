@@ -57,6 +57,12 @@ public class ShippingApiController {
         return Api.OK(response);
     }
 
+    // TODO Login DeliveryMan 정보 활용 필요
+    @PostMapping("/complete/{requestId}")
+    public Api<ShippingResponse> deliveryComplete(@PathVariable Long requestId) {
+        ShippingResponse response = shippingBusiness.deliveryComplete(requestId);
+        return Api.OK(response);
+    }
 
 
 }
