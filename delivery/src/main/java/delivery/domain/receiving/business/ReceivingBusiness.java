@@ -3,6 +3,8 @@ package delivery.domain.receiving.business;
 import db.domain.goods.GoodsEntity;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.users.UserEntity;
+import delivery.common.utils.datetime.DateTimeUtils;
+import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
 import delivery.domain.receiving.controller.model.ReceivingResponse;
@@ -12,6 +14,8 @@ import delivery.domain.receiving.service.ReceivingService;
 import delivery.domain.users.converter.UserConverter;
 import delivery.domain.users.service.UserService;
 import global.annotation.Business;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,26 +38,7 @@ public class ReceivingBusiness {
 
         List<ReceivingEntity> receivingEntityList = receivingService.getRequestList();
 
-        ReceivingResponseList responseList = receivingConverter.toResponseList(receivingEntityList);
-
-        receivingEntityList.forEach(receivingEntity -> {
-
-            log.info("receivingList Id : {} ", receivingEntity.getId());
-
-            List<Long> goodsIdList = goodsService.getReceivingGoodsList(receivingEntity.getId())
-                .stream().map(goodsEntity -> {
-                    return goodsEntity.getId();
-                }).toList();
-
-            responseList.getReservationResponseList().forEach(reservationResponse -> {
-                reservationResponse.setGoodsIdList(goodsIdList);
-                reservationResponse.setUserName(
-                    userService.getUserBy(receivingEntity.getUserId()).getName());
-            });
-
-        });
-
-        return responseList;
+        return getResponseList(receivingEntityList);
     }
 
     public ReceivingResponse getReservation(Long requestId) {
@@ -91,4 +76,35 @@ public class ReceivingBusiness {
 
     }
 
+    public ReceivingResponseList showReservationByDate(String date) {
+
+        RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
+        List<ReceivingEntity> receivingEntityList = receivingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+
+        return getResponseList(receivingEntityList);
+
+    }
+
+    private ReceivingResponseList getResponseList(List<ReceivingEntity> receivingEntityList) {
+        ReceivingResponseList responseList = receivingConverter.toResponseList(receivingEntityList);
+
+        receivingEntityList.forEach(receivingEntity -> {
+
+            log.info("receivingList Id : {} ", receivingEntity.getId());
+
+            List<Long> goodsIdList = goodsService.getReceivingGoodsList(receivingEntity.getId())
+                .stream().map(goodsEntity -> {
+                    return goodsEntity.getId();
+                }).toList();
+
+            responseList.getReservationResponseList().forEach(reservationResponse -> {
+                reservationResponse.setGoodsIdList(goodsIdList);
+                reservationResponse.setUserName(
+                    userService.getUserBy(receivingEntity.getUserId()).getName());
+            });
+
+        });
+
+        return responseList;
+    }
 }
