@@ -22,13 +22,13 @@ public class ReceivingApiController {
     private final ReceivingBusiness receivingBusiness;
 
     @GetMapping
-    public Api<ReceivingResponseList> showReservationList(){
+    public Api<ReceivingResponseList> showReservationList() {
         ReceivingResponseList response = receivingBusiness.getReservationList();
         return Api.OK(response);
     }
 
     @GetMapping("/{requestId}")
-    public Api<ReceivingResponse> showReservation(@PathVariable Long requestId){
+    public Api<ReceivingResponse> showReservation(@PathVariable Long requestId) {
         ReceivingResponse response = receivingBusiness.getReservation(requestId);
         return Api.OK(response);
     }
@@ -36,7 +36,7 @@ public class ReceivingApiController {
     @PostMapping("/reservation/{requestId}")
     public Api<ReceivingResponse> receivingReservation(
         @PathVariable Long requestId
-    ){
+    ) {
         ReceivingResponse response = receivingBusiness.reservationConfirmed(requestId);
         return Api.OK(response);
     }
@@ -45,8 +45,14 @@ public class ReceivingApiController {
     @GetMapping("/reservation")
     public Api<ReceivingResponseList> showReservationByDate(
         @RequestParam String date
-    ){
+    ) {
         ReceivingResponseList response = receivingBusiness.showReservationByDate(date);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/start/{requestId}")
+    public Api<ReceivingResponse> deliveryStart(@PathVariable Long requestId) {
+        ReceivingResponse response = receivingBusiness.deliveryStart(requestId);
         return Api.OK(response);
     }
 

@@ -1,8 +1,11 @@
 package delivery.domain.receiving.business;
 
-import db.domain.goods.GoodsEntity;
 import db.domain.receiving.ReceivingEntity;
+import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.users.UserEntity;
+import delivery.common.error.ReceivingErrorCode;
+import delivery.common.error.ShippingErrorCode;
+import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
 import delivery.domain.goods.converter.GoodsConverter;
@@ -14,9 +17,6 @@ import delivery.domain.receiving.service.ReceivingService;
 import delivery.domain.users.converter.UserConverter;
 import delivery.domain.users.service.UserService;
 import global.annotation.Business;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +79,8 @@ public class ReceivingBusiness {
     public ReceivingResponseList showReservationByDate(String date) {
 
         RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
-        List<ReceivingEntity> receivingEntityList = receivingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+        List<ReceivingEntity> receivingEntityList = receivingService.getRequestListByDate(
+            dateTime.getStartDateTime(), dateTime.getDueDateTime());
 
         return getResponseList(receivingEntityList);
 
@@ -106,5 +107,21 @@ public class ReceivingBusiness {
         });
 
         return responseList;
+    }
+
+    public ReceivingResponse deliveryStart(Long requestId) {
+
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+
+        if (receivingEntity.getStatus() != ReceivingStatus.CONFIRMATION) {
+            throw new ReceivingNotInConfirmationException(
+                ReceivingErrorCode.RECEIVING_NOT_IN_CONFIRMATION);
+        }
+
+        ReceivingEntity updateEntity = receivingService.startDelivery(receivingEntity);
+
+        ReceivingResponse receivingResponse = setGoodsIdAndUserNameReceivingResponse(updateEntity);
+
+        return receivingResponse;
     }
 }
