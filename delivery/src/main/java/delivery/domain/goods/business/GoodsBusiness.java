@@ -3,6 +3,7 @@ package delivery.domain.goods.business;
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
+import delivery.domain.goods.controller.model.GoodsResponse;
 import delivery.domain.goods.controller.model.GoodsResponses;
 import delivery.domain.goods.controller.model.ImageSet;
 import delivery.domain.goods.converter.GoodsConverter;
@@ -51,5 +52,14 @@ public class GoodsBusiness {
         });
 
         return responses;
+    }
+
+    public GoodsResponse getGoodsBy(Long goodsId) {
+        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+        GoodsResponse response = goodsConverter.toResponse(goodsEntity);
+        List<ImageEntity> imageEntityList = imageService.getImageListBy(response.getId());
+        List<ImageSet> imageSet = imageConverter.toImageSetList(imageEntityList);
+        response.setImages(imageSet);
+        return response;
     }
 }
