@@ -43,4 +43,16 @@ public class GoodsService {
         goodsEntity.setStatus(GoodsStatus.SHIPPING);
         return goodsRepository.save(goodsEntity);
     }
+
+    public List<GoodsEntity> getGoodsListBy(Long requestId) {
+
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByReceivingIdOrderByIdDesc(
+            requestId);
+
+        if (goodsEntityList.isEmpty()){
+            throw new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND);
+        }
+
+        return goodsEntityList;
+    }
 }
