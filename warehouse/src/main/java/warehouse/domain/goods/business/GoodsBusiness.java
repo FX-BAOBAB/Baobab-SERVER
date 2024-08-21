@@ -46,24 +46,24 @@ public class GoodsBusiness {
 
         List<GoodsEntity> goodsList = findGoodsListById(strategy, requestId, email);
 
-        return getGoodsResponsesBy(goodsList, email);
+        return getGoodsResponsesBy(goodsList);
     }
 
     @Transactional
     public List<GoodsResponse> getGoodsList(GoodsStatus status, String email) {
 
-        List<GoodsEntity> goodsList = goodsService.findAllByGoodsStatusWithThrow(status);
+        Long userId = usersService.getUserWithThrow(email).getId();
 
-        return getGoodsResponsesBy(goodsList, email);
+        List<GoodsEntity> goodsList = goodsService.findAllByGoodsStatusAndUserIdWithThrow(status ,userId);
+
+        return getGoodsResponsesBy(goodsList);
     }
 
-    private List<GoodsResponse> getGoodsResponsesBy(List<GoodsEntity> goodsList, String email) {
+    private List<GoodsResponse> getGoodsResponsesBy(List<GoodsEntity> goodsList) {
 
         List<GoodsResponse> goodsResponse = new ArrayList<>();
 
         goodsList.forEach(goodsEntity -> {
-
-            goodsOwnerCheckWithThrow(email, goodsEntity);
 
             ImageListResponse imageListResponse = imageConverter.toImageListResponse(goodsEntity);
 
@@ -72,13 +72,6 @@ public class GoodsBusiness {
         });
 
         return goodsResponse;
-    }
-
-    private void goodsOwnerCheckWithThrow(String email, GoodsEntity goodsEntity) {
-        UserEntity userEntity = usersService.getUserWithThrow(email);
-        if (!Objects.equals(userEntity.getId(), goodsEntity.getUserId())) {
-            throw new NotOwnerException(GoodsErrorCode.NOT_OWNER);
-        }
     }
 
     private List<GoodsEntity> findGoodsListById(GetGoodsStrategy strategy, Long requestId,

@@ -13,7 +13,7 @@ public interface GoodsRepository extends JpaRepository<GoodsEntity,Long> {
 
     List<GoodsEntity> findAllByIdIn(List<Long> goodsIdList);
 
-    List<GoodsEntity> findAllByStatusOrderByIdDesc(GoodsStatus status);
+    List<GoodsEntity> findAllByStatusAndUserIdOrderByIdDesc(GoodsStatus status, Long userId);
 
     List<GoodsEntity> findAllByTakeBackIdOrderByIdDesc(Long takeBackId);
 

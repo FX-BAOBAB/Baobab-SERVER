@@ -7,6 +7,7 @@ import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.receiving.ReceivingNotFoundException;
 import delivery.common.exception.receiving.ReceivingNotInTakingException;
 import delivery.domain.receiving.controller.model.ReceivingResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,26 @@ public class ReceivingService {
         }
 
         receivingEntity.setStatus(ReceivingStatus.CONFIRMATION);
+        return receivingRepository.save(receivingEntity);
+    }
+
+    public List<ReceivingEntity> getRequestListByDate(LocalDateTime startDate,LocalDateTime dueDate) {
+        List<ReceivingEntity> receivingEntityList = receivingRepository.findAllByStatusAndVisitDateBetweenOrderByUserId(
+            ReceivingStatus.CONFIRMATION, startDate, dueDate);
+
+        if (receivingEntityList.isEmpty()) {
+            throw new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND);
+        }
+        return receivingEntityList;
+    }
+
+    public ReceivingEntity startDelivery(ReceivingEntity receivingEntity) {
+        receivingEntity.setStatus(ReceivingStatus.DELIVERY);
+        return receivingRepository.save(receivingEntity);
+    }
+
+    public ReceivingEntity deliveryComplete(ReceivingEntity receivingEntity) {
+        receivingEntity.setStatus(ReceivingStatus.RECEIVING);
         return receivingRepository.save(receivingEntity);
     }
 }

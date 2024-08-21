@@ -2,6 +2,9 @@ package delivery.common.exception;
 
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.exception.goods.GoodsNotFoundException;
+import delivery.common.exception.goods.GoodsNotInReceivingException;
+import delivery.common.exception.goods.GoodsNotInShippingIngException;
+import delivery.common.exception.goods.GoodsNotInStorageException;
 import delivery.common.exception.goods.InvalidGoodsStatusException;
 import delivery.common.exception.receiving.NotOwnerException;
 import global.api.Api;
@@ -36,5 +39,26 @@ public class GoodsExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(Api.ERROR(GoodsErrorCode.NOT_OWNER));
+    }
+
+    @ExceptionHandler(value = GoodsNotInStorageException.class)
+    public ResponseEntity<Api<Object>> goodsNotInStorageException(GoodsNotInStorageException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_IN_STORAGE));
+    }
+
+    @ExceptionHandler(value = GoodsNotInShippingIngException.class)
+    public ResponseEntity<Api<Object>> goodsNotInShippingIngException(GoodsNotInShippingIngException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_IN_SHIPPING_ING));
+    }
+
+    @ExceptionHandler(value = GoodsNotInReceivingException.class)
+    public ResponseEntity<Api<Object>> goodsNotInReceivingException(GoodsNotInReceivingException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Api.ERROR(GoodsErrorCode.GOODS_NOT_IN_RECEIVING));
     }
 }

@@ -104,8 +104,8 @@ public class GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    public List<GoodsEntity> findAllByGoodsStatusWithThrow(GoodsStatus status) {
-        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByStatusOrderByIdDesc(status);
+    public List<GoodsEntity> findAllByGoodsStatusAndUserIdWithThrow(GoodsStatus status, Long userId) {
+        List<GoodsEntity> goodsEntityList = goodsRepository.findAllByStatusAndUserIdOrderByIdDesc(status, userId);
         checkEmptyGoodsListWithThrow(goodsEntityList);
         return goodsEntityList;
     }
