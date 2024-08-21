@@ -5,14 +5,13 @@ import db.domain.usedgoods.QueryUsedGoodsRepository;
 import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.UsedGoodsRepository;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
+import db.domain.usedgoodsorder.UsedGoodsOrderRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.error.UsedGoodsErrorCode;
-import warehouse.common.exception.goods.GoodsNotFoundException;
 import warehouse.common.exception.usedGoods.GoodsNotInUsedStatus;
 import warehouse.common.exception.usedGoods.UsedGoodsNotFoundException;
 
@@ -36,7 +35,7 @@ public class UsedGoodsService {
 
     public UsedGoodsEntity getUsedGoodsBy(Long usedGoodsId) {
         return usedGoodsRepository.findFirstById(usedGoodsId).orElseThrow(
-            () -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
+            () -> new UsedGoodsNotFoundException(UsedGoodsErrorCode.USED_GOODS_NOT_FOUND));
     }
 
     public List<UsedGoodsEntity> getUsedGoodsListBy(List<Long> usedGoodsIdList,

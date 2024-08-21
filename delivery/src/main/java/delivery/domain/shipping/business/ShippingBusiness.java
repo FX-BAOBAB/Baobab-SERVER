@@ -1,0 +1,164 @@
+package delivery.domain.shipping.business;
+
+import db.domain.goods.GoodsEntity;
+import db.domain.goods.enums.GoodsStatus;
+import db.domain.receiving.ReceivingEntity;
+import db.domain.receiving.enums.ReceivingStatus;
+import db.domain.shipping.ShippingEntity;
+import db.domain.shipping.enums.ShippingStatus;
+import db.domain.users.UserEntity;
+import delivery.common.error.GoodsErrorCode;
+import delivery.common.error.ReceivingErrorCode;
+import delivery.common.error.ShippingErrorCode;
+import delivery.common.exception.goods.GoodsNotFoundException;
+import delivery.common.exception.goods.GoodsNotInShippingIngException;
+import delivery.common.exception.goods.GoodsNotInStorageException;
+import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
+import delivery.common.exception.shipping.ShippingNotInRegisteredException;
+import delivery.common.utils.datetime.DateTimeUtils;
+import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
+import delivery.domain.goods.converter.GoodsConverter;
+import delivery.domain.goods.service.GoodsService;
+import delivery.domain.receiving.controller.model.ReceivingResponse;
+import delivery.domain.receiving.controller.model.ReceivingResponseList;
+import delivery.domain.shipping.controller.model.ShippingResponse;
+import delivery.domain.shipping.controller.model.ShippingResponseList;
+import delivery.domain.shipping.converter.ShippingConverter;
+import delivery.domain.shipping.service.ShippingService;
+import delivery.domain.users.converter.UserConverter;
+import delivery.domain.users.service.UserService;
+import global.annotation.Business;
+import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Business
+@RequiredArgsConstructor
+public class ShippingBusiness {
+
+    private final ShippingService shippingService;
+    private final ShippingConverter shippingConverter;
+    private final UserService userService;
+    private final UserConverter userConverter;
+    private final GoodsService goodsService;
+    private final GoodsConverter goodsConverter;
+
+    public ShippingResponseList getReservationList() {
+
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestList();
+
+        return getResponseList(shippingEntityList);
+    }
+
+    public ShippingResponse getReservation(Long requestId) {
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        ShippingResponse response = getShippingResponse(shippingEntity);
+
+        return response;
+    }
+
+    public ShippingResponse shippingReservation(Long requestId) {
+        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId);
+
+        ShippingResponse response = getShippingResponse(shippingEntity);
+
+        return response;
+    }
+
+    private ShippingResponse getShippingResponse(ShippingEntity shippingEntity) {
+        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
+
+        List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
+            goodsEntity -> {
+                return goodsEntity.getId();
+            }
+        ).toList();
+
+        UserEntity userEntity = userService.getUserBy(shippingEntity.getUserId());
+
+        response.setUserName(userEntity.getName());
+        response.setGoodsIdList(goodsIdList);
+
+        return response;
+    }
+
+    public ShippingResponseList showReservationByDate(String date) {
+
+        RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
+
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+
+        return getResponseList(shippingEntityList);
+    }
+
+    private ShippingResponseList getResponseList(List<ShippingEntity> shippingEntityList) {
+        ShippingResponseList responseList = shippingConverter.toResponseList(shippingEntityList);
+
+        shippingEntityList.forEach(shippingEntity -> {
+
+            log.info("receivingList Id : {} " , shippingEntity.getId());
+
+            List<Long> goodsIdList = goodsService.getShippingGoodsList(shippingEntity.getId()).stream().map(
+                goodsEntity -> {
+                    return goodsEntity.getId();
+                }
+            ).toList();
+
+            responseList.getReservationResponseList().forEach(reservationResponse -> {
+                reservationResponse.setGoodsIdList(goodsIdList);
+                reservationResponse.setUserName(userService.getUserBy(shippingEntity.getUserId()).getName());
+            });
+
+        });
+
+        return responseList;
+    }
+
+    public ShippingResponse deliveryStart(Long requestId) {
+
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        if (shippingEntity.getStatus() != ShippingStatus.REGISTERED) {
+            throw new ShippingNotInRegisteredException(
+                ShippingErrorCode.SHIPPING_NOT_IN_REGISTERED);
+        }
+
+        ShippingEntity updateEntity = shippingService.startDelivery(shippingEntity);
+
+        ShippingResponse shippingResponse = getShippingResponse(updateEntity);
+
+        shippingResponse.getGoodsIdList().forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+            if (goodsEntity.getStatus() != GoodsStatus.SHIPPING_ING){
+                throw new GoodsNotInShippingIngException(GoodsErrorCode.GOODS_NOT_IN_SHIPPING_ING);
+            }
+        });
+
+        return shippingResponse;
+    }
+
+    public ShippingResponse deliveryComplete(Long requestId) {
+
+        ShippingEntity shippingEntity = shippingService.getRequest(requestId);
+
+        if (shippingEntity.getStatus() != ShippingStatus.DELIVERY) {
+            throw new ShippingNotInRegisteredException(
+                ShippingErrorCode.SHIPPING_NOT_IN_DELIVERY);
+        }
+
+        ShippingEntity updateEntity = shippingService.deliveryComplete(shippingEntity);
+
+        ShippingResponse shippingResponse = getShippingResponse(updateEntity);
+
+        shippingResponse.getGoodsIdList().forEach(goodsId -> {
+            GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
+            goodsService.changeShippingComplete(goodsEntity);
+        });
+
+        return shippingResponse;
+
+    }
+}
