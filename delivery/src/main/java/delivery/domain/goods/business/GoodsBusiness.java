@@ -25,11 +25,21 @@ public class GoodsBusiness {
     private final ImageConverter imageConverter;
     private final ImageRepository imageRepository;
 
-    public GoodsResponses getGoodsListBy(Long requestId) {
+    public GoodsResponses getReceivingGoodsListBy(Long requestId) {
 
-        List<GoodsEntity> goodsEntityList =  goodsService.getGoodsListBy(requestId);
+        List<GoodsEntity> goodsEntityList =  goodsService.getReceivingGoodsList(requestId);
 
+        return setImageSet(goodsEntityList);
+    }
 
+    public GoodsResponses getShippingGoodsListBy(Long requestId) {
+
+        List<GoodsEntity> goodsEntityList =  goodsService.getShippingGoodsList(requestId);
+
+        return setImageSet(goodsEntityList);
+    }
+
+    private GoodsResponses setImageSet(List<GoodsEntity> goodsEntityList) {
         GoodsResponses responses = goodsConverter.toResponseList(goodsEntityList);
 
         responses.getGoodsResponseList().forEach(response -> {

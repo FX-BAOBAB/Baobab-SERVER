@@ -20,7 +20,15 @@ public class GoodsApiController {
     public Api<GoodsResponses> receivingGoods(
         @PathVariable Long requestId
     ){
-        GoodsResponses response = goodsBusiness.getGoodsListBy(requestId);
+        GoodsResponses response = goodsBusiness.getReceivingGoodsListBy(requestId);
+        return Api.OK(response);
+    }
+
+    @GetMapping("/shipping/{requestId}")
+    public Api<GoodsResponses> shippingGoods(
+        @PathVariable Long requestId
+    ){
+        GoodsResponses response = goodsBusiness.getShippingGoodsListBy(requestId);
         return Api.OK(response);
     }
 
