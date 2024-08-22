@@ -19,7 +19,7 @@ import warehouse.domain.chat.controller.model.response.MessageResponse;
 import warehouse.domain.chat.converter.ChatConverter;
 import warehouse.domain.chat.service.ChatService;
 import warehouse.domain.usedgoods.service.UsedGoodsService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
 
 @Business
 @RequiredArgsConstructor
