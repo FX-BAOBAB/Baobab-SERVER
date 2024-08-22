@@ -7,9 +7,7 @@ import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.users.UserEntity;
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ReceivingErrorCode;
-import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.goods.GoodsNotInReceivingException;
-import delivery.common.exception.goods.GoodsNotInShippingIngException;
 import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
@@ -20,7 +18,7 @@ import delivery.domain.receiving.controller.model.ReceivingResponseList;
 import delivery.domain.receiving.converter.ReceivingConverter;
 import delivery.domain.receiving.service.ReceivingService;
 import delivery.domain.users.converter.UserConverter;
-import delivery.domain.users.service.UserService;
+import delivery.domain.users.security.jwt.service.UsersService;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +32,7 @@ public class ReceivingBusiness {
 
     private final ReceivingService receivingService;
     private final ReceivingConverter receivingConverter;
-    private final UserService userService;
+    private final UsersService userService;
     private final UserConverter userConverter;
     private final GoodsService goodsService;
     private final GoodsConverter goodsConverter;
@@ -74,7 +72,7 @@ public class ReceivingBusiness {
             }).toList();
 
         ReceivingResponse response = receivingConverter.toResponse(receivingEntity);
-        UserEntity userEntity = userService.getUserBy(receivingEntity.getUserId());
+        UserEntity userEntity = userService.getUserWithThrow(receivingEntity.getUserId());
         response.setGoodsIdList(goodsIdList);
         response.setUserName(userEntity.getName());
         return response;
@@ -106,7 +104,7 @@ public class ReceivingBusiness {
             responseList.getReservationResponseList().forEach(reservationResponse -> {
                 reservationResponse.setGoodsIdList(goodsIdList);
                 reservationResponse.setUserName(
-                    userService.getUserBy(receivingEntity.getUserId()).getName());
+                    userService.getUserWithThrow(receivingEntity.getUserId()).getName());
             });
 
         });

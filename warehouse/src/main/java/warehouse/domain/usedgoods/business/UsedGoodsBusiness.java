@@ -25,7 +25,8 @@ import warehouse.domain.usedgoods.controller.model.response.UsedGoodsDetailRespo
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsSearchResponse;
 import warehouse.domain.usedgoods.converter.UsedGoodsConverter;
 import warehouse.domain.usedgoods.service.UsedGoodsService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
+
 
 @Business
 @RequiredArgsConstructor

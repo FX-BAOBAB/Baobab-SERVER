@@ -26,7 +26,8 @@ import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.receiving.service.ReceivingService;
 import warehouse.domain.takeback.service.TakeBackService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
+
 
 @Slf4j
 @Business
