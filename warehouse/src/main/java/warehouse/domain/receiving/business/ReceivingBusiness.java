@@ -34,7 +34,7 @@ import warehouse.domain.receiving.converter.guarantee.GuaranteeConverter;
 import warehouse.domain.receiving.converter.message.MessageConverter;
 import warehouse.domain.receiving.converter.receiving.ReceivingConverter;
 import warehouse.domain.receiving.service.ReceivingService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
 
 @Slf4j
 @Business

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import warehouse.common.error.UserErrorCode;
 import warehouse.common.exception.user.UserNameNotFoundException;
 
+
 @Service
 @RequiredArgsConstructor
 public class AuthorizationService implements UserDetailsService {
