@@ -21,7 +21,7 @@ import warehouse.domain.shipping.controller.model.response.ShippingDetailRespons
 import warehouse.domain.shipping.controller.model.response.ShippingStatusResponse;
 import warehouse.domain.shipping.converter.ShippingConverter;
 import warehouse.domain.shipping.service.ShippingService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
 
 @Business
 @RequiredArgsConstructor

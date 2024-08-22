@@ -19,7 +19,8 @@ import warehouse.domain.takeback.controller.model.TakeBackResponse;
 import warehouse.domain.takeback.controller.model.TakeBackStatusResponse;
 import warehouse.domain.takeback.converter.TakeBackConverter;
 import warehouse.domain.takeback.service.TakeBackService;
-import warehouse.domain.users.service.UsersService;
+import warehouse.domain.users.security.service.UsersService;
+
 
 @Slf4j
 @Business
