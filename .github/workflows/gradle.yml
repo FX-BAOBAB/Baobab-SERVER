@@ -26,6 +26,11 @@ jobs:
           cd ./gateway/src/main/resources
           echo "${{ secrets.GATEWAY_APPLICATION }}" > application.yml
 
+      - name: Make Users application.yml
+        run: |
+          cd ./users/src/main/resources
+          echo "${{ secrets.USER_APPLICATION }}" > application.yml
+
       - name: Make Warehouse application.yml
         run: |
           cd ./warehouse/src/main/resources
