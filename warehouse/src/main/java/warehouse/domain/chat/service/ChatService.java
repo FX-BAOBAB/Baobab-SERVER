@@ -157,7 +157,7 @@ public class ChatService {
     /**
      * ChatRoom 정보와 ChatMessage 정보를 저정하고 캐시에서 삭제
      */
-    @Scheduled(cron = "0 0 2 ? * 7") // 매주 토요일 오전 2시 저장
+    @Scheduled(cron = "0 0 2 ? * 6") // 매주 토요일 오전 2시 저장
     private void saveRedisToRdb() {
         // chatRoom 저장
         List<ChatRoomEntity> chatRoomEntityList = opsHashChatRoom.values(CHAT_ROOMS);

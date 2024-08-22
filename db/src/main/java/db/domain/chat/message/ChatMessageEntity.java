@@ -1,6 +1,6 @@
 package db.domain.chat.message;
 
-import db.domain.chat.enums.MessageType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,10 +24,16 @@ public class ChatMessageEntity implements Serializable  {
 
     @Id
     private Long id;
+
+    @Column(nullable = false)
     private String message; // 메시지 내용
-    private MessageType type; // 메시지 타입
+
+    @Column(nullable = false)
     private Long chatRoomId; // 방 ID
+
+    @Column(nullable = false)
     private Long userId; // 발신자 ID
+
     private String createdAt;
 
 }

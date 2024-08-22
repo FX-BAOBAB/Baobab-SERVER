@@ -1,12 +1,11 @@
 package warehouse.domain.chat.converter;
 
-import db.domain.chat.room.ChatRoomEntity;
 import db.domain.chat.enums.ChatRoomStatus;
+import db.domain.chat.message.ChatMessageEntity;
+import db.domain.chat.room.ChatRoomEntity;
 import global.annotation.Converter;
 import java.time.LocalDateTime;
 import java.util.List;
-import db.domain.chat.message.ChatMessageEntity;
-import db.domain.chat.enums.MessageType;
 import warehouse.domain.chat.controller.model.request.ChatMessageRequest;
 import warehouse.domain.chat.controller.model.response.ChatMessageResponse;
 import warehouse.domain.chat.controller.model.response.ChatRoomResponse;
@@ -42,7 +41,6 @@ public class ChatConverter {
         List<ChatMessageEntity> chatMessageEntityList) {
         return chatMessageEntityList.stream().map(chatMessageEntity -> ChatMessageResponse.builder()
             .message(chatMessageEntity.getMessage())
-            .type(chatMessageEntity.getType())
             .chatRoomId(chatMessageEntity.getChatRoomId())
             .userId(chatMessageEntity.getUserId())
             .createdAt(chatMessageEntity.getCreatedAt())
@@ -52,7 +50,6 @@ public class ChatConverter {
     public ChatMessageEntity toChatMessage(ChatMessageRequest message, Long userId) {
         return ChatMessageEntity.builder()
             .message(message.getMessage())
-            .type(message.getType())
             .chatRoomId(message.getChatRoomId())
             .userId(userId)
             .createdAt(String.valueOf(LocalDateTime.now()))

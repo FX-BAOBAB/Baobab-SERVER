@@ -1,6 +1,7 @@
 package warehouse.domain.chat.controller;
 
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class ChatApiController {
     private final ChatBusiness chatBusiness;
 
     @PostMapping("/{usedGoodsId}") //채팅방 개설 -> 구매자가
+    @Operation(summary = "[채팅방 생성]", description = "물품 구매자가 채팅방을 생성함, ws://localhost:8080/chatting")
     public Api<ChatRoomResponse> createChatRoom(@PathVariable Long usedGoodsId,
         @AuthenticationPrincipal User user) {
         ChatRoomResponse response = chatBusiness.createChatRoom(usedGoodsId, user.getUsername());
@@ -34,6 +36,7 @@ public class ChatApiController {
     }
 
     @PostMapping("/enter/{chatRoomId}") // 채팅방 입장
+    @Operation(summary = "[채팅방 입장]", description = "구독 - /sub/chat/{chatRoomId}")
     public Api<List<ChatMessageResponse>> enterChatRoom(@PathVariable Long chatRoomId,
         @AuthenticationPrincipal User user) {
         List<ChatMessageResponse> response = chatBusiness.enterChatRoom(chatRoomId,
@@ -42,6 +45,7 @@ public class ChatApiController {
     }
 
     @PostMapping("/quit/{chatRoomId}") // 채팅방 퇴장
+    @Operation(summary = "[채팅방 퇴장]")
     public Api<MessageResponse> quitChatRoom(@PathVariable Long chatRoomId,
         @AuthenticationPrincipal User user) {
         MessageResponse response = chatBusiness.quitChatRoom(chatRoomId, user.getUsername());
@@ -49,18 +53,21 @@ public class ChatApiController {
     }
 
     @PostMapping("/message")
+    @Operation(summary = "[message 전송]", description = "/pub/chat")
     public void sendMessage(@RequestBody ChatMessageRequest message, @AuthenticationPrincipal User user) {
         log.info(message.toString());
         chatBusiness.sendChatMessage(message, user.getUsername());
     }
 
     @GetMapping("/buy") // 구매 채팅방 조회
+    @Operation(summary = "[구매 채팅방 조회]")
     public Api<List<ChatRoomResponse>> getBuyerChatRoom(@AuthenticationPrincipal User user) {
         List<ChatRoomResponse> response = chatBusiness.getBuyerChatRoom(user.getUsername());
         return Api.OK(response);
     }
 
     @GetMapping("/sell") // 판매 채팅방 조회
+    @Operation(summary = "[판매 채팅방 조회]")
     public Api<List<ChatRoomResponse>> getSellerChatRoom(@AuthenticationPrincipal User user) {
         List<ChatRoomResponse> response = chatBusiness.getSellerChatRoom(user.getUsername());
         return Api.OK(response);
@@ -68,6 +75,7 @@ public class ChatApiController {
 
     // TODO - TEST 용
     @GetMapping("/rooms") // 모든 채팅방 조회 test 용
+    @Operation(summary = "[TEST 모든 채팅방 조회(redis)]")
     public Api<List<ChatRoomResponse>> rooms() {
         List<ChatRoomResponse> responses = chatBusiness.findAllChatRoom();
         return Api.OK(responses);
@@ -75,6 +83,7 @@ public class ChatApiController {
 
     // TODO - TEST 용
     @GetMapping("/{chatRoomId}") // 모든 채팅 메시지 조회
+    @Operation(summary = "[TEST chatRoomId 로 모든 채팅 조회]")
     public Api<List<ChatMessageResponse>> getChatMessage(@PathVariable Long chatRoomId) {
         List<ChatMessageResponse> response = chatBusiness.getChatMessage(chatRoomId);
         return Api.OK(response);
