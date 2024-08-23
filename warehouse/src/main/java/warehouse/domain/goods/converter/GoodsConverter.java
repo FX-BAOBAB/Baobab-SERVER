@@ -30,6 +30,7 @@ public class GoodsConverter {
             .basicImages(imageListResponse.getBasicImageListResponse())
             .faultImages(imageListResponse.getFaultImageListResponse())
             .category(goodsEntity.getCategory())
+            .status(goodsEntity.getStatus())
             .quantity(goodsEntity.getQuantity())
             .build();
     }
