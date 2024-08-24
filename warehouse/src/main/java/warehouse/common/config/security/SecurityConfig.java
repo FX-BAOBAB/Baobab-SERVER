@@ -33,7 +33,7 @@ public class SecurityConfig {
     private final TokenService tokenService;
 
     private final List<String> WHITE_LIST = List.of("/swagger-ui.html", "/swagger-ui/**",
-        "/v3/api-docs/**", "/open-api/**");
+        "/v3/api-docs/**", "/open-api/**", "/chatting/**");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
