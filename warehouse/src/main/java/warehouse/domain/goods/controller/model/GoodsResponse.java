@@ -1,6 +1,7 @@
 package warehouse.domain.goods.controller.model;
 
 import db.domain.goods.enums.GoodsCategory;
+import db.domain.goods.enums.GoodsStatus;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,8 @@ public class GoodsResponse {
     private String name;
 
     private GoodsCategory category;
+
+    private GoodsStatus status;
 
     private int quantity;
 
