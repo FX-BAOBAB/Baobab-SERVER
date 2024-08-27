@@ -1,5 +1,4 @@
-package db.domain.image;
-
+package db.domain.imagemapping;
 
 import db.common.BaseEntity;
 import db.domain.image.enums.ImageKind;
@@ -16,29 +15,20 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
-@Table(name = "image")
+@Table(name = "image_mapping")
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ImageEntity extends BaseEntity {
+public class ImageMapping extends BaseEntity {
 
-    @Column(length = 200, nullable = false)
-    private String imageUrl;
-
-    @Column(length = 100, nullable = false)
-    private String originalName;
-
-    @Column(length = 100, nullable = false)
-    private String serverName;
-
-    @Column(length = 100)
-    private String caption;
-
-    @Column(nullable = false, length = 10)
-    private String extension;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
+    private ImageKind kind;
 
     @Column(nullable = false)
-    private Long imageMappingId;
+    private Long goodsId;
 
+    @Column(nullable = false)
+    private Long userId;
 }
