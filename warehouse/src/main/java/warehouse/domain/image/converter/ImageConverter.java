@@ -3,8 +3,8 @@ package warehouse.domain.image.converter;
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
+import db.domain.imagemapping.ImageMappingEntity;
 import global.annotation.Converter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,16 +16,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import warehouse.common.error.ImageErrorCode;
 import warehouse.common.exception.image.ImageStorageException;
 import warehouse.common.utils.ImageUtils;
-import warehouse.domain.image.controller.model.ImageListRequest;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.controller.model.ImageRequest;
 import warehouse.domain.image.controller.model.ImageResponse;
+import warehouse.domain.image.service.ImageMappingService;
 import warehouse.domain.image.service.ImageService;
 
 @Slf4j
@@ -33,49 +32,22 @@ import warehouse.domain.image.service.ImageService;
 @Converter
 public class ImageConverter {
 
-    @Value("${file.path}")
-    private String uploadDir;
-
     private final ImageService imageService;
-
-    public ImageEntity toEntity(ImageRequest request) {
-
-        if (Objects.requireNonNull(request.getFile().getOriginalFilename()).isEmpty()) {
-            throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
-        }
-
-        ImageInfo imageInfo = new ImageInfo(request, uploadDir);
-
-        return ImageEntity.builder().imageUrl(imageInfo.getImageUrl())
-            .originalName(imageInfo.getOriginalFileName()).serverName(imageInfo.serverName)
-            .kind(request.getKind()).caption(request.getCaption())
-            .extension(imageInfo.getExtension()).build();
-    }
-
+    private final ImageMappingService imageMappingService;
 
     public ImageResponse toResponse(ImageEntity newEntity) {
+        ImageMappingEntity imageMappingEntity = imageMappingService.getImageMappingBy(
+            newEntity.getImageMappingId());
         return Optional.ofNullable(newEntity).map(
                 it -> ImageResponse.builder().id(newEntity.getId())
-                    .serverName(newEntity.getServerName()).originalName(newEntity.getOriginalName())
-                    .imageUrl(newEntity.getImageUrl()).caption(newEntity.getCaption())
-                    .goodsId(newEntity.getGoodsId()).kind(newEntity.getKind()).build())
+                    .serverName(newEntity.getServerName())
+                    .originalName(newEntity.getOriginalName())
+                    .imageUrl(newEntity.getImageUrl())
+                    .caption(newEntity.getCaption())
+                    .goodsId(imageMappingEntity.getGoodsId())
+                    .kind(imageMappingEntity.getKind())
+                    .build())
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
-    }
-
-    public List<ImageRequest> toRequestList(ImageListRequest listRequest) {
-
-        List<ImageRequest> requestList = new ArrayList<>();
-
-        for (int i = 0; i < listRequest.getFiles().size(); i++) {
-            ImageRequest request = new ImageRequest();
-            request.setFile(listRequest.getFiles().get(i));
-            request.setKind(listRequest.getKind());
-            request.setCaption(listRequest.getCaptions().get(i));
-
-            requestList.add(request);
-        }
-
-        return requestList;
     }
 
     public List<ImageResponse> toResponseList(List<ImageEntity> imageEntityList) {
@@ -92,11 +64,27 @@ public class ImageConverter {
     }
 
     public ImageListResponse toImageListResponse(GoodsEntity goodsEntity) {
-        List<ImageEntity> basicImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+        List<ImageMappingEntity> imageMappingEntityList = imageMappingService.getImageMappingIdByGoodsId(
+            goodsEntity.getId());
+
+        List<Long> basicImageMappingIdList = getImageMappingIdByKind(imageMappingEntityList,
             ImageKind.BASIC);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlListBy(goodsEntity.getId(),
+        List<Long> faultImageMappingIdList = getImageMappingIdByKind(imageMappingEntityList,
             ImageKind.FAULT);
+
+        List<ImageEntity> basicImageEntityList = imageService.getImageUrlList(
+            basicImageMappingIdList);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlList(
+            faultImageMappingIdList);
         return toImageListResponse(basicImageEntityList, faultImageEntityList);
+    }
+
+    private List<Long> getImageMappingIdByKind(List<ImageMappingEntity> imageMappingEntityList,
+        ImageKind kind) {
+        return imageMappingEntityList.stream()
+            .filter(imageMappingEntity -> imageMappingEntity.getKind() == kind)
+            .map(imageMappingEntity -> imageMappingEntity.getId())
+            .toList();
     }
 
     @Slf4j
