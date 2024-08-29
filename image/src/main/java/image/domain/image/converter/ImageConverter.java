@@ -60,12 +60,16 @@ public class ImageConverter {
 
 
     public ImageResponse toResponse(ImageEntity newEntity) {
+        ImageMappingEntity imageMappingEntity = imageMappingService.getImageMappingBy(
+            newEntity.getImageMappingId());
         return Optional.ofNullable(newEntity).map(
                 it -> ImageResponse.builder().id(newEntity.getId())
                     .serverName(newEntity.getServerName())
                     .originalName(newEntity.getOriginalName())
                     .imageUrl(newEntity.getImageUrl())
                     .caption(newEntity.getCaption())
+                    .kind(imageMappingEntity.getKind())
+                    .goodsId(imageMappingEntity.getGoodsId())
                     .build())
             .orElseThrow(() -> new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR));
     }

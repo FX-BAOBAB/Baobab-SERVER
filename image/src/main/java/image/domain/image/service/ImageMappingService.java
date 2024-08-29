@@ -43,4 +43,9 @@ public class ImageMappingService {
         imageMappingRepository.deleteById(imageEntity.getImageMappingId());
     }
 
+    public ImageMappingEntity getImageMappingBy(Long imageMappingId) {
+        return imageMappingRepository.findById(imageMappingId)
+            .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND));
+    }
+
 }
