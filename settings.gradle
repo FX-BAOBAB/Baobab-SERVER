@@ -5,4 +5,5 @@ include 'warehouse'
 include 'delivery'
 include 'gateway'
 include 'users'
+include 'image'
 

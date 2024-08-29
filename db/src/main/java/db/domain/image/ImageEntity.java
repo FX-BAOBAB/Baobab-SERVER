@@ -35,14 +35,10 @@ public class ImageEntity extends BaseEntity {
     @Column(length = 100)
     private String caption;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50, nullable = false, columnDefinition = "VARCHAR(50)")
-    private ImageKind kind;
-
-    @Column(nullable = false)
-    private Long goodsId;
-
     @Column(nullable = false, length = 10)
     private String extension;
+
+    @Column(nullable = false)
+    private Long imageMappingId;
 
 }

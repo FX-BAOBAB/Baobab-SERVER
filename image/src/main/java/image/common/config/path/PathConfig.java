@@ -1,13 +1,13 @@
-package warehouse.common.config.path;
+package image.common.config.path;
 
+import image.common.error.ImageErrorCode;
+import image.common.exception.image.ImageStorageException;
+import image.domain.image.properties.FileStorageProperties;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import warehouse.common.error.ImageErrorCode;
-import warehouse.common.exception.image.ImageStorageException;
-import warehouse.domain.image.properties.FileStorageProperties;
 
 @Configuration
 public class PathConfig {

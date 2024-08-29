@@ -1,4 +1,4 @@
-package warehouse.domain.image.properties;
+package image.domain.image.properties;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -17,9 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final List<String> METHODS = List.of("GET", "OPTIONS", "POST");
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -30,9 +27,4 @@ public class WebConfig implements WebMvcConfigurer {
         return source;
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**")
-            .addResourceLocations("file:" + uploadDir);
-    }
 }
