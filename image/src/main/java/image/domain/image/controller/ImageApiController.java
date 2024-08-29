@@ -45,8 +45,8 @@ public class ImageApiController {
         return Api.OK(response);
     }
 
-    @GetMapping("/byte/{filepath}")
-    @Operation(summary = "[단일 파일 byte[] 반환하기]")
+//    @GetMapping("/byte/{filepath}")
+//    @Operation(summary = "[단일 파일 byte[] 반환하기]")
     public Api<byte[]> display(@PathVariable("filepath") String filepath) {
         byte[] result = imageBusiness.getImageFile(filepath);
         return Api.OK(result);
