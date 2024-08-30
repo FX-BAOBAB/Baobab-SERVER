@@ -18,7 +18,6 @@ public class ImageConverter {
         return ImageSet.builder()
             .imageId(imageEntity.getId())
             .caption(imageEntity.getCaption())
-            .kind(imageEntity.getKind())
             .build();
     }
 
