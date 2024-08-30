@@ -3,6 +3,7 @@ package warehouse.domain.receiving.business;
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.enums.ImageKind;
+import db.domain.imagemapping.ImageMappingEntity;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.users.UserEntity;
 import global.annotation.Business;
@@ -23,6 +24,7 @@ import warehouse.domain.goods.converter.GoodsConverter;
 import warehouse.domain.goods.service.GoodsService;
 import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
+import warehouse.domain.image.service.ImageMappingService;
 import warehouse.domain.image.service.ImageService;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
@@ -46,6 +48,7 @@ public class ReceivingBusiness {
     private final GoodsService goodsService;
     private final GoodsConverter goodsConverter;
     private final ImageService imageService;
+    private final ImageMappingService imageMappingService;
     private final ImageConverter imageConverter;
     private final GuaranteeConverter guaranteeConverter;
     private final MessageConverter messageConverter;
@@ -72,12 +75,21 @@ public class ReceivingBusiness {
         List<GoodsEntity> savedGoodsList = saveGoodsList(goodsEntityList, registeredReceivingEntity,
             userId);
 
-        // 7.Goods <-> Image 연결
+        // 7.Goods <-> ImageMapping 연결
         savedGoodsList.forEach(goodsEntity -> {
             goodsEntity.setReceivingId(registeredReceivingEntity.getId());
             goodsEntity.setUserId(userId);
+
             request.getGoodsRequests().forEach(goodsRequest -> {
-                imageService.receivingRequest(goodsRequest, goodsEntity.getId());
+                List<ImageEntity> imageEntityList = imageService.getImagesByImageIdList(
+                    goodsRequest.getImageIdList());
+
+                imageEntityList.forEach(imageEntity -> {
+                    ImageMappingEntity imageMappingEntity = imageMappingService.getImageMappingBy(
+                        imageEntity.getImageMappingId());
+                    imageMappingService.receivingRequest(imageMappingEntity, goodsEntity);
+                });
+
             });
         });
 

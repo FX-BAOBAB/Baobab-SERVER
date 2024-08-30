@@ -1,7 +1,12 @@
-package warehouse.domain.image.business;
+package image.domain.image.business;
 
 import db.domain.image.ImageEntity;
+import db.domain.imagemapping.ImageMappingEntity;
 import global.annotation.Business;
+import image.common.error.ImageErrorCode;
+import image.common.exception.image.ImageStorageException;
+import image.domain.image.converter.ImageMappingConverter;
+import image.domain.image.service.ImageMappingService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -13,14 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import warehouse.common.error.ImageErrorCode;
-import warehouse.common.exception.image.ImageStorageException;
-import warehouse.domain.goods.converter.GoodsConverter;
-import warehouse.domain.image.controller.model.ImageListRequest;
-import warehouse.domain.image.controller.model.ImageRequest;
-import warehouse.domain.image.controller.model.ImageResponse;
-import warehouse.domain.image.converter.ImageConverter;
-import warehouse.domain.image.service.ImageService;
+import image.domain.image.controller.model.ImageListRequest;
+import image.domain.image.controller.model.ImageRequest;
+import image.domain.image.controller.model.ImageResponse;
+import image.domain.image.converter.ImageConverter;
+import image.domain.image.service.ImageService;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,13 +30,15 @@ import warehouse.domain.image.service.ImageService;
 public class ImageBusiness {
 
     private final ImageService imageService;
+    private final ImageMappingService imageMappingService;
     private final ImageConverter imageConverter;
-    private final GoodsConverter goodsConverter;
+    private final ImageMappingConverter imageMappingConverter;
 
     @Qualifier("imageUploadExecutor")
     private final Executor executor;
 
     public ImageResponse uploadImage(ImageRequest request) {
+
         if (request.getFile().isEmpty()) {
             throw new ImageStorageException(ImageErrorCode.IMAGE_STORAGE_ERROR);
         }
@@ -71,12 +75,22 @@ public class ImageBusiness {
     }
 
     private void deleteImage(List<ImageEntity> imageEntityList) {
-        imageEntityList.forEach(imageService::deleteImageDB);
+        imageEntityList.forEach(imageEntity -> {
+            imageService.deleteImageDB(imageEntity);
+            imageMappingService.deleteImageDB(imageEntity);
+        });
     }
 
     public List<ImageResponse> getImageUrlListBy(Long goodsId) {
-        return imageService.getImageUrlList(goodsId).stream()
-            .map(imageConverter::toResponse).collect(Collectors.toList());
+        // 1. goodsId 로 ImageMappingEntity 조회
+        // 2. 조회된 ImageMappingEntity 에서 imageMappingId List 추출
+        // 3. imageMappingId List 로 ImageEntity 조회
+        // 4. Response
+        List<Long> imageMappingIdList = imageMappingService.getImageMappingIdByGoodsId(goodsId).stream()
+            .map(imageMappingEntity -> imageMappingEntity.getId()).toList();
+
+        return imageService.getImageUrlList(imageMappingIdList).stream()
+            .map(imageEntity -> imageConverter.toResponse(imageEntity)).toList();
     }
 
     public byte[] getImageFile(String filepath) {
@@ -84,8 +98,12 @@ public class ImageBusiness {
     }
 
     private ImageEntity imageUploadBizLogic(ImageRequest request) {
-        ImageEntity entity = imageConverter.toEntity(request);
-        imageService.uploadImage(request.getFile(), entity);
-        return imageService.saveImageDataToDB(entity);
+        ImageMappingEntity imageMappingEntity = imageMappingConverter.toEntity(request);
+        ImageMappingEntity savedImageMappingEntity = imageMappingService.imageMapping(
+            imageMappingEntity);
+
+        ImageEntity imageEntity = imageConverter.toEntity(request, imageMappingEntity.getId());
+        imageService.uploadImage(request.getFile(), imageEntity);
+        return imageService.saveImageDataToDB(imageEntity, savedImageMappingEntity);
     }
 }

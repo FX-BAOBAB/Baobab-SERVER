@@ -1,4 +1,4 @@
-package warehouse.domain.image.controller;
+package image.domain.image.controller;
 
 import global.api.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import warehouse.domain.image.business.ImageBusiness;
-import warehouse.domain.image.controller.model.ImageListRequest;
-import warehouse.domain.image.controller.model.ImageRequest;
-import warehouse.domain.image.controller.model.ImageResponse;
+import image.domain.image.business.ImageBusiness;
+import image.domain.image.controller.model.ImageListRequest;
+import image.domain.image.controller.model.ImageRequest;
+import image.domain.image.controller.model.ImageResponse;
 
 // TODO Test 용 : 삭제 예정
 @RestController
@@ -45,8 +45,8 @@ public class ImageApiController {
         return Api.OK(response);
     }
 
-    @GetMapping("/byte/{filepath}")
-    @Operation(summary = "[단일 파일 byte[] 반환하기]")
+//    @GetMapping("/byte/{filepath}")
+//    @Operation(summary = "[단일 파일 byte[] 반환하기]")
     public Api<byte[]> display(@PathVariable("filepath") String filepath) {
         byte[] result = imageBusiness.getImageFile(filepath);
         return Api.OK(result);

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class ImageService {
 
     private final ImageRepository imageRepository;
-
+    // TODO 수정
     public List<ImageEntity> getImageListBy(Long imageId) {
-        return imageRepository.findAllByGoodsIdOrderByIdDesc(imageId);
+//        return imageRepository.findAllByGoodsIdOrderByIdDesc(imageId);
+        return null;
     }
+
 
 }
