@@ -85,3 +85,24 @@ public class FaultBusiness {
     }
 
 
+    public AddFaultResponse addFault(AddFaultRequest addFaultRequest, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId(); // deliveryManId
+
+        // 1. imageId 로 imageEntity 불러오기
+        ImageEntity imageEntity = imageService.getImageBy(addFaultRequest.getImageId());
+
+        // 2. imageEntity 의 imageMappingId 로 imageMappingEntity 불러오기
+        ImageMappingEntity imageMappingEntity = imageMappingService.getImageMappingBy(
+            imageEntity.getImageMappingId());
+
+        // 3. 이미지 매핑
+        ImageMappingEntity savedMappingEntity = imageMappingService.addFault(
+            imageMappingEntity, addFaultRequest, userId);
+
+        // 4. 응답
+        return faultConverter.toResponse(savedMappingEntity, imageEntity);
+
+    }
+
+}

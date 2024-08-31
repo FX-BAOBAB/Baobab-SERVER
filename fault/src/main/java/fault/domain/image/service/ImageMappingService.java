@@ -1,5 +1,6 @@
 package fault.domain.image.service;
 
+import db.domain.image.enums.ImageKind;
 import db.domain.imagemapping.ImageMappingEntity;
 import db.domain.imagemapping.ImageMappingRepository;
 import fault.common.error.ImageErrorCode;
@@ -31,6 +32,7 @@ public class ImageMappingService {
 
     private ImageMappingEntity updateImageMapping(ImageMappingEntity imageMappingEntity,
         AddFaultRequest addFaultRequest, Long userId) {
+        imageMappingEntity.setKind(ImageKind.DELIVERY);
         imageMappingEntity.setGoodsId(addFaultRequest.getGoodsId());
         imageMappingEntity.setUserId(userId);
         return imageMappingRepository.save(imageMappingEntity);

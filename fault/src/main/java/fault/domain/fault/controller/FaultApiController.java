@@ -62,3 +62,15 @@ public class FaultApiController {
         return Api.OK(response);
     }
 
+    @PostMapping()
+    @Operation(summary = "[결함 추가 등록]")
+    public Api<AddFaultResponse> addFault(
+        @RequestBody @ApiValid Api<AddFaultRequest> addFaultRequest,
+        @AuthenticationPrincipal User user) {
+        AddFaultResponse response = faultBusiness.addFault(addFaultRequest.getBody(),
+            user.getUsername());
+        return Api.OK(response);
+    }
+
+
+}
