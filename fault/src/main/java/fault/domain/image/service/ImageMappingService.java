@@ -1,13 +1,13 @@
 package fault.domain.image.service;
 
-import db.domain.goods.GoodsEntity;
 import db.domain.imagemapping.ImageMappingEntity;
 import db.domain.imagemapping.ImageMappingRepository;
+import fault.common.error.ImageErrorCode;
+import fault.common.exception.image.ImageNotFoundException;
+import fault.domain.fault.controller.model.request.AddFaultRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import fault.common.error.ImageErrorCode;
-import fault.common.exception.image.ImageNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +24,15 @@ public class ImageMappingService {
             .orElseThrow(() -> new ImageNotFoundException(ImageErrorCode.IMAGE_NOT_FOUND));
     }
 
-    public void receivingRequest(ImageMappingEntity imageMappingEntity, GoodsEntity goodsEntity) {
-        updateImage(imageMappingEntity, goodsEntity);
+    public ImageMappingEntity addFault(ImageMappingEntity imageMappingEntity,
+        AddFaultRequest addFaultRequest, Long userId) {
+        return updateImageMapping(imageMappingEntity, addFaultRequest, userId);
     }
 
-    private void updateImage(ImageMappingEntity imageMappingEntity, GoodsEntity goodsEntity) {
-        imageMappingEntity.setUserId(goodsEntity.getUserId());
-        imageMappingEntity.setGoodsId(goodsEntity.getId());
-        imageMappingRepository.save(imageMappingEntity);
+    private ImageMappingEntity updateImageMapping(ImageMappingEntity imageMappingEntity,
+        AddFaultRequest addFaultRequest, Long userId) {
+        imageMappingEntity.setGoodsId(addFaultRequest.getGoodsId());
+        imageMappingEntity.setUserId(userId);
+        return imageMappingRepository.save(imageMappingEntity);
     }
-
 }
