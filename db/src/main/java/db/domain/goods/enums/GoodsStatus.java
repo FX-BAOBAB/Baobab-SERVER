@@ -13,7 +13,8 @@ public enum GoodsStatus {
     TAKE_BACK(4,"반품", "반품된 상품입니다."),
     SHIPPING_ING(5,"출고 진행 중", "출고 진행 중 입니다."),
     SHIPPING(6,"출고", "출고된 상품입니다."),
-    USED(7,"중고", "중고 전환 된 상품입니다.")
+    USED(7,"중고", "중고 전환 된 상품입니다."),
+    REJECT(8, "입고 취소", "입고 거절된 상품입니다.")
     ;
 
     private final int current;
