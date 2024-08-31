@@ -50,3 +50,15 @@ public class FaultApiController {
         MessageResponse response = faultBusiness.approveFault(receivingId);
         return Api.OK(response);
     }
+
+    @PostMapping("/reject")
+    @Operation(summary = "[결함 반려]")
+    public Api<RejectFaultResponse> rejectFault(
+        @RequestBody @ApiValid Api<RejectFaultRequest> rejectFaultRequest,
+        @AuthenticationPrincipal User user) {
+        log.info("reject result : {}", rejectFaultRequest.toString());
+        RejectFaultResponse response = faultBusiness.rejectFault(rejectFaultRequest.getBody(),
+            user.getUsername());
+        return Api.OK(response);
+    }
+

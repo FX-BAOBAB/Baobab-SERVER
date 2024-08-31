@@ -64,3 +64,24 @@ public class FaultBusiness {
     }
 
 
+    public RejectFaultResponse rejectFault(RejectFaultRequest rejectFaultRequest, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId(); // deliveryManId
+
+        ReceivingEntity receivingEntity = receivingService.getReceivingBy(
+            rejectFaultRequest.getReceivingId());
+
+        // 결함 반려
+        // **입고요청서 CLOSE, 물품 상태 REJECT**
+        receivingService.rejectFault(receivingEntity, ReceivingStatus.CLOSE); //
+        goodsService.findAllByReceivingIdWithThrow(receivingEntity.getId()).stream()
+            .forEach(
+                goodsEntity -> goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.REJECT)
+            );
+
+        FaultEntity faultEntity = faultConverter.toEntity(rejectFaultRequest, userId);
+        FaultEntity savedFaultEntity = faultService.rejectFault(faultEntity);
+        return faultConverter.toResponse(savedFaultEntity);
+    }
+
+
