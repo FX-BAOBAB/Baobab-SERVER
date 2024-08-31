@@ -58,3 +58,9 @@ public class FaultBusiness {
     }
 
 
+    public MessageResponse approveFault(Long receivingId) {
+        receivingService.approveFault(receivingId); // **입고 상태를 DELIVERY 로 변경합니다.**
+        return messageConverter.toMassageResponse("결함이 승인되었습니다.");
+    }
+
+

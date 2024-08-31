@@ -44,3 +44,9 @@ public class FaultApiController {
         return Api.OK(response);
     }
 
+    @PostMapping("/{receivingId}")
+    @Operation(summary = "[결함 승인]")
+    public Api<MessageResponse> approveFault(@PathVariable Long receivingId) {
+        MessageResponse response = faultBusiness.approveFault(receivingId);
+        return Api.OK(response);
+    }
