@@ -36,3 +36,11 @@ public class FaultApiController {
         FaultListResponse response = faultBusiness.getFaultList(goodsId);
         return Api.OK(response);
     }
+
+    @GetMapping("/{imageId}")
+    @Operation(summary = "[결함 상세 보기]")
+    public Api<FaultImageResponse> getFaultDetail(@PathVariable Long imageId) {
+        FaultImageResponse response = faultBusiness.getFaultDetail(imageId);
+        return Api.OK(response);
+    }
+

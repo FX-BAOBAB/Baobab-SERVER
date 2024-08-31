@@ -52,3 +52,9 @@ public class FaultBusiness {
 
     }
 
+    public FaultImageResponse getFaultDetail(Long imageId) {
+        ImageEntity imageEntity = imageService.getImageBy(imageId);
+        return faultConverter.toResponse(imageEntity);
+    }
+
+
