@@ -36,6 +36,11 @@ jobs:
           cd ./image/src/main/resources
           echo "${{ secrets.IMAGE_APPLICATION }}" > application.yml
 
+      - name: Make Fault application.yml
+        run: |
+          cd ./fault/src/main/resources
+          echo "${{ secrets.FAULT_APPLICATION }}" > application.yml
+
       - name: Make Warehouse application.yml
         run: |
           cd ./warehouse/src/main/resources
