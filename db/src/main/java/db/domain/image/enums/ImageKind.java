@@ -10,7 +10,8 @@ public enum ImageKind {
 
     BASIC("기본 사진"),
     FAULT("결함 사진"),
-    PROFILE("프로필 사진")
+    PROFILE("프로필 사진"),
+    DELIVERY("배송 결함")
     ;
 
     private final String description;
