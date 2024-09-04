@@ -7,4 +7,5 @@ include 'gateway'
 include 'users'
 include 'image'
 include 'fault'
+include 'store'
 
