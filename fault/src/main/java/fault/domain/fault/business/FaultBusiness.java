@@ -43,7 +43,8 @@ public class FaultBusiness {
     public FaultListResponse getFaultList(Long goodsId) {
         List<Long> faultImageMappingIdList = imageMappingService.getImageMappingIdByGoodsId(goodsId)
             .stream()
-            .filter(imageMappingEntity -> imageMappingEntity.getKind() == ImageKind.FAULT)
+            .filter(imageMappingEntity -> imageMappingEntity.getKind() == ImageKind.FAULT
+                    || imageMappingEntity.getKind() == ImageKind.DELIVERY)
             .map(imageMappingEntity -> imageMappingEntity.getId()).toList();
 
         List<ImageEntity> faultImageEntityList = imageService.getImageBy(faultImageMappingIdList);
