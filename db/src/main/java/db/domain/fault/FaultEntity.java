@@ -20,10 +20,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class FaultEntity extends BaseEntity {
 
-    private LocalDateTime guaranteeAt;
-
     @Column(length = 200, nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private Boolean approval;
+
+    private LocalDateTime registeredAt;
 
     @Column(nullable = false)
     private Long receivingId;

@@ -19,7 +19,7 @@ public class ReceivingService {
             .orElseThrow((() -> new ReceivingNotFoundException(ErrorCode.NULL_POINT)));
     }
 
-    public void approveFault(Long receivingId) {
+    public void setReceivingStatusBy(Long receivingId, ReceivingStatus status) {
         ReceivingEntity receivingEntity = this.getReceivingBy(receivingId);
         receivingEntity.setStatus(ReceivingStatus.DELIVERY);
         receivingRepository.save(receivingEntity);
