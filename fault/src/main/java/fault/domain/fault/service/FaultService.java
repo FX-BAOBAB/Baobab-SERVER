@@ -2,6 +2,8 @@ package fault.domain.fault.service;
 
 import db.domain.fault.FaultEntity;
 import db.domain.fault.FaultRepository;
+import fault.common.error.FaultErrorCode;
+import fault.common.exception.fault.ExistsFaultRequestException;
 import fault.domain.fault.controller.model.request.FaultRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ public class FaultService {
     public void checkFaultRequest(Long receivingId) {
         boolean exists = faultRepository.existsByReceivingId(receivingId);
         if(exists) {
-            throw  new RuntimeException("이미 승인/반려된 요청서가 존재합니다.");
+            throw new ExistsFaultRequestException(FaultErrorCode.EXISTS_FAULT_REQUEST);
         }
     }
 }
