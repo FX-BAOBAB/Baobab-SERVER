@@ -1,4 +1,4 @@
-package store.domain.controller;
+package store.domain.controller.model;
 
 import db.domain.receiving.enums.ReceivingStatus;
 import java.time.LocalDateTime;

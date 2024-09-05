@@ -2,7 +2,7 @@ package store.domain.converter;
 
 import db.domain.receiving.ReceivingEntity;
 import global.annotation.Converter;
-import store.domain.controller.ReceivingResponse;
+import store.domain.controller.model.ReceivingResponse;
 
 @Converter
 public class ReceivingConverter {
