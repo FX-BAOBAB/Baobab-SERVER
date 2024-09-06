@@ -7,15 +7,13 @@ import db.domain.image.enums.ImageKind;
 import db.domain.imagemapping.ImageMappingEntity;
 import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
-import fault.domain.fault.controller.model.common.MessageResponse;
 import fault.domain.fault.controller.model.request.AddFaultRequest;
-import fault.domain.fault.controller.model.request.RejectFaultRequest;
+import fault.domain.fault.controller.model.request.FaultRequest;
 import fault.domain.fault.controller.model.response.AddFaultResponse;
 import fault.domain.fault.controller.model.response.FaultImageResponse;
 import fault.domain.fault.controller.model.response.FaultListResponse;
-import fault.domain.fault.controller.model.response.RejectFaultResponse;
+import fault.domain.fault.controller.model.response.FaultResponse;
 import fault.domain.fault.converter.FaultConverter;
-import fault.domain.fault.converter.MessageConverter;
 import fault.domain.fault.service.FaultService;
 import fault.domain.goods.service.GoodsService;
 import fault.domain.image.service.ImageMappingService;
@@ -37,13 +35,13 @@ public class FaultBusiness {
     private final GoodsService goodsService;
 
     private final FaultConverter faultConverter;
-    private final MessageConverter messageConverter;
     private final FaultService faultService;
 
     public FaultListResponse getFaultList(Long goodsId) {
         List<Long> faultImageMappingIdList = imageMappingService.getImageMappingIdByGoodsId(goodsId)
             .stream()
-            .filter(imageMappingEntity -> imageMappingEntity.getKind() == ImageKind.FAULT)
+            .filter(imageMappingEntity -> imageMappingEntity.getKind() == ImageKind.FAULT
+                || imageMappingEntity.getKind() == ImageKind.DELIVERY)
             .map(imageMappingEntity -> imageMappingEntity.getId()).toList();
 
         List<ImageEntity> faultImageEntityList = imageService.getImageBy(faultImageMappingIdList);
@@ -58,32 +56,42 @@ public class FaultBusiness {
     }
 
 
-    public MessageResponse approveFault(Long receivingId) {
-        receivingService.approveFault(receivingId); // **입고 상태를 DELIVERY 로 변경합니다.**
-        return messageConverter.toMassageResponse("결함이 승인되었습니다.");
+    public FaultResponse approveFault(FaultRequest faultRequest, String email) {
+
+        Long userId = usersService.getUserWithThrow(email).getId();
+
+        // 이미 결함 승인/반려 기록이 있는경우 예외
+        faultService.checkFaultRequest(faultRequest.getReceivingId());
+
+        approve(faultRequest);
+
+        FaultEntity faultEntity = faultConverter.toEntity(faultRequest, userId);
+
+        FaultEntity savedFaultEntity = faultService.approvalFault(faultEntity, true);
+
+        return faultConverter.toResponse(savedFaultEntity);
+
     }
 
+    public FaultResponse rejectFault(FaultRequest faultRequest, String email) {
 
-    public RejectFaultResponse rejectFault(RejectFaultRequest rejectFaultRequest, String email) {
+        Long userId = usersService.getUserWithThrow(email).getId();
 
-        Long userId = usersService.getUserWithThrow(email).getId(); // deliveryManId
+        // 이미 결함 승인/반려 기록이 있는경우 예외
+        faultService.checkFaultRequest(faultRequest.getReceivingId());
 
         ReceivingEntity receivingEntity = receivingService.getReceivingBy(
-            rejectFaultRequest.getReceivingId());
+            faultRequest.getReceivingId());
 
-        // 결함 반려
-        // **입고요청서 CLOSE, 물품 상태 REJECT**
-        receivingService.rejectFault(receivingEntity, ReceivingStatus.CLOSE); //
-        goodsService.findAllByReceivingIdWithThrow(receivingEntity.getId()).stream()
-            .forEach(
-                goodsEntity -> goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.REJECT)
-            );
+        reject(receivingEntity);
 
-        FaultEntity faultEntity = faultConverter.toEntity(rejectFaultRequest, userId);
-        FaultEntity savedFaultEntity = faultService.rejectFault(faultEntity);
+        FaultEntity faultEntity = faultConverter.toEntity(faultRequest, userId);
+
+        FaultEntity savedFaultEntity = faultService.approvalFault(faultEntity, false);
+
         return faultConverter.toResponse(savedFaultEntity);
-    }
 
+    }
 
     public AddFaultResponse addFault(AddFaultRequest addFaultRequest, String email) {
 
@@ -103,6 +111,19 @@ public class FaultBusiness {
         // 4. 응답
         return faultConverter.toResponse(savedMappingEntity, imageEntity);
 
+    }
+
+    private void reject(ReceivingEntity receivingEntity) {
+        receivingService.rejectFault(receivingEntity, ReceivingStatus.CLOSE); //
+        goodsService.findAllByReceivingIdWithThrow(receivingEntity.getId()).stream()
+            .forEach(
+                goodsEntity -> goodsService.setGoodsStatusBy(goodsEntity, GoodsStatus.REJECT)
+            );
+    }
+
+    private void approve(FaultRequest faultRequest) {
+        receivingService.setReceivingStatusBy(faultRequest.getReceivingId(),
+            ReceivingStatus.DELIVERY);
     }
 
 }

@@ -1,13 +1,12 @@
 package fault.domain.fault.controller;
 
 import fault.domain.fault.business.FaultBusiness;
-import fault.domain.fault.controller.model.common.MessageResponse;
 import fault.domain.fault.controller.model.request.AddFaultRequest;
-import fault.domain.fault.controller.model.request.RejectFaultRequest;
+import fault.domain.fault.controller.model.request.FaultRequest;
 import fault.domain.fault.controller.model.response.FaultImageResponse;
 import fault.domain.fault.controller.model.response.FaultListResponse;
 import fault.domain.fault.controller.model.response.AddFaultResponse;
-import fault.domain.fault.controller.model.response.RejectFaultResponse;
+import fault.domain.fault.controller.model.response.FaultResponse;
 import global.annotation.ApiValid;
 import global.api.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,26 +43,26 @@ public class FaultApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/{receivingId}")
+    @PostMapping("/approve")
     @Operation(summary = "[결함 승인]")
-    public Api<MessageResponse> approveFault(@PathVariable Long receivingId) {
-        MessageResponse response = faultBusiness.approveFault(receivingId);
+    public Api<FaultResponse> approveFault(@RequestBody @ApiValid Api<FaultRequest> faultRequest,
+        @AuthenticationPrincipal User user) {
+        FaultResponse response = faultBusiness.approveFault(faultRequest.getBody(),
+            user.getUsername());
         return Api.OK(response);
     }
 
     @PostMapping("/reject")
     @Operation(summary = "[결함 반려]")
-    public Api<RejectFaultResponse> rejectFault(
-        @RequestBody @ApiValid Api<RejectFaultRequest> rejectFaultRequest,
+    public Api<FaultResponse> rejectFault(@RequestBody @ApiValid Api<FaultRequest> faultRequest,
         @AuthenticationPrincipal User user) {
-        log.info("reject result : {}", rejectFaultRequest.toString());
-        RejectFaultResponse response = faultBusiness.rejectFault(rejectFaultRequest.getBody(),
+        FaultResponse response = faultBusiness.rejectFault(faultRequest.getBody(),
             user.getUsername());
         return Api.OK(response);
     }
 
     @PostMapping()
-    @Operation(summary = "[결함 추가 등록]")
+    @Operation(summary = "[결함 추가 등록]") // 배송자가
     public Api<AddFaultResponse> addFault(
         @RequestBody @ApiValid Api<AddFaultRequest> addFaultRequest,
         @AuthenticationPrincipal User user) {

@@ -3,11 +3,11 @@ package fault.domain.fault.converter;
 import db.domain.fault.FaultEntity;
 import db.domain.image.ImageEntity;
 import db.domain.imagemapping.ImageMappingEntity;
-import fault.domain.fault.controller.model.request.RejectFaultRequest;
+import fault.domain.fault.controller.model.request.FaultRequest;
 import fault.domain.fault.controller.model.response.FaultImageResponse;
 import fault.domain.fault.controller.model.response.FaultListResponse;
 import fault.domain.fault.controller.model.response.AddFaultResponse;
-import fault.domain.fault.controller.model.response.RejectFaultResponse;
+import fault.domain.fault.controller.model.response.FaultResponse;
 import global.annotation.Converter;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FaultConverter {
 
-    public FaultEntity toEntity(RejectFaultRequest rejectFaultRequest, Long userId) {
+    public FaultEntity toEntity(FaultRequest faultRequest, Long userId) {
         return FaultEntity.builder()
-            .guaranteeAt(LocalDateTime.now())
-            .description(rejectFaultRequest.getDescription())
-            .receivingId(rejectFaultRequest.getReceivingId())
+            .description(faultRequest.getDescription())
+            .registeredAt(LocalDateTime.now())
+            .receivingId(faultRequest.getReceivingId())
             .userId(userId)
             .build();
     }
@@ -56,13 +56,15 @@ public class FaultConverter {
             .build();
     }
 
-    public RejectFaultResponse toResponse(FaultEntity faultEntity) {
-        return RejectFaultResponse.builder()
+    public FaultResponse toResponse(FaultEntity faultEntity) {
+        return FaultResponse.builder()
             .faultId(faultEntity.getId())
+            .approval(faultEntity.getApproval())
             .receivingId(faultEntity.getReceivingId())
             .description(faultEntity.getDescription())
-            .guaranteeAt(faultEntity.getGuaranteeAt())
+            .registeredAt(faultEntity.getRegisteredAt())
             .build();
     }
+
 
 }
