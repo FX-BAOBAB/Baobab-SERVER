@@ -4,6 +4,7 @@ import db.domain.usedgoods.UsedGoodsEntity;
 import db.domain.usedgoods.enums.UsedGoodsStatus;
 import db.domain.usedgoodsorder.UsedGoodsOrderEntity;
 import global.annotation.Converter;
+import java.time.LocalDateTime;
 import java.util.List;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsOrderResponse;
 import warehouse.domain.usedgoods.controller.model.response.UsedGoodsStatusResponse;
@@ -13,16 +14,18 @@ public class UsedGoodsOrderConverter {
 
     public UsedGoodsOrderEntity toEntity(UsedGoodsEntity usedGoodsEntity, Long userId) {
         return UsedGoodsOrderEntity.builder()
-            .userId(userId)
+            .sellerId(usedGoodsEntity.getUserId())
+            .buyerId(userId)
             .usedGoodsId(usedGoodsEntity.getId())
+            .createdAt(LocalDateTime.now())
             .build();
     }
 
     public UsedGoodsOrderResponse toResponse(UsedGoodsOrderEntity orderEntity) {
         return UsedGoodsOrderResponse.builder()
             .usedGoodsOrderId(orderEntity.getId())
-            .userId(orderEntity.getUserId())
-            .status(orderEntity.getStatus())
+            .sellerId(orderEntity.getSellerId())
+            .buyerId(orderEntity.getBuyerId())
             .createdAt(orderEntity.getCreatedAt())
             .usedGoodsId(orderEntity.getUsedGoodsId())
             .build();

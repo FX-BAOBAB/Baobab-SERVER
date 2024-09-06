@@ -58,6 +58,7 @@ public class UsedGoodsConverter {
         return EntitySearchCondition.builder()
             .usedGoodsId(condition.getUsedGoodsId())
             .keyword(condition.getKeyword())
+            .status(condition.getStatus())
             .minPrice(condition.getMinPrice())
             .maxPrice(condition.getMaxPrice())
             .startDate(condition.getStartDate())

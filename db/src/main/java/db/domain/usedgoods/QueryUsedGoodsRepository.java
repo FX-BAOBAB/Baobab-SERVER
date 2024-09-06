@@ -33,7 +33,8 @@ public class QueryUsedGoodsRepository { // JpaQueryFactory 가 존재하기 때�
                 loeEndDate(condition.getEndDate()), // endDate 이전 날짜로 조회 진행함
                 ltUsedGoodsId(condition.getUsedGoodsId()), // cursor 방식 적용
                 isNotUnregistered(),
-                isUserId(condition.getUserId())
+                isUserId(condition.getUserId()),
+                filterBy(condition.getStatus()) // 파라미터로 받은 status로 필터링
             )
             .orderBy(getOrderSpecifier(condition.getPage().getSort()).stream()
                 .toArray(size -> new OrderSpecifier[size]))
@@ -83,6 +84,11 @@ public class QueryUsedGoodsRepository { // JpaQueryFactory 가 존재하기 때�
 
     private BooleanExpression isUserId(Long userId) {
         return userId != null ? usedGoodsEntity.userId.eq(userId) : null;
+    }
+
+    private BooleanExpression filterBy(UsedGoodsStatus status) {
+        return status != null ? usedGoodsEntity.status.eq(status)
+            : usedGoodsEntity.status.ne(UsedGoodsStatus.UNREGISTERED);
     }
 
 }

@@ -1,5 +1,6 @@
 package db.domain.usedgoods;
 
+import db.domain.usedgoods.enums.UsedGoodsStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ public class EntitySearchCondition {
 
     private Long usedGoodsId;
     private String keyword;
+    private UsedGoodsStatus status;
     private int minPrice;
     private Integer maxPrice;
     private LocalDateTime startDate;
