@@ -1,11 +1,8 @@
 package db.domain.usedgoodsorder;
 
 import db.common.BaseEntity;
-import db.domain.usedgoodsorder.enums.UsedGoodsOrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -25,11 +22,10 @@ public class UsedGoodsOrderEntity extends BaseEntity {
 
 
     @Column(nullable = false)
-    private Long userId; // 구매자 ID
+    private Long buyerId; // 구매자 ID
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50,columnDefinition = "VARCHAR(50)")
-    private UsedGoodsOrderStatus status;
+    @Column(nullable = false)
+    private Long sellerId; // 판매자 ID
 
     private LocalDateTime createdAt;
 

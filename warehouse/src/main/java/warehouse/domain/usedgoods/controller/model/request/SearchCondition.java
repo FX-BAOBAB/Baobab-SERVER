@@ -1,5 +1,6 @@
 package warehouse.domain.usedgoods.controller.model.request;
 
+import db.domain.usedgoods.enums.UsedGoodsStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,8 @@ public class SearchCondition {
     private Long usedGoodsId;
 
     private String keyword; // 제목으로 찾기
+
+    private UsedGoodsStatus status;
 
     @Builder.Default
     private int minPrice = 0; // 최소 가격
