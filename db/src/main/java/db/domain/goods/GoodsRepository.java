@@ -19,4 +19,5 @@ public interface GoodsRepository extends JpaRepository<GoodsEntity,Long> {
 
     List<GoodsEntity> findAllByShippingIdOrderByIdDesc(Long takeBackId);
 
+    List<GoodsEntity> findAllByStatusOrderByIdDesc(GoodsStatus status);
 }
