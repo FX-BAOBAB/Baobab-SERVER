@@ -22,4 +22,4 @@ jwt:
     plus-hour: 12
 
 server:
-  port: 8084
+  port: 8085
