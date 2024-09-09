@@ -38,9 +38,8 @@ public class StoreBusiness {
         }).toList();
     }
 
-    public List<ShippingResponse> getRequestShipping() {
-        List<ShippingEntity> shippingEntityList = shippingService.getRequestShippingBy(
-            ShippingStatus.PENDING);
+    public List<ShippingResponse> getRequestShipping(ShippingStatus status) {
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestShippingBy(status);
         return shippingEntityList.stream().map(shippingEntity -> {
             return shippingConverter.toResponse(shippingEntity);
         }).toList();
