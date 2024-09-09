@@ -24,9 +24,15 @@ public class StoreBusiness {
     private final ShippingConverter shippingConverter;
 
 
+    public List<ReceivingResponse> getRequestReceiving(ReceivingStatus status) {
+        List<ReceivingEntity> receivingEntityList = receivingService.getRequestReceivingBy(status);
+        return receivingEntityList.stream().map(receivingEntity -> {
+            return receivingConverter.toResponse(receivingEntity);
+        }).toList();
+    }
+
     public List<ReceivingResponse> getRequestReceiving() {
-        List<ReceivingEntity> receivingEntityList = receivingService.getRequestReceivingBy(
-            ReceivingStatus.RECEIVING);
+        List<ReceivingEntity> receivingEntityList = receivingService.getRequestReceiving();
         return receivingEntityList.stream().map(receivingEntity -> {
             return receivingConverter.toResponse(receivingEntity);
         }).toList();

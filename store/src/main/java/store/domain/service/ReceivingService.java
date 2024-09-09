@@ -16,4 +16,8 @@ public class ReceivingService {
     public List<ReceivingEntity> getRequestReceivingBy(ReceivingStatus status) {
         return receivingRepository.findAllByStatusOrderByVisitDate(status);
     }
+
+    public List<ReceivingEntity> getRequestReceiving() {
+        return receivingRepository.findAll();
+    }
 }
