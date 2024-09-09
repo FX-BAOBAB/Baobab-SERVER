@@ -30,8 +30,19 @@
       </header>
     </header>
   
-  
   <!-- shipping List -->
+
+    <form action="" th:action="@{/api/store/shipping}" method="get" class="row">
+      <div class="col col-8">
+        <select class="form-select" th:name="status" aria-label="Small select example">
+          <option value="1" th:each="status: ${shippingStatusList}" th:value="${status.name()}" th:text="${status.status}">One</option>
+        </select>
+      </div>
+      <div class="col">
+        <button type="submit"  class="btn btn-secondary">검색</button>
+      </div>
+    </form>
+
     <table id="receivingList" class="table">
     <thead>
       <tr>

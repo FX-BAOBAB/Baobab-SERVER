@@ -1,6 +1,7 @@
 package store.domain.controller;
 
 import db.domain.receiving.enums.ReceivingStatus;
+import db.domain.shipping.enums.ShippingStatus;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,13 @@ public class StoreApiController {
 
 
     @GetMapping("/shipping")
-    public String shippingList(Model model){
-        List<ShippingResponse> response = storeBusiness.getRequestShipping();
+    public String shippingList(@RequestParam(required = false) ShippingStatus status, Model model){
+
+        if (status == null){
+            status = ShippingStatus.PENDING;
+        }
+
+        List<ShippingResponse> response = storeBusiness.getRequestShipping(status);
         model.addAttribute("shippingList" , response);
         return "shippingList";
     }
@@ -42,6 +48,11 @@ public class StoreApiController {
     @ModelAttribute
     public ReceivingStatus[] receivingStatus(){
         return ReceivingStatus.values();
+    }
+
+    @ModelAttribute
+    public ShippingStatus[] shippingStatus(){
+        return ShippingStatus.values();
     }
 
 }
