@@ -1,5 +1,6 @@
 package store.domain.controller;
 
+import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.enums.ShippingStatus;
 import jakarta.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.domain.business.StoreBusiness;
+import store.domain.controller.model.GoodsResponse;
 import store.domain.controller.model.ReceivingResponse;
 import store.domain.controller.model.ShippingResponse;
 
@@ -45,6 +47,13 @@ public class StoreApiController {
         return "shippingList";
     }
 
+    @GetMapping("/goods")
+    public String goodsList(@RequestParam(required = false)GoodsStatus status,Model model){
+       List<GoodsResponse> response = storeBusiness.getGoodsList(status);
+       model.addAttribute("goodsList" , response);
+       return "goodsList";
+    }
+
     @ModelAttribute
     public ReceivingStatus[] receivingStatus(){
         return ReceivingStatus.values();
@@ -53,6 +62,11 @@ public class StoreApiController {
     @ModelAttribute
     public ShippingStatus[] shippingStatus(){
         return ShippingStatus.values();
+    }
+
+    @ModelAttribute
+    public GoodsStatus[] goodsStatus(){
+        return GoodsStatus.values();
     }
 
 }
