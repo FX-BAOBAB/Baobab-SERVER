@@ -75,6 +75,7 @@ public class StoreBusiness {
         return goodsService.getGoodsListBy(goodsIdList).stream().map(goodsEntity -> {
             GoodsResponse response = goodsConverter.toResponse(goodsEntity);
             response.setBasicImageUrlList(imageService.getBasicImageUrlListBy(goodsEntity.getId()));
+            response.setFaultImageUrlList(imageService.getFaultImageUrlListBy(goodsEntity.getId()));
             return response;
         }).toList();
 
