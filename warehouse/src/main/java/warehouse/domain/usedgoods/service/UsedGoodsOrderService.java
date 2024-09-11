@@ -2,8 +2,6 @@ package warehouse.domain.usedgoods.service;
 
 import db.domain.usedgoodsorder.UsedGoodsOrderEntity;
 import db.domain.usedgoodsorder.UsedGoodsOrderRepository;
-import db.domain.usedgoodsorder.enums.UsedGoodsOrderStatus;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,15 +14,30 @@ public class UsedGoodsOrderService {
 
     private final UsedGoodsOrderRepository usedGoodsOrderRepository;
 
-    public UsedGoodsOrderEntity requestOrder(UsedGoodsOrderEntity orderEntity) {
-        orderEntity.setStatus(UsedGoodsOrderStatus.REGISTERED);
-        orderEntity.setCreatedAt(LocalDateTime.now());
+    public UsedGoodsOrderEntity orderUsedGoods(UsedGoodsOrderEntity orderEntity) {
         return usedGoodsOrderRepository.save(orderEntity);
     }
 
     public List<UsedGoodsOrderEntity> getUsedGoodsOrderListBy(Long usedGoodsId) {
         List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderRepository.findAllByUsedGoodsId(
             usedGoodsId);
+        return getValidatedOrderList(orderEntityList);
+    }
+
+    public List<UsedGoodsOrderEntity> getUsedGoodsOrderListByBuyerId(Long userId) {
+        List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderRepository.findAllByBuyerId(
+            userId);
+        return getValidatedOrderList(orderEntityList);
+    }
+
+    public List<UsedGoodsOrderEntity> getUsedGoodsOrderListBySellerId(Long userId) {
+        List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderRepository.findAllBySellerId(
+            userId);
+        return getValidatedOrderList(orderEntityList);
+    }
+
+    private List<UsedGoodsOrderEntity> getValidatedOrderList(
+        List<UsedGoodsOrderEntity> orderEntityList) {
         if (orderEntityList.isEmpty()) {
             throw new UsedGoodsOrderNotFoundException(
                 UsedGoodsErrorCode.USED_GOODS_ORDER_NOT_FOUND);
@@ -32,20 +45,9 @@ public class UsedGoodsOrderService {
         return orderEntityList;
     }
 
-    public UsedGoodsOrderEntity getUsedGoodsOrderBy(Long usedGoodsOrderId) {
-        return usedGoodsOrderRepository.findFirstById(usedGoodsOrderId)
-            .orElseThrow(() -> new UsedGoodsOrderNotFoundException(
-                UsedGoodsErrorCode.USED_GOODS_ORDER_NOT_FOUND));
-    }
-
-    public void setUsedGoodsOrderStatusBy(UsedGoodsOrderEntity orderEntity,
-        UsedGoodsOrderStatus status) {
-        orderEntity.setStatus(status);
-        usedGoodsOrderRepository.save(orderEntity);
-    }
-
-    public Boolean hasExistingOrder(Long usedGoodsId, Long userId) {
-        return usedGoodsOrderRepository.findByUsedGoodsIdAndUserId(usedGoodsId, userId).isPresent();
+    public Boolean hasExistingOrder(Long usedGoodsId, Long buyerId) {
+        return usedGoodsOrderRepository.findByUsedGoodsIdAndBuyerId(usedGoodsId, buyerId)
+            .isPresent();
     }
 
 }

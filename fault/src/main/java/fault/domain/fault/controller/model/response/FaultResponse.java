@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RejectFaultResponse {
+public class FaultResponse {
 
     private Long faultId;
-    private Long receivingId;
     private String description;
-    private LocalDateTime guaranteeAt;
+    private Boolean approval;
+    private LocalDateTime registeredAt;
+    private Long receivingId;
 
 }

@@ -69,6 +69,11 @@ public class UsersBusiness {
         return usersConverter.toResponse(userEntity);
     }
 
+    public UserResponse getUserInformation(Long userId) {
+        UserEntity userEntity = usersService.getUserByUserIdWithThrow(userId);
+        return usersConverter.toResponse(userEntity);
+    }
+
     public MessageResponse unregister(String email) {
         usersService.unregister(email);
         return MessageResponse.builder()

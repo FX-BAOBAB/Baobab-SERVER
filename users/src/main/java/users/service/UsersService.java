@@ -97,4 +97,8 @@ public class UsersService {
         }
 
     }
+
+    public UserEntity getUserByUserIdWithThrow(Long userId) {
+        return usersRepository.findFirstByIdAndStatusOrderByIdDesc(userId,UserStatus.REGISTERED).orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+    }
 }

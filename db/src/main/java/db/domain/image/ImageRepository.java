@@ -10,4 +10,8 @@ public interface ImageRepository extends JpaRepository<ImageEntity,Long> {
 
     Optional<ImageEntity> findFirstByIdOrderByIdDesc(Long imageId);
 
+    List<ImageEntity> findAllByImageMappingIdOrderByImageMappingId(Long id);
+
+    Optional<ImageEntity> findFirstByImageMappingIdOrderByIdDesc(Long imageMappingId);
+
 }
