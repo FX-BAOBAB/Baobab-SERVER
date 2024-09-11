@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import store.domain.business.StoreBusiness;
@@ -32,6 +33,15 @@ public class StoreApiController {
         List<ReceivingResponse> response = storeBusiness.getRequestReceiving(status);
         model.addAttribute("receivingList" , response);
         return "receivingList";
+    }
+
+    @GetMapping("/receiving/{receivingId}")
+    public String showReceiving(@PathVariable Long receivingId,Model model){
+        ReceivingResponse response = storeBusiness.getReceivingRequestDetail(receivingId);
+        List<GoodsResponse> goodsResponses = storeBusiness.getGoodsListBy(response.getGoodsIdList());
+        model.addAttribute("receivingRequest" , response);
+        model.addAttribute("goodsList" , goodsResponses);
+        return "receivingDetail";
     }
 
 

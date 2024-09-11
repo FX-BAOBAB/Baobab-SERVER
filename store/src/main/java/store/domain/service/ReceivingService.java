@@ -20,4 +20,9 @@ public class ReceivingService {
     public List<ReceivingEntity> getRequestReceiving() {
         return receivingRepository.findAll();
     }
+
+    // TODO Exception 처리 필요
+    public ReceivingEntity getRequestReceivingBy(Long receivingId) {
+        return receivingRepository.findFirstById(receivingId).orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
+    }
 }
