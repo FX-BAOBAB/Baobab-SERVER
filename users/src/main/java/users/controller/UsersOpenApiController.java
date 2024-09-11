@@ -5,6 +5,8 @@ import global.api.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import users.controller.model.duplicaiton.DuplicationEmailRequest;
 import users.controller.model.duplicaiton.DuplicationNameRequest;
 import users.controller.model.duplicaiton.DuplicationResponse;
 import users.controller.model.login.UserLoginRequest;
+import users.controller.model.login.UserResponse;
 import users.controller.model.register.UsersRegisterRequest;
 import users.controller.model.register.UsersRegisteredResponse;
 import users.security.jwt.model.TokenResponse;
@@ -62,6 +65,11 @@ public class UsersOpenApiController {
         return Api.OK(response);
     }
 
-
+    @GetMapping("/{userId}")
+    @Operation(summary = "[사용자 고유 아이디로 사용자 정보 조회]")
+    public Api<UserResponse> getUserInfo(@PathVariable Long userId){
+        UserResponse response = usersBusiness.getUserInformation(userId);
+        return Api.OK(response);
+    }
 
 }
