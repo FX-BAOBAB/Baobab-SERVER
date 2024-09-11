@@ -62,4 +62,11 @@ public class UsedGoodsOrderApiController {
         return Api.OK(response);
     }
 
+    @GetMapping("/{usedGoodsId}")
+    @Operation(summary = "[거래 요청서 단일 조회]")
+    public Api<UsedGoodsOrderResponse> getOrderRequest(@PathVariable Long usedGoodsId) {
+        UsedGoodsOrderResponse response = usedGoodsOrderBusiness.getOrderRequest(usedGoodsId);
+        return Api.OK(response);
+    }
+
 }
