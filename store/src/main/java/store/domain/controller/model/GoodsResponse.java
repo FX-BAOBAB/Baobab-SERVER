@@ -29,6 +29,8 @@ public class GoodsResponse {
 
     private GoodsStatus status;
 
-    private List<Long> imageIdList;
+    private List<String> basicImageUrlList;
+
+    private List<String> faultImageUrlList;
 
 }

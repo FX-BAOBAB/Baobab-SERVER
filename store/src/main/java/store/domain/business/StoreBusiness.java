@@ -58,8 +58,25 @@ public class StoreBusiness {
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(status);
         return goodsEntityList.stream().map(goodsEntity -> {
             GoodsResponse response = goodsConverter.toResponse(goodsEntity);
-            response.setImageIdList(imageService.getImageIdListBy(goodsEntity.getId()));
+            response.setBasicImageUrlList(imageService.getBasicImageUrlListBy(goodsEntity.getId()));
+            response.setFaultImageUrlList(imageService.getFaultImageUrlListBy(goodsEntity.getId()));
             return response;
         }).toList();
+    }
+
+    public ReceivingResponse getReceivingRequestDetail(Long receivingId) {
+        ReceivingEntity receivingEntity = receivingService.getRequestReceivingBy(receivingId);
+        ReceivingResponse response = receivingConverter.toResponse(receivingEntity);
+        response.setGoodsIdList(goodsService.getGoodsListBy(receivingId).stream().map(goodsEntity -> goodsEntity.getId()).toList());
+        return response;
+    }
+
+    public List<GoodsResponse> getGoodsListBy(List<Long> goodsIdList) {
+        return goodsService.getGoodsListBy(goodsIdList).stream().map(goodsEntity -> {
+            GoodsResponse response = goodsConverter.toResponse(goodsEntity);
+            response.setBasicImageUrlList(imageService.getBasicImageUrlListBy(goodsEntity.getId()));
+            return response;
+        }).toList();
+
     }
 }
