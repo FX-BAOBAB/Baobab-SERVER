@@ -95,31 +95,10 @@ public class UsedGoodsOrderBusiness {
         return usedGoodsOrderConverter.toResponse(usedGoodsOrderList);
     }
 
-    /**
-     * 판매자는 구매 요청 내역을 조회할 수 있다.
-     */
-    public List<UsedGoodsOrderResponse> getOrderList(Long usedGoodsId, String email) {
-
-        // 판매자 userId
-        Long userId = getUserId(email);
-
-        // 1. usedGoodsId 로 판매자 ID 조회
-        UsedGoodsEntity usedGoodsEntity = usedGoodsService.getUsedGoodsBy(usedGoodsId);
-
-        // 2. 판매자 권한 확인
-        validateSellerAuthority(usedGoodsEntity, userId);
-
-        List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderService.getUsedGoodsOrderListBy(
+    public UsedGoodsOrderResponse getOrderRequest(Long usedGoodsId) {
+        UsedGoodsOrderEntity usedGoodsOrderEntity = usedGoodsOrderService.getUsedGoodsOrderBy(
             usedGoodsId);
-
-        return usedGoodsOrderConverter.toResponse(orderEntityList);
-    }
-
-
-    private static void validateSellerAuthority(UsedGoodsEntity usedGoodsEntity, Long userId) {
-        if (!usedGoodsEntity.getUserId().equals(userId)) {
-            throw new InvalidOrderAuthorityException(UsedGoodsErrorCode.INVALID_ORDER_AUTHORITY);
-        }
+        return usedGoodsOrderConverter.toResponse(usedGoodsOrderEntity);
     }
 
     private Long getUserId(String email) {
