@@ -71,6 +71,19 @@ public class StoreApiController {
        return "goodsList";
     }
 
+    @GetMapping("/goods/{goodsId}")
+    public String showGoods(@PathVariable Long goodsId,Model model){
+        GoodsResponse response = storeBusiness.getGoodsBy(goodsId);
+        model.addAttribute("goods" , response);
+        return "goodsDetail";
+    }
+
+
+    @ModelAttribute
+    public ReceivingStatus[] receivingStatus(){
+        return ReceivingStatus.values();
+    }
+
     @GetMapping("/fault/{goodsId}")
     public String addFaultForm(@PathVariable Long goodsId, Model model){
         model.addAttribute("goodsId", goodsId);
@@ -84,11 +97,6 @@ public class StoreApiController {
         model.addAttribute("goods",goods);
         redirectAttributes.addAttribute("goodsId",goods.getId());
         return "redirect:/api/store/goods/{goodsId}";
-    }
-
-    @ModelAttribute
-    public ReceivingStatus[] receivingStatus(){
-        return ReceivingStatus.values();
     }
 
     @ModelAttribute

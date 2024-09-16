@@ -154,7 +154,7 @@ public class ImageConverter {
                 Objects.requireNonNull(this.originalFileName));
             this.fileName = StringUtils.cleanPath(this.serverName + this.extension);
             this.imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                //.scheme("https")
+                .scheme("https")
                 .path(uploadDir + fileName)
                 .toUriString();
         }

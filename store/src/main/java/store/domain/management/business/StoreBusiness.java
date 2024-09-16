@@ -74,11 +74,7 @@ public class StoreBusiness {
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(status);
         return goodsEntityList.stream().map(goodsEntity -> {
             GoodsResponse response = goodsConverter.toResponse(goodsEntity);
-
-            List<ImageUrlSet> basicImageUrlSet = imageService.getBasicImageUrlSetBy(goodsEntity.getId());
-            response.setBasicImageUrlSet(basicImageUrlSet);
-            List<ImageUrlSet> faultImageUrlSet = imageService.getFaultImageUrlSetBy(goodsEntity.getId());
-            response.setFaultImageUrlSet(faultImageUrlSet);
+            setImageUrl(goodsEntity, response);
             return response;
         }).toList();
     }
@@ -93,16 +89,28 @@ public class StoreBusiness {
     public List<GoodsResponse> getGoodsListBy(List<Long> goodsIdList) {
         return goodsService.getGoodsListBy(goodsIdList).stream().map(goodsEntity -> {
             GoodsResponse response = goodsConverter.toResponse(goodsEntity);
-            List<ImageUrlSet> basicImageUrlSet = imageService.getBasicImageUrlSetBy(goodsEntity.getId());
-            response.setBasicImageUrlSet(basicImageUrlSet);
-            List<ImageUrlSet> faultImageUrlSet = imageService.getFaultImageUrlSetBy(goodsEntity.getId());
-            response.setFaultImageUrlSet(faultImageUrlSet);
+            setImageUrl(goodsEntity, response);
             return response;
         }).toList();
 
     }
 
-    // TODO Image 등록 기능 포함 필요, Exception 처리 필요
+    // TODO Exception 처리 필요
+    public GoodsResponse getGoodsBy(Long goodsId) {
+        GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId)
+            .orElseThrow(() -> new RuntimeException("물품이 존재하지 않습니다."));
+        GoodsResponse response = goodsConverter.toResponse(goodsEntity);
+        setImageUrl(goodsEntity, response);
+        return response;
+    }
+
+    private void setImageUrl(GoodsEntity goodsEntity, GoodsResponse response) {
+        List<ImageUrlSet> basicImageUrlSet = imageService.getBasicImageUrlSetBy(goodsEntity.getId());
+        response.setBasicImageUrlSet(basicImageUrlSet);
+        List<ImageUrlSet> faultImageUrlSet = imageService.getFaultImageUrlSetBy(goodsEntity.getId());
+        response.setFaultImageUrlSet(faultImageUrlSet);
+    }
+
     public GoodsResponse addFault(AddFaultRequest request, User user) {
 
         UserEntity userEntity = usersService.getUserWithThrow(user.getUsername());
@@ -138,6 +146,7 @@ public class StoreBusiness {
         return imageService.saveImageDataToDB(imageEntity, savedImageMappingEntity);
     }
 
+    // TODO Image 등록 기능 포함 필요, Exception 처리 필요
     private ImageEntity imageUploadBizLogic(ImageRequest request,Long goodsId) {
         ImageMappingEntity imageMappingEntity = imageMappingConverter.toEntity(request,goodsId);
         ImageMappingEntity savedImageMappingEntity = imageMappingService.imageMapping(
@@ -146,5 +155,6 @@ public class StoreBusiness {
         ImageEntity imageEntity = imageConverter.toEntity(request, imageMappingEntity.getId());
         imageService.uploadImage(request.getFile(), imageEntity);
         return imageService.saveImageDataToDB(imageEntity, savedImageMappingEntity);
+
     }
 }
