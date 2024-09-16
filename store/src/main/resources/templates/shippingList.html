@@ -57,7 +57,7 @@
         <th scope="row"><a href="#" th:href="@{|/api/receiving/${shipping.id}|}" th:text="${shipping.id}">1</a></th>
         <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.status}">소형가구</a></td>
         <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.deliveryAddress}">소형가구</a></td>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.deliveryDate}">소형가구</a></td>
+        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${#temporals.format(shipping.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}">소형가구</a></td>
       </tr>
     </tbody>
   </table>

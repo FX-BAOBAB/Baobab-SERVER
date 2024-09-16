@@ -21,5 +21,9 @@ jwt:
   refresh-token:
     plus-hour: 12
 
+file:
+  upload-dir: /Users/yeongwoonshin/Desktop/Baobab-SERVER/image/src/main/resources/static/images/
+  path: /images/
+
 server:
   port: 8085
