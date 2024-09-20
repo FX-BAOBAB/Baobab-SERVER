@@ -32,8 +32,7 @@
   
   
   <!-- receiving List -->
-
-      <form action="" th:action="@{/api/store/receiving}" method="get" class="row">
+    <form action="" th:action="@{/api/store/receiving}" method="get" class="row">
         <div class="col col-8">
           <select class="form-select" th:name="status" aria-label="Small select example">
             <option value="1" th:each="status: ${receivingStatusList}" th:value="${status.name()}" th:text="${status.status}">One</option>
@@ -62,9 +61,6 @@
       </tr>
     </tbody>
   </table>
-
- 
-
   </div>
 
 </body>

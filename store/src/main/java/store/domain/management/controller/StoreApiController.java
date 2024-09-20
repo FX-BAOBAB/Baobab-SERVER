@@ -3,6 +3,7 @@ package store.domain.management.controller;
 import db.domain.goods.enums.GoodsStatus;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.enums.ShippingStatus;
+import db.domain.store.enums.StoreLocation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import store.domain.management.business.StoreBusiness;
 import store.domain.management.controller.model.AddFaultRequest;
 import store.domain.management.controller.model.GoodsResponse;
+import store.domain.management.controller.model.GoodsStoreResponse;
 import store.domain.management.controller.model.ReceivingResponse;
 import store.domain.management.controller.model.ShippingResponse;
+import store.domain.management.controller.model.StoreRequest;
 
 @Slf4j
 @Controller
@@ -78,12 +81,6 @@ public class StoreApiController {
         return "goodsDetail";
     }
 
-
-    @ModelAttribute
-    public ReceivingStatus[] receivingStatus(){
-        return ReceivingStatus.values();
-    }
-
     @GetMapping("/fault/{goodsId}")
     public String addFaultForm(@PathVariable Long goodsId, Model model){
         model.addAttribute("goodsId", goodsId);
@@ -99,6 +96,35 @@ public class StoreApiController {
         return "redirect:/api/store/goods/{goodsId}";
     }
 
+    @GetMapping("/manage/{receivingId}")
+    public String storeManage(@PathVariable Long receivingId,Model model){
+        ReceivingResponse response = storeBusiness.getReceivingRequestDetail(receivingId);
+        List<GoodsResponse> goodsResponses = storeBusiness.getGoodsListBy(response.getGoodsIdList());
+        model.addAttribute("receivingRequest" , response);
+        model.addAttribute("goodsList" , goodsResponses);
+        return "goodsStore";
+    }
+
+    @PostMapping("/manage/{receivingId}")
+    public String setStore(@PathVariable Long receivingId,@ModelAttribute StoreRequest request,RedirectAttributes redirectAttributes){
+        storeBusiness.setStore(request);
+        redirectAttributes.addAttribute("receivingId",receivingId);
+        return "redirect:/api/store/stored/{receivingId}";
+    }
+
+    @GetMapping("/stored/{receivingId}")
+    public String getGoodsStoreDetail(@PathVariable Long receivingId,Model model){
+        ReceivingResponse response = storeBusiness.getReceivingRequestDetail(receivingId);
+        List<GoodsStoreResponse> storeResponses = storeBusiness.getGoodsStoredListBy(response.getGoodsIdList());
+        model.addAttribute("receivingRequest" , response);
+        model.addAttribute("goodsList" , storeResponses);
+        return "goodsStoreDetail";
+    }
+
+    @ModelAttribute
+    public ReceivingStatus[] receivingStatus(){
+        return ReceivingStatus.values();
+    }
     @ModelAttribute
     public ShippingStatus[] shippingStatus(){
         return ShippingStatus.values();
@@ -107,6 +133,11 @@ public class StoreApiController {
     @ModelAttribute
     public GoodsStatus[] goodsStatus(){
         return GoodsStatus.values();
+    }
+
+    @ModelAttribute
+    public StoreLocation[] storeLocation(){
+        return StoreLocation.values();
     }
 
 }

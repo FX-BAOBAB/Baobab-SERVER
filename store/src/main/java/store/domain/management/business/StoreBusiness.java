@@ -9,6 +9,8 @@ import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.ShippingEntity;
 import db.domain.shipping.enums.ShippingStatus;
+import db.domain.store.GoodsLedgerEntity;
+import db.domain.store.enums.StoreLocation;
 import db.domain.users.UserEntity;
 import global.annotation.Business;
 import java.util.List;
@@ -23,12 +25,16 @@ import store.domain.image.domain.image.service.ImageService;
 import store.domain.image.domain.users.security.service.UsersService;
 import store.domain.management.controller.model.AddFaultRequest;
 import store.domain.management.controller.model.GoodsResponse;
+import store.domain.management.controller.model.GoodsStoreResponse;
 import store.domain.management.controller.model.ImageUrlSet;
 import store.domain.management.controller.model.ReceivingResponse;
 import store.domain.management.controller.model.ShippingResponse;
+import store.domain.management.controller.model.StoreRequest;
 import store.domain.management.converter.GoodsConverter;
+import store.domain.management.converter.GoodsLedgerConverter;
 import store.domain.management.converter.ReceivingConverter;
 import store.domain.management.converter.ShippingConverter;
+import store.domain.management.service.GoodsLedgerService;
 import store.domain.management.service.GoodsService;
 import store.domain.management.service.ReceivingService;
 import store.domain.management.service.ShippingService;
@@ -48,6 +54,8 @@ public class StoreBusiness {
     private final ImageMappingService imageMappingService;
     private final ImageMappingConverter imageMappingConverter;
     private final UsersService usersService;
+    private final GoodsLedgerService goodsLedgerService;
+    private final GoodsLedgerConverter goodsLedgerConverter;
 
     public List<ReceivingResponse> getRequestReceiving(ReceivingStatus status) {
         List<ReceivingEntity> receivingEntityList = receivingService.getRequestReceivingBy(status);
@@ -156,5 +164,24 @@ public class StoreBusiness {
         imageService.uploadImage(request.getFile(), imageEntity);
         return imageService.saveImageDataToDB(imageEntity, savedImageMappingEntity);
 
+    }
+
+    public void setStore(StoreRequest request) {
+        List<Long> goodsIds = request.getGoodsIds();
+        List<StoreLocation> storeLocation = request.getStoreLocation();
+        for (int i = 0; i < goodsIds.size(); i++) {
+            GoodsLedgerEntity entity = goodsLedgerConverter.toEntity(goodsIds.get(i),storeLocation.get(i));
+            goodsLedgerService.setStore(entity);
+        }
+    }
+
+    public List<GoodsStoreResponse> getGoodsStoredListBy(List<Long> goodsIdList) {
+        return goodsService.getGoodsListBy(goodsIdList).stream().map(goodsEntity -> {
+            GoodsResponse goodsResponse = goodsConverter.toResponse(goodsEntity);
+            setImageUrl(goodsEntity, goodsResponse);
+            GoodsLedgerEntity entity = goodsLedgerService.getLedgerBy(goodsResponse.getId());
+            GoodsStoreResponse response = goodsLedgerConverter.toResponse(entity,goodsResponse);
+            return response;
+        }).toList();
     }
 }
