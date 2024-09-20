@@ -25,4 +25,13 @@ public class ReceivingService {
     public ReceivingEntity getRequestReceivingBy(Long receivingId) {
         return receivingRepository.findFirstById(receivingId).orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
     }
+
+    // TODO Exception 처리 필요
+    public ReceivingEntity setStatus(Long receivingId, ReceivingStatus receivingStatus) {
+        ReceivingEntity receivingEntity = receivingRepository.findFirstById(receivingId)
+            .orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
+
+        receivingEntity.setStatus(receivingStatus);
+        return receivingRepository.save(receivingEntity);
+    }
 }

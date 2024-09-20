@@ -1,6 +1,7 @@
 package store.domain.management.controller;
 
 import db.domain.goods.enums.GoodsStatus;
+import db.domain.receiving.ReceivingEntity;
 import db.domain.receiving.enums.ReceivingStatus;
 import db.domain.shipping.enums.ShippingStatus;
 import db.domain.store.enums.StoreLocation;
@@ -107,7 +108,7 @@ public class StoreApiController {
 
     @PostMapping("/manage/{receivingId}")
     public String setStore(@PathVariable Long receivingId,@ModelAttribute StoreRequest request,RedirectAttributes redirectAttributes){
-        storeBusiness.setStore(request);
+        storeBusiness.setStore(receivingId, request);
         redirectAttributes.addAttribute("receivingId",receivingId);
         return "redirect:/api/store/stored/{receivingId}";
     }

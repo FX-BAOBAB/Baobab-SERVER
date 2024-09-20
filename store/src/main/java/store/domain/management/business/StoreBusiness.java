@@ -166,13 +166,16 @@ public class StoreBusiness {
 
     }
 
-    public void setStore(StoreRequest request) {
+    public ReceivingEntity setStore(Long receivingId, StoreRequest request) {
+        ReceivingEntity receivingEntity = receivingService.setStatus(receivingId,
+            ReceivingStatus.STORAGE);
         List<Long> goodsIds = request.getGoodsIds();
         List<StoreLocation> storeLocation = request.getStoreLocation();
         for (int i = 0; i < goodsIds.size(); i++) {
             GoodsLedgerEntity entity = goodsLedgerConverter.toEntity(goodsIds.get(i),storeLocation.get(i));
             goodsLedgerService.setStore(entity);
         }
+        return receivingEntity;
     }
 
     public List<GoodsStoreResponse> getGoodsStoredListBy(List<Long> goodsIdList) {
