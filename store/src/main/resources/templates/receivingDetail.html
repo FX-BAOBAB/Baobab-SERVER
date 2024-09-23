@@ -132,7 +132,7 @@
                 </button>
               </div>
 
-              <div class="row">
+              <div th:if="${receivingRequest.status.name() == 'LOADING'}" class="row">
                 <div class="col"></div>
                 <div class="col-8">
                   <a type="button" th:href="@{|/api/store/fault/${goods.id}|}" class="btn btn-danger mt-3 w-100">결함 등록</a>
@@ -153,7 +153,7 @@
   <form th:if="${receivingRequest.status.name() == 'RECEIVING'}" action="" th:action="@{|/api/store/loading/${receivingRequest.id}|}" method="post">
     <button type="summit" class="btn btn-primary w-100 mb-3 mt-3">입고 시작</button>
   </form>
-  <a th:if="${receivingRequest.status.name() == 'LOADING'}" type="button" th:href="@{|/api/store/storage/${receivingRequest.id}|}"  class="btn btn-primary w-100 mb-3 mt-3">입고 완료</a>
+  <a th:if="${receivingRequest.status.name() == 'LOADING'}" type="button" th:href="@{|/api/store/storage/${receivingRequest.id}|}"  class="btn btn-primary w-100 mb-3 mt-3">창고 배치</a>
 
 </div>
 
