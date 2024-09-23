@@ -202,4 +202,13 @@ public class StoreBusiness {
         response.setGoodsIdList(goodsService.getShippingGoodsListBy(shippingId).stream().map(goodsEntity -> goodsEntity.getId()).toList());
         return response;
     }
+
+    public ReceivingEntity setLoading(Long receivingId) {
+        ReceivingEntity receivingEntity = receivingService.getRequestReceivingBy(receivingId);
+        if (receivingEntity.getStatus() != ReceivingStatus.RECEIVING){
+            throw new RuntimeException("Receiving 상태가 아닙니다.");
+        }
+        receivingService.setStatus(receivingEntity.getId(), ReceivingStatus.LOADING);
+        return receivingEntity;
+    }
 }

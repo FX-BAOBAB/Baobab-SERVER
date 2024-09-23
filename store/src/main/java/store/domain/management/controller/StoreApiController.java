@@ -114,7 +114,14 @@ public class StoreApiController {
         return "redirect:/api/store/goods/{goodsId}";
     }
 
-    @GetMapping("/manage/{receivingId}")
+    @PostMapping("/loading/{receivingId}")
+    public String loadingReceiving(@PathVariable Long receivingId,RedirectAttributes redirectAttributes){
+        storeBusiness.setLoading(receivingId);
+        redirectAttributes.addAttribute("receivingId",receivingId);
+        return "redirect:/api/store/receiving/{receivingId}";
+    }
+
+    @GetMapping("/storage/{receivingId}")
     public String storeManage(@PathVariable Long receivingId,Model model){
         ReceivingResponse response = storeBusiness.getReceivingRequestDetail(receivingId);
         List<GoodsResponse> goodsResponses = storeBusiness.getGoodsListBy(response.getGoodsIdList());
@@ -123,7 +130,7 @@ public class StoreApiController {
         return "goodsStore";
     }
 
-    @PostMapping("/manage/{receivingId}")
+    @PostMapping("/storage/{receivingId}")
     public String setStore(@PathVariable Long receivingId,@ModelAttribute StoreRequest request,RedirectAttributes redirectAttributes){
         storeBusiness.setStore(receivingId, request);
         redirectAttributes.addAttribute("receivingId",receivingId);

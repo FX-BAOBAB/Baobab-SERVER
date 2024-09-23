@@ -150,8 +150,10 @@
 
   <!-- arcod end -->
 
-
-  <a type="button" th:href="@{|/api/store/manage/${receivingRequest.id}|}"  class="btn btn-primary w-100 mb-3 mt-3">입고</a>
+  <form th:if="${receivingRequest.status.name() == 'RECEIVING'}" action="" th:action="@{|/api/store/loading/${receivingRequest.id}|}" method="post">
+    <button type="summit" class="btn btn-primary w-100 mb-3 mt-3">입고 시작</button>
+  </form>
+  <a th:if="${receivingRequest.status.name() == 'LOADING'}" type="button" th:href="@{|/api/store/storage/${receivingRequest.id}|}"  class="btn btn-primary w-100 mb-3 mt-3">입고 완료</a>
 
 </div>
 
