@@ -55,7 +55,6 @@ public class StoreApiController {
         return "receivingDetail";
     }
 
-
     @GetMapping("/shipping")
     public String shippingList(@RequestParam(required = false) ShippingStatus status, Model model){
 
@@ -66,6 +65,24 @@ public class StoreApiController {
         List<ShippingResponse> response = storeBusiness.getRequestShipping(status);
         model.addAttribute("shippingList" , response);
         return "shippingList";
+    }
+
+    @GetMapping("/shipping/{shippingId}")
+    public String showShipping(@PathVariable Long shippingId,Model model){
+        ShippingResponse response = storeBusiness.getShippingRequestDetail(shippingId);
+        List<GoodsResponse> goodsResponses = storeBusiness.getGoodsListBy(response.getGoodsIdList());
+        model.addAttribute("shippingRequest" , response);
+        model.addAttribute("goodsList" , goodsResponses);
+        return "shippingDetail";
+    }
+
+    @PostMapping("/shipping/{shippingId}")
+    public String readyShipping(@PathVariable Long shippingId,Model model){
+        ShippingResponse response = storeBusiness.readyShipping(shippingId);
+        List<GoodsResponse> goodsResponses = storeBusiness.getGoodsListBy(response.getGoodsIdList());
+        model.addAttribute("shippingRequest" , response);
+        model.addAttribute("goodsList" , goodsResponses);
+        return "shippingDetail";
     }
 
     @GetMapping("/goods")
@@ -126,6 +143,7 @@ public class StoreApiController {
     public ReceivingStatus[] receivingStatus(){
         return ReceivingStatus.values();
     }
+
     @ModelAttribute
     public ShippingStatus[] shippingStatus(){
         return ShippingStatus.values();

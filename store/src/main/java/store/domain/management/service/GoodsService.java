@@ -3,6 +3,7 @@ package store.domain.management.service;
 import db.domain.goods.GoodsEntity;
 import db.domain.goods.GoodsRepository;
 import db.domain.goods.enums.GoodsStatus;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,9 @@ public class GoodsService {
             () -> new RuntimeException("해당 상품이 존재하지 않습니다."));
         goodsEntity.setStatus(goodsStatus);
         return goodsRepository.save(goodsEntity);
+    }
+
+    public List<GoodsEntity> getShippingGoodsListBy(Long receivingId) {
+        return goodsRepository.findAllByShippingIdOrderByIdDesc(receivingId);
     }
 }

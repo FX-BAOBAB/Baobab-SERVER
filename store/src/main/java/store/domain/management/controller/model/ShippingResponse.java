@@ -26,4 +26,6 @@ public class ShippingResponse {
 
     private Long deliveryMan;
 
+    private List<Long> goodsIdList;
+
 }

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 출고 요청서 상세 조회
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- header -->
+  <header>
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+      <a href="/"
+         class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+        BAOBAB
+      </a>
+
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="#" th:href="|@{/api/store/receiving(status=RECEIVING)}|" class="nav-link px-2 link-secondary">입고 관리</a></li>
+        <li><a href="#" th:href="|@{/api/store/shipping(status=PENDING)}|" class="nav-link px-2 link-primary">출고 관리</a></li>
+        <li><a href="#" th:href="|@{/api/store/goods(status=STORAGE)}|" class="nav-link px-2 link-secondary">물품 관리</a></li>
+      </ul>
+
+      <div class="col-md-3 text-end">
+
+      </div>
+    </header>
+  </header>
+
+
+  <!-- arcod start -->
+
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#requestInfo" aria-expanded="true" aria-controls="requestInfo">
+          출고 요청서
+        </button>
+      </h2>
+      <div id="requestInfo" class="accordion-collapse collapse show"
+           data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <div class="card" style="width: 77rem;">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${shippingRequest.id}">요청서 ID</h5>
+              <h6 class="card-subtitle mb-2 text-muted" th:text="${shippingRequest.status}">요청서
+                상태</h6>
+              <p class="card-text mt-3" th:text="|주소 : ${shippingRequest.deliveryAddress}|">주소 : </p>
+              <p class="card-text"
+                 th:text="|방문일자 : ${#temporals.format(shippingRequest.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}|">
+                방문 일자 : </p>
+              <p class="card-text"
+                 th:text="|배송자 : ${shippingRequest.deliveryMan}|">
+                결함 인정일: </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item" th:each="goods : ${goodsList}">
+      <h2 class="accordion-header">
+        <button class="accordion-button" th:text="${goods.name}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                aria-controls="collapseOne">
+          물품 A
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show"
+           data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <div class="card" style="width: 77rem;">
+            <div class="card-body">
+              <h5 class="card-title" th:text="${goods.name}">물품 A</h5>
+              <h6 class="card-subtitle mb-2 text-muted" th:text="${goods.modelName}">Model Name</h6>
+              <p class="card-text mt-3" th:text="|물품 ID : ${goods.id}|">물품 ID : <span> 1 </span></p>
+              <p class="card-text" th:text="|상태 : ${goods.status}|">상태 : <span> 입고 진행 중 </span></p>
+              <p class="card-text" th:text="|카테고리 : ${goods.category}|">카테고리 : <span> 대형 가전 </span>
+              </p>
+              <p class="card-text" th:text="|수량 : ${goods.quantity}|">수량 : <span> 1 </span></p>
+
+
+              <div id="carouselExampleAutoplayingA" class="carousel slide mt-3 row"
+                   data-bs-ride="carousel">
+                <div class="carousel-inner" id="carouselBasic">
+                  <div class="carousel-item" th:each="basicImage : ${goods.basicImageUrlSet}">
+                     <figure>
+                      <img src="image/1.jpg" th:src="${basicImage.imageUrl}" class="d-block w-100" alt="...">
+                      <figcaption class="figure-caption" th:text="${basicImage.caption}">A caption for the above image.</figcaption>
+                    </figure>
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button"
+                        data-bs-target="#carouselExampleAutoplayingA" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button"
+                        data-bs-target="#carouselExampleAutoplayingA" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+
+              <div id="carouselExampleAutoplayingB" class="carousel slide mt-3"
+                   data-bs-ride="carousel">
+                <div class="carousel-inner" id="carouselFault">
+                  <div class="carousel-item" th:each="faultImage : ${goods.faultImageUrlSet}">
+                    <figure>
+                      <img src="image/1.jpg" th:src="${faultImage.imageUrl}" class="d-block w-100" alt="...">
+                      <figcaption class="figure-caption" th:text="${faultImage.caption}">A caption for the above image.</figcaption>
+                    </figure>
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button"
+                        data-bs-target="#carouselExampleAutoplayingB" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button"
+                        data-bs-target="#carouselExampleAutoplayingB" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- arcod end -->
+
+  <form th:if="${shippingRequest.status.name() == 'REGISTERED'}" action="" th:action method="post">
+    <button type="summit" class="btn btn-primary w-100 mb-3 mt-3">출고 준비 완료</button>
+  </form>
+
+</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+<script>
+  $carouselBasic = document.getElementById('carouselBasic');
+  $carouselFault = document.getElementById('carouselFault');
+
+  window.onload = function () {
+    getFirstChild($carouselBasic).classList.add('active');
+    getFirstChild($carouselFault).classList.add('active');
+  }
+
+  function getFirstChild(element) {
+    var firstChild = element.firstChild;
+    while (firstChild != null && firstChild.nodeType === 3) {
+      firstChild = firstChild.nextSibling;
+    }
+    return firstChild;
+  }
+
+</script>
+</html>
