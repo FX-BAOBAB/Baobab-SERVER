@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import store.domain.management.controller.model.StoreRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -32,4 +31,11 @@ public class GoodsService {
         return goodsRepository.findById(goodsId);
     }
 
+    // TODO Exception 처리 필요
+    public GoodsEntity setStatus(Long goodsId, GoodsStatus goodsStatus) {
+        GoodsEntity goodsEntity = getGoodsBy(goodsId).orElseThrow(
+            () -> new RuntimeException("해당 상품이 존재하지 않습니다."));
+        goodsEntity.setStatus(goodsStatus);
+        return goodsRepository.save(goodsEntity);
+    }
 }

@@ -172,6 +172,7 @@ public class StoreBusiness {
         List<Long> goodsIds = request.getGoodsIds();
         List<StoreLocation> storeLocation = request.getStoreLocation();
         for (int i = 0; i < goodsIds.size(); i++) {
+            goodsService.setStatus(goodsIds.get(i),GoodsStatus.STORAGE);
             GoodsLedgerEntity entity = goodsLedgerConverter.toEntity(goodsIds.get(i),storeLocation.get(i));
             goodsLedgerService.setStore(entity);
         }
