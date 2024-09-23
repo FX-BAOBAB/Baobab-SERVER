@@ -188,4 +188,18 @@ public class StoreBusiness {
             return response;
         }).toList();
     }
+
+    public ShippingResponse getShippingRequestDetail(Long shippingId) {
+        ShippingEntity shippingEntity = shippingService.getRequestShippingBy(shippingId);
+        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
+        response.setGoodsIdList(goodsService.getShippingGoodsListBy(shippingId).stream().map(goodsEntity -> goodsEntity.getId()).toList());
+        return response;
+    }
+
+    public ShippingResponse readyShipping(Long shippingId) {
+        ShippingEntity shippingEntity =  shippingService.setStatus(shippingId,ShippingStatus.READY);
+        ShippingResponse response = shippingConverter.toResponse(shippingEntity);
+        response.setGoodsIdList(goodsService.getShippingGoodsListBy(shippingId).stream().map(goodsEntity -> goodsEntity.getId()).toList());
+        return response;
+    }
 }

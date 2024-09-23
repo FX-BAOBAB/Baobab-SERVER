@@ -43,7 +43,7 @@
       </div>
     </form>
 
-    <table id="receivingList" class="table">
+    <table id="list" class="table">
     <thead>
       <tr>
         <th scope="col">ID</th>
@@ -54,10 +54,10 @@
     </thead>
     <tbody>
       <tr th:each="shipping : ${shippingList}">
-        <th scope="row"><a href="#" th:href="@{|/api/receiving/${shipping.id}|}" th:text="${shipping.id}">1</a></th>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.status}">소형가구</a></td>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.deliveryAddress}">소형가구</a></td>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${#temporals.format(shipping.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}">소형가구</a></td>
+        <th scope="row"><a href="#" th:href="@{|/api/shipping/${shipping.id}|}" th:text="${shipping.id}">1</a></th>
+        <td><a href="#" th:href="@{|/api/store/shipping/${shipping.id}|}" th:text="${shipping.status}">소형가구</a></td>
+        <td><a href="#" th:href="@{|/api/store/shipping/${shipping.id}|}" th:text="${shipping.deliveryAddress}">소형가구</a></td>
+        <td><a href="#" th:href="@{|/api/store/shipping/${shipping.id}|}" th:text="${#temporals.format(shipping.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}">소형가구</a></td>
       </tr>
     </tbody>
   </table>
