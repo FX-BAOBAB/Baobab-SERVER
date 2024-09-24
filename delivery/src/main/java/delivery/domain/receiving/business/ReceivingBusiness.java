@@ -23,6 +23,7 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.User;
 
 
 @Slf4j
@@ -53,9 +54,11 @@ public class ReceivingBusiness {
         return response;
     }
 
-    public ReceivingResponse reservationConfirmed(Long requestId) {
+    public ReceivingResponse reservationConfirmed(Long requestId, User user) {
 
-        ReceivingEntity receivingEntity = receivingService.reservationConfirmed(requestId);
+        Long userId = userService.getUserWithThrow(user.getUsername()).getId();
+
+        ReceivingEntity receivingEntity = receivingService.reservationConfirmed(requestId,userId);
 
         ReceivingResponse receivingResponse = setGoodsIdAndUserNameReceivingResponse(
             receivingEntity);
@@ -75,21 +78,28 @@ public class ReceivingBusiness {
         UserEntity userEntity = userService.getUserWithThrow(receivingEntity.getUserId());
         response.setGoodsIdList(goodsIdList);
         response.setUserName(userEntity.getName());
+
+        Long deliveryManId = receivingEntity.getDeliveryMan();
+        if (deliveryManId != null){
+            UserEntity deliveryMan = userService.getUserWithThrow(deliveryManId);
+            response.setDeliveryManName(deliveryMan.getName());
+        }
         return response;
 
     }
 
-    public ReceivingResponseList showReservationByDate(String date) {
-
+    public ReceivingResponseList showReservationByDate(String date, User user) {
+        Long userId = userService.getUserWithThrow(user.getUsername()).getId();
         RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
         List<ReceivingEntity> receivingEntityList = receivingService.getRequestListByDate(
-            dateTime.getStartDateTime(), dateTime.getDueDateTime());
+            dateTime.getStartDateTime(), dateTime.getDueDateTime(),userId);
 
         return getResponseList(receivingEntityList);
 
     }
 
     private ReceivingResponseList getResponseList(List<ReceivingEntity> receivingEntityList) {
+
         ReceivingResponseList responseList = receivingConverter.toResponseList(receivingEntityList);
 
         receivingEntityList.forEach(receivingEntity -> {
@@ -105,6 +115,11 @@ public class ReceivingBusiness {
                 reservationResponse.setGoodsIdList(goodsIdList);
                 reservationResponse.setUserName(
                     userService.getUserWithThrow(receivingEntity.getUserId()).getName());
+
+                Long deliveryManId = receivingEntity.getDeliveryMan();
+                if (deliveryManId != null) {
+                    reservationResponse.setDeliveryManName(userService.getUserWithThrow(deliveryManId).getName());
+                }
             });
 
         });

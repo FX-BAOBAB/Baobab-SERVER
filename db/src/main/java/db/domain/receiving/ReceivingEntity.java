@@ -38,4 +38,6 @@ public class ReceivingEntity extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
+    private Long deliveryMan;
+
 }

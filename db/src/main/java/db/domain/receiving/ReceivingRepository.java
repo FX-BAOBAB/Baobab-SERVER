@@ -16,4 +16,6 @@ public interface ReceivingRepository extends JpaRepository<ReceivingEntity, Long
     List<ReceivingEntity> findAllByStatusOrderByVisitDate(ReceivingStatus receivingStatus);
 
     List<ReceivingEntity> findAllByStatusAndVisitDateBetweenOrderByUserId (ReceivingStatus receivingStatus, LocalDateTime startDate, LocalDateTime dueDate);
+
+    List<ReceivingEntity> findAllByDeliveryManAndStatusAndVisitDateBetweenOrderByVisitDateDesc(Long userId,ReceivingStatus receivingStatus, LocalDateTime startDate, LocalDateTime dueDate);
 }

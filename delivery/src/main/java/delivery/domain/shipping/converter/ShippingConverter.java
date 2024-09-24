@@ -25,7 +25,6 @@ public class ShippingConverter {
             .status(shippingEntity.getStatus())
             .deliveryDate(shippingEntity.getDeliveryDate())
             .deliveryAddress(shippingEntity.getDeliveryAddress())
-            .deliveryMan(shippingEntity.getDeliveryMan())
             .build();
     }
 }

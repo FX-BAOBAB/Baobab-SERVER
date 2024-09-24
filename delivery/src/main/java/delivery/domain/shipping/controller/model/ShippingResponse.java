@@ -23,7 +23,7 @@ public class ShippingResponse {
 
     private String userName;
 
-    private Long deliveryMan;
+    private String deliveryMan;
 
     private List<Long> goodsIdList;
 

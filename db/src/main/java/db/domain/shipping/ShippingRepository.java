@@ -16,4 +16,6 @@ public interface ShippingRepository extends JpaRepository<ShippingEntity, Long> 
 
     List<ShippingEntity> findAllByStatusAndDeliveryDateBetweenOrderByUserId(ShippingStatus status,
         LocalDateTime startDate, LocalDateTime dueDate);
+
+    List<ShippingEntity> findAllByDeliveryManAndStatusAndDeliveryDateBetweenOrderByDeliveryDateDesc(Long userId,ShippingStatus shippingStatus, LocalDateTime startDate, LocalDateTime dueDate);
 }

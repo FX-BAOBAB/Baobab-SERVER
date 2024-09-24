@@ -39,7 +39,7 @@ public class ShippingService {
         return shippingRepository.findFirstById(requestId).orElseThrow(() -> new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
     }
 
-    public ShippingEntity reservationConfirmed(Long requestId) {
+    public ShippingEntity reservationConfirmed(Long requestId, Long deliveryManId) {
         ShippingEntity shippingEntity = getRequest(requestId);
 
         if (shippingEntity.getStatus() != ShippingStatus.PENDING) {
@@ -47,7 +47,7 @@ public class ShippingService {
         }
 
         shippingEntity.setStatus(ShippingStatus.REGISTERED);
-
+        shippingEntity.setDeliveryMan(deliveryManId);
         return shippingRepository.save(shippingEntity);
 
     }
@@ -55,6 +55,16 @@ public class ShippingService {
     public List<ShippingEntity> getRequestListByDate(LocalDateTime startDate, LocalDateTime dueDate) {
         List<ShippingEntity> receivingEntityList = shippingRepository.findAllByStatusAndDeliveryDateBetweenOrderByUserId(
             ShippingStatus.REGISTERED, startDate, dueDate);
+
+        if (receivingEntityList.isEmpty()) {
+            throw new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND);
+        }
+        return receivingEntityList;
+    }
+
+    public List<ShippingEntity> getRequestListByDate(LocalDateTime startDate, LocalDateTime dueDate, Long userId) {
+        List<ShippingEntity> receivingEntityList = shippingRepository.findAllByDeliveryManAndStatusAndDeliveryDateBetweenOrderByDeliveryDateDesc(
+            userId,ShippingStatus.REGISTERED, startDate, dueDate);
 
         if (receivingEntityList.isEmpty()) {
             throw new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND);
