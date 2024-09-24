@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import warehouse.common.error.GoodsErrorCode;
 import warehouse.common.exception.Goods.InvalidGoodsStatusException;
 import warehouse.common.exception.goods.GoodsNotFoundException;
+import warehouse.common.exception.receiving.NotOwnerException;
 import warehouse.domain.shipping.controller.model.request.ShippingRequest;
 
 @Service
@@ -157,6 +158,18 @@ public class GoodsService {
     public void setUserId(GoodsEntity goodsEntity, Long userId) {
         goodsEntity.setUserId(userId);
         goodsRepository.save(goodsEntity);
+    }
+
+    public void checkOwner(List<Long> goodsIdList, Long userId) {
+        goodsRepository.findAllById(goodsIdList).forEach(goodsEntity -> {
+            checkOwner(goodsEntity,userId);
+        });
+    }
+
+    public void checkOwner(GoodsEntity entity, Long userId) {
+        if(entity.getUserId() != userId){
+            throw new NotOwnerException(GoodsErrorCode.NOT_OWNER);
+        }
     }
 
 }
