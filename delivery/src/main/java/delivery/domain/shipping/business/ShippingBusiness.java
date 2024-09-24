@@ -23,6 +23,7 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.User;
 
 @Slf4j
 @Business
@@ -32,9 +33,7 @@ public class ShippingBusiness {
     private final ShippingService shippingService;
     private final ShippingConverter shippingConverter;
     private final UsersService userService;
-    private final UserConverter userConverter;
     private final GoodsService goodsService;
-    private final GoodsConverter goodsConverter;
 
     public ShippingResponseList getReservationList() {
 
@@ -51,8 +50,11 @@ public class ShippingBusiness {
         return response;
     }
 
-    public ShippingResponse shippingReservation(Long requestId) {
-        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId);
+    public ShippingResponse shippingReservation(Long requestId, User user) {
+
+        Long deliveryManId = userService.getUserWithThrow(user.getUsername()).getId();
+
+        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId,deliveryManId);
 
         ShippingResponse response = getShippingResponse(shippingEntity);
 
@@ -73,14 +75,22 @@ public class ShippingBusiness {
         response.setUserName(userEntity.getName());
         response.setGoodsIdList(goodsIdList);
 
+        Long deliveryManId = shippingEntity.getDeliveryMan();
+        if (deliveryManId != null) {
+            UserEntity deliveryMan = userService.getUserWithThrow(deliveryManId);
+            response.setDeliveryMan(deliveryMan.getName());
+        }
+
         return response;
     }
 
-    public ShippingResponseList showReservationByDate(String date) {
+    public ShippingResponseList showReservationByDate(String date, User user) {
+
+        Long deliveryManId = userService.getUserWithThrow(user.getUsername()).getId();
 
         RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
 
-        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime(),deliveryManId);
 
         return getResponseList(shippingEntityList);
     }
@@ -101,6 +111,14 @@ public class ShippingBusiness {
             responseList.getReservationResponseList().forEach(reservationResponse -> {
                 reservationResponse.setGoodsIdList(goodsIdList);
                 reservationResponse.setUserName(userService.getUserWithThrow(shippingEntity.getUserId()).getName());
+
+                Long deliveryManId = shippingEntity.getDeliveryMan();
+
+                if (deliveryManId != null) {
+                    UserEntity deliveryMan = userService.getUserWithThrow(deliveryManId);
+                    reservationResponse.setDeliveryMan(deliveryMan.getName());
+                }
+
             });
 
         });
