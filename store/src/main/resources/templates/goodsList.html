@@ -19,9 +19,9 @@
       </a>
 
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="#" th:href="|@{/api/store/receiving(status=RECEIVING)}|" class="nav-link px-2 link-secondary">입고 관리</a></li>
-        <li><a href="#" th:href="|@{/api/store/shipping(status=PENDING)}|" class="nav-link px-2 link-secondary">출고 관리</a></li>
-        <li><a href="#" th:href="|@{/api/store/goods(status=STORAGE)}|" class="nav-link px-2 link-primary">물품 관리</a></li>
+        <li><a href="#" th:href="|@{/api/receiving(status=RECEIVING)}|" class="nav-link px-2 link-secondary">입고 관리</a></li>
+        <li><a href="#" th:href="|@{/api/shipping(status=PENDING)}|" class="nav-link px-2 link-secondary">출고 관리</a></li>
+        <li><a href="#" th:href="|@{/api/goods(status=STORAGE)}|" class="nav-link px-2 link-primary">물품 관리</a></li>
       </ul>
 
       <div class="col-md-3 text-end">
@@ -33,7 +33,7 @@
 
   <!-- receiving List -->
 
-  <form action="" th:action="@{/api/store/goods}" method="get" class="row">
+  <form action="" th:action="@{/api/goods}" method="get" class="row">
     <div class="col col-8">
       <select class="form-select" th:name="status" aria-label="Small select example">
         <option value="1" th:each="status: ${goodsStatusList}" th:value="${status.name()}" th:text="${status.status}">One</option>
@@ -57,10 +57,10 @@
     <tbody>
     <tr th:each="goods : ${goodsList}">
       <th scope="row"><a href="#" th:href="@{|/api/goods/${goods.id}|}" th:text="${goods.id}">1</a></th>
-      <td><a href="#" th:href="@{|/api/store/goods/${goods.id}|}" th:text="${goods.name}">소형가구</a></td>
-      <td><a href="#" th:href="@{|/api/store/goods/${goods.id}|}" th:text="${goods.modelName}">소형가구</a></td>
-      <td><a href="#" th:href="@{|/api/store/goods/${goods.id}|}" th:text="${goods.category}">소형가구</a></td>
-      <td><a href="#" th:href="@{|/api/store/goods/${goods.id}|}" th:text="${goods.quantity}">소형가구</a></td>
+      <td><a href="#" th:href="@{|/api/goods/${goods.id}|}" th:text="${goods.name}">소형가구</a></td>
+      <td><a href="#" th:href="@{|/api/goods/${goods.id}|}" th:text="${goods.modelName}">소형가구</a></td>
+      <td><a href="#" th:href="@{|/api/goods/${goods.id}|}" th:text="${goods.category}">소형가구</a></td>
+      <td><a href="#" th:href="@{|/api/goods/${goods.id}|}" th:text="${goods.quantity}">소형가구</a></td>
     </tr>
     </tbody>
   </table>

@@ -23,7 +23,7 @@ import store.domain.image.common.error.ImageErrorCode;
 import store.domain.image.common.exception.image.ImageNotFoundException;
 import store.domain.image.common.exception.image.ImageStorageException;
 import store.domain.image.common.utils.ImageUtils;
-import store.domain.management.controller.model.ImageUrlSet;
+import store.domain.goods.controller.model.ImageUrlSet;
 
 @Slf4j
 @RequiredArgsConstructor
