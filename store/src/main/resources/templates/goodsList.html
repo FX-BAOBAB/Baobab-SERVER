@@ -30,9 +30,7 @@
     </header>
   </header>
 
-
   <!-- receiving List -->
-
   <form action="" th:action="@{/api/goods}" method="get" class="row">
     <div class="col col-8">
       <select class="form-select" th:name="status" aria-label="Small select example">
@@ -43,6 +41,12 @@
       <button type="submit"  class="btn btn-secondary">검색</button>
     </div>
   </form>
+
+  <div id="goodsError" th:if="${error != null}" class="animate-bounce mt-3 mb-3">
+    <div class="alert alert-danger" role="alert" th:text="${error}">
+      This is a danger alert—check it out!
+    </div>
+  </div>
 
   <table id="receivingList" class="table">
     <thead>
@@ -69,4 +73,14 @@
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+  $goodsError = document.getElementById('goodsError');
+
+  window.onload = function () {
+    setTimeout(() => {
+      $goodsError.classList.add('d-none');
+    },5000)
+  }
+
+</script>
 </html>

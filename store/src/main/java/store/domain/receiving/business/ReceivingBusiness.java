@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.domain.goods.controller.model.GoodsResponse;
-import store.domain.image.domain.image.service.ImageService;
+import store.domain.image.service.ImageService;
 import store.domain.receiving.controller.model.ReceivingResponse;
 import store.domain.goods.converter.GoodsConverter;
 import store.domain.receiving.converter.ReceivingConverter;

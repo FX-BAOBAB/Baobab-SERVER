@@ -6,6 +6,8 @@ import db.domain.receiving.enums.ReceivingStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.common.error.ReceivingErrorCode;
+import store.common.exception.receiving.ReceivingNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +23,14 @@ public class ReceivingService {
         return receivingRepository.findAll();
     }
 
-    // TODO Exception 처리 필요
     public ReceivingEntity getRequestReceivingBy(Long receivingId) {
-        return receivingRepository.findFirstById(receivingId).orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
+        return receivingRepository.findFirstById(receivingId).orElseThrow(() -> new ReceivingNotFoundException(
+            ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
     }
 
-    // TODO Exception 처리 필요
     public ReceivingEntity setStatus(Long receivingId, ReceivingStatus receivingStatus) {
         ReceivingEntity receivingEntity = receivingRepository.findFirstById(receivingId)
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
+            .orElseThrow(() -> new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
 
         receivingEntity.setStatus(receivingStatus);
         return receivingRepository.save(receivingEntity);

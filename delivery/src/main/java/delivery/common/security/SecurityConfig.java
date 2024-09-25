@@ -3,6 +3,7 @@ package delivery.common.security;
 import delivery.domain.users.security.jwt.filter.JwtAuthFilter;
 import delivery.domain.users.security.jwt.service.TokenService;
 import delivery.domain.users.security.service.AuthorizationService;
+import jakarta.servlet.DispatcherType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -45,6 +46,7 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS)).authorizeHttpRequests(it -> {
                 it.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll().anyRequest()
                     .authenticated()
                 ;

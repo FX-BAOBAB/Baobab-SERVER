@@ -1,17 +1,18 @@
 package store.domain.goods.business;
 
 import db.domain.goods.GoodsEntity;
-import db.domain.goods.GoodsRepository;
 import db.domain.goods.enums.GoodsStatus;
 import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import store.common.error.GoodsErrorCode;
+import store.common.exception.goods.GoodsNotFoundException;
 import store.domain.goods.controller.model.GoodsResponse;
 import store.domain.goods.controller.model.ImageUrlSet;
 import store.domain.goods.converter.GoodsConverter;
 import store.domain.goods.service.GoodsService;
-import store.domain.image.domain.image.converter.ImageConverter;
-import store.domain.image.domain.image.service.ImageService;
+import store.domain.image.converter.ImageConverter;
+import store.domain.image.service.ImageService;
 
 @Business
 @RequiredArgsConstructor
@@ -20,9 +21,11 @@ public class GoodsBusiness {
     private final GoodsService goodsService;
     private final GoodsConverter goodsConverter;
     private final ImageService imageService;
-    private final ImageConverter imageConverter;
 
     public List<GoodsResponse> getGoodsList(GoodsStatus status) {
+        if (status == null){
+            status = GoodsStatus.STORAGE;
+        }
         List<GoodsEntity> goodsEntityList = goodsService.getGoodsListBy(status);
         return goodsEntityList.stream().map(goodsEntity -> {
             GoodsResponse response = goodsConverter.toResponse(goodsEntity);
@@ -40,10 +43,9 @@ public class GoodsBusiness {
 
     }
 
-    // TODO Exception 처리 필요
     public GoodsResponse getGoodsBy(Long goodsId) {
         GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId)
-            .orElseThrow(() -> new RuntimeException("물품이 존재하지 않습니다."));
+            .orElseThrow(() -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
         GoodsResponse response = goodsConverter.toResponse(goodsEntity);
         setImageUrl(goodsEntity, response);
         return response;

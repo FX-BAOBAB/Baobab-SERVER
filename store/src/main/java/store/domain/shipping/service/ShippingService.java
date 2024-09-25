@@ -6,6 +6,8 @@ import db.domain.shipping.enums.ShippingStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.common.error.ShippingErrorCode;
+import store.common.exception.shipping.ShippingNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,16 +19,15 @@ public class ShippingService {
         return shippingRepository.findAllByStatusOrderByDeliveryDate(status);
     }
 
-    // TODO Exception 처리 필요
     public ShippingEntity getRequestShippingBy(Long shippingId) {
-        return shippingRepository.findFirstById(shippingId).orElseThrow(() -> new RuntimeException("존재하지 않는 요청서입니다."));
+        return shippingRepository.findFirstById(shippingId).orElseThrow(() -> new ShippingNotFoundException(
+            ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND));
     }
 
-    // TODO Exception 처리 필요
     public ShippingEntity setStatus(Long shippingId, ShippingStatus shippingStatus) {
         ShippingEntity shippingEntity = getRequestShippingBy(shippingId);
         if (shippingEntity.getStatus() != ShippingStatus.REGISTERED){
-            throw new RuntimeException("출고 접수 상태가 아닙니다.");
+            throw new ShippingNotFoundException(ShippingErrorCode.SHIPPING_REQUEST_NOT_FOUND);
         }
         shippingEntity.setStatus(shippingStatus);
         return shippingRepository.save(shippingEntity);

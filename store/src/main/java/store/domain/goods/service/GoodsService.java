@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.common.error.GoodsErrorCode;
+import store.common.exception.goods.GoodsNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +24,18 @@ public class GoodsService {
         return goodsRepository.findAllByReceivingIdOrderByIdDesc(receivingId);
     }
 
-    // TODO Exception 처리 필요
     public List<GoodsEntity> getGoodsListBy(List<Long> goodsIdList) {
-        return goodsIdList.stream().map(goodsId -> goodsRepository.findById(goodsId).orElseThrow(()-> new RuntimeException("해당 상품이 존재하지 않습니다."))).toList();
+        return goodsIdList.stream().map(goodsId -> goodsRepository.findById(goodsId).orElseThrow(()-> new GoodsNotFoundException(
+            GoodsErrorCode.GOODS_NOT_FOUND))).toList();
     }
 
     public Optional<GoodsEntity> getGoodsBy(Long goodsId) {
         return goodsRepository.findById(goodsId);
     }
 
-    // TODO Exception 처리 필요
     public GoodsEntity setStatus(Long goodsId, GoodsStatus goodsStatus) {
         GoodsEntity goodsEntity = getGoodsBy(goodsId).orElseThrow(
-            () -> new RuntimeException("해당 상품이 존재하지 않습니다."));
+            () -> new GoodsNotFoundException(GoodsErrorCode.GOODS_NOT_FOUND));
         goodsEntity.setStatus(goodsStatus);
         return goodsRepository.save(goodsEntity);
     }
