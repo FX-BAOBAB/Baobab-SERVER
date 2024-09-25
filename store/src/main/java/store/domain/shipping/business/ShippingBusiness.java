@@ -6,7 +6,7 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import store.domain.goods.controller.model.GoodsResponse;
-import store.domain.image.domain.image.service.ImageService;
+import store.domain.image.service.ImageService;
 import store.domain.shipping.controller.model.ShippingResponse;
 import store.domain.goods.converter.GoodsConverter;
 import store.domain.shipping.converter.ShippingConverter;

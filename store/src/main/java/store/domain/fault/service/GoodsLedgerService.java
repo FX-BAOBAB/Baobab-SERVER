@@ -4,6 +4,8 @@ import db.domain.store.GoodsLedgerEntity;
 import db.domain.store.GoodsLedgerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import store.common.error.GoodsLedgerErrorCode;
+import store.common.exception.goodsledger.GoodsLedgerNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +17,8 @@ public class GoodsLedgerService {
         return goodsLedgerRepository.save(entity);
     }
 
-    // TODO Exception 처리 필요
     public GoodsLedgerEntity getLedgerBy(Long id) {
-        return goodsLedgerRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않습니다."));
+        return goodsLedgerRepository.findById(id).orElseThrow(() -> new GoodsLedgerNotFoundException(
+            GoodsLedgerErrorCode.GOODS_LEDGER_NOT_FOUND));
     }
 }
