@@ -58,9 +58,7 @@
               <p class="card-text"
                  th:text="|방문일자 : ${#temporals.format(shippingRequest.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}|">
                 방문 일자 : </p>
-              <p class="card-text"
-                 th:text="|배송자 : ${shippingRequest.deliveryMan}|">
-                결함 인정일: </p>
+              <p class="card-text" th:text="|배송자 : ${shippingRequest.deliveryMan}|"> 결함 인정일: </p>
             </div>
           </div>
         </div>
