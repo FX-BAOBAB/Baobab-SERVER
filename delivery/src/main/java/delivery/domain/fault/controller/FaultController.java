@@ -5,6 +5,7 @@ import delivery.domain.fault.controller.model.AddFaultRequest;
 import delivery.domain.goods.controller.model.GoodsResponse;
 import delivery.domain.goods.controller.model.GoodsResponses;
 import global.api.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,8 @@ public class FaultController {
 
     private final FaultBusiness faultBusiness;
 
-    @PostMapping()
+    @PostMapping
+    @Operation(summary = "[결함 등록 : parameter = file, caption, goodsId]")
     public Api<GoodsResponse> addFault(@Parameter(hidden = true) @AuthenticationPrincipal User user,@ModelAttribute AddFaultRequest request, Model model,
         RedirectAttributes redirectAttributes){
         GoodsResponse response = faultBusiness.addFault(request,user);
