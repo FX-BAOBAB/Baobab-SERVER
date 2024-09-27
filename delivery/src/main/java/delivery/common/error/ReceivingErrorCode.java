@@ -14,7 +14,8 @@ public enum ReceivingErrorCode implements ErrorCodeIfs {
     RECEIVING_NOT_IN_TAKING(HttpStatus.BAD_REQUEST.value(), 1252,"입고 요청 상태가 아닙니다."),
     RECEIVING_NOT_IN_CONFIRMATION(HttpStatus.NOT_FOUND.value(),1253,"입고 확정 상태가 아닙니다."),
     RECEIVING_NOT_IN_DELIVERY(HttpStatus.NOT_FOUND.value(),1254,"입고 배송 상태가 아닙니다."),
-    ;
+    RECEIVING_NOT_IN_REGISTERED(HttpStatus.NOT_FOUND.value(),1255,"입고 접수 상태가 아닙니다."),
+    RECEIVING_NOT_IN_CHECKING(HttpStatus.NOT_FOUND.value(),1256,"입고 심의 상태가 아닙니다.");
 
     private final Integer httpCode;
     private final Integer errorCode;

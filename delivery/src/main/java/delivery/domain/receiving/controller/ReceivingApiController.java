@@ -37,10 +37,8 @@ public class ReceivingApiController {
     }
 
     @PostMapping("/reservation/{requestId}")
-    public Api<ReceivingResponse> receivingReservation(
-        @Parameter(hidden = true) @AuthenticationPrincipal User user,
-        @PathVariable Long requestId) {
-        ReceivingResponse response = receivingBusiness.reservationConfirmed(requestId, user);
+    public Api<ReceivingResponse> receivingReservation(@PathVariable Long requestId) {
+        ReceivingResponse response = receivingBusiness.reservationConfirmed(requestId);
         return Api.OK(response);
     }
 
@@ -65,4 +63,15 @@ public class ReceivingApiController {
         return Api.OK(response);
     }
 
+    @PostMapping("/register/{requestId}")
+    public Api<ReceivingResponse> registerRequest(@Parameter(hidden = true) @AuthenticationPrincipal User user,@PathVariable Long requestId) {
+        ReceivingResponse response = receivingBusiness.registerRequest(user,requestId);
+        return Api.OK(response);
+    }
+
+    @PostMapping("/check/{requestId}")
+    public Api<ReceivingResponse> checkStartRequest(@PathVariable Long requestId) {
+        ReceivingResponse response = receivingBusiness.checkStartRequest(requestId);
+        return Api.OK(response);
+    }
 }

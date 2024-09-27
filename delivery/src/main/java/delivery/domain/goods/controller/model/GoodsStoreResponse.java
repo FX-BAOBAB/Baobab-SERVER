@@ -2,10 +2,8 @@ package delivery.domain.goods.controller.model;
 
 import db.domain.goods.enums.GoodsCategory;
 import db.domain.goods.enums.GoodsStatus;
+import db.domain.store.enums.StoreLocation;
 import delivery.domain.image.controller.model.ImageUrlSet;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoodsResponse {
+public class GoodsStoreResponse {
 
     private Long id;
 
@@ -36,4 +34,9 @@ public class GoodsResponse {
     private List<ImageUrlSet> basicImageUrlSet;
 
     private List<ImageUrlSet> faultImageUrlSet;
+
+    private StoreLocation storeLocation;
+
+    private LocalDateTime storedAt;
+
 }
