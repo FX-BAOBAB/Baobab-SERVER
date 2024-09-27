@@ -1,5 +1,6 @@
 package delivery.common.security;
 
+import db.domain.users.enums.UserRole;
 import delivery.domain.users.security.jwt.filter.JwtAuthFilter;
 import delivery.domain.users.security.jwt.service.TokenService;
 import delivery.domain.users.security.service.AuthorizationService;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,6 +48,7 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS)).authorizeHttpRequests(it -> {
                 it.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .requestMatchers("/api/**").hasRole("DELIVERY_MAN")
                     .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll().anyRequest()
                     .authenticated()
