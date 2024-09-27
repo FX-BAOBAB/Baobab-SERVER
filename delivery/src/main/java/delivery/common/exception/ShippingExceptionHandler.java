@@ -4,6 +4,7 @@ import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.shipping.ShippingNotFoundException;
 import delivery.common.exception.shipping.ShippingNotInDeliveryException;
 import delivery.common.exception.shipping.ShippingNotInPendingException;
+import delivery.common.exception.shipping.ShippingNotInReadyException;
 import delivery.common.exception.shipping.ShippingNotInRegisteredException;
 import global.api.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,13 @@ public class ShippingExceptionHandler {
         log.info("", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Api.ERROR(ShippingErrorCode.SHIPPING_NOT_IN_DELIVERY));
+    }
+
+    @ExceptionHandler(value = ShippingNotInReadyException.class)
+    public ResponseEntity<Api<Object>> shippingNotInReadyException(ShippingNotInReadyException e) {
+        log.info("", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Api.ERROR(ShippingErrorCode.SHIPPING_NOT_IN_READY));
     }
 
 }
