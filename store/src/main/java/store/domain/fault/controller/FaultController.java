@@ -25,13 +25,13 @@ public class FaultController {
 
     private final FaultBusiness faultBusiness;
 
-    @GetMapping("/fault/{goodsId}")
+    @GetMapping("/{goodsId}")
     public String addFaultForm(@PathVariable Long goodsId, Model model){
         model.addAttribute("goodsId", goodsId);
         return "addFault";
     }
 
-    @PostMapping("/fault")
+    @PostMapping
     public String addFault(@Parameter(hidden = true) @AuthenticationPrincipal User user,@ModelAttribute AddFaultRequest request, Model model,
         RedirectAttributes redirectAttributes){
         GoodsResponse goods = faultBusiness.addFault(request,user);

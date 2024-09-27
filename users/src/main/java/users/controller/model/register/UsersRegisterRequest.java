@@ -1,5 +1,6 @@
 package users.controller.model.register;
 
+import db.domain.users.enums.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -38,5 +39,7 @@ public class UsersRegisterRequest {
     @Pattern(regexp = "^[0-9]{5}$")
     private String post;
 
+    @NotNull
+    private UserRole role;
 
 }
