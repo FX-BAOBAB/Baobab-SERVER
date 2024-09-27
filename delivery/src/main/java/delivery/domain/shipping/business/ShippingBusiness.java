@@ -8,6 +8,7 @@ import db.domain.users.UserEntity;
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.goods.GoodsNotInShippingIngException;
+import delivery.common.exception.shipping.ShippingNotInReadyException;
 import delivery.common.exception.shipping.ShippingNotInRegisteredException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
@@ -130,9 +131,9 @@ public class ShippingBusiness {
 
         ShippingEntity shippingEntity = shippingService.getRequest(requestId);
 
-        if (shippingEntity.getStatus() != ShippingStatus.REGISTERED) {
-            throw new ShippingNotInRegisteredException(
-                ShippingErrorCode.SHIPPING_NOT_IN_REGISTERED);
+        if (shippingEntity.getStatus() != ShippingStatus.READY) {
+            throw new ShippingNotInReadyException(
+                ShippingErrorCode.SHIPPING_NOT_IN_READY);
         }
 
         ShippingEntity updateEntity = shippingService.startDelivery(shippingEntity);
