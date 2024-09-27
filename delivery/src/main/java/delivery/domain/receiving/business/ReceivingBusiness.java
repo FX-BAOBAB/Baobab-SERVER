@@ -9,7 +9,10 @@ import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.goods.GoodsNotInReceivingException;
 import delivery.common.exception.receiving.ReceivingNotFoundException;
+import delivery.common.exception.receiving.ReceivingNotInCheckingException;
 import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
+import delivery.common.exception.receiving.ReceivingNotInDeliveryException;
+import delivery.common.exception.receiving.ReceivingNotInRegisteredException;
 import delivery.common.exception.receiving.ReceivingNotInTakingException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
@@ -60,7 +63,7 @@ public class ReceivingBusiness {
 
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
         if (receivingEntity.getStatus() != ReceivingStatus.CHECKING) {
-            throw new ReceivingNotInTakingException(ReceivingErrorCode.RECEIVING_NOT_IN_CHECKING);
+            throw new ReceivingNotInCheckingException(ReceivingErrorCode.RECEIVING_NOT_IN_CHECKING);
         }
 
         receivingService.changeStatus(receivingEntity,ReceivingStatus.CONFIRMATION);
@@ -133,10 +136,9 @@ public class ReceivingBusiness {
         Long userId = userService.getUserWithThrow(user.getUsername()).getId();
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
         if (receivingEntity.getStatus() != ReceivingStatus.TAKING) {
-            throw new ReceivingNotInConfirmationException(
+            throw new ReceivingNotInTakingException(
                 ReceivingErrorCode.RECEIVING_NOT_IN_TAKING);
         }
-
         ReceivingEntity updateEntity = receivingService.updateDeliveryMan(
             receivingService.changeStatus(receivingEntity, ReceivingStatus.REGISTERED), userId);
         return setGoodsIdAndUserNameReceivingResponse(updateEntity);
@@ -145,7 +147,7 @@ public class ReceivingBusiness {
     public ReceivingResponse checkStartRequest(Long requestId) {
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
         if (receivingEntity.getStatus() != ReceivingStatus.REGISTERED) {
-            throw new ReceivingNotInConfirmationException(
+            throw new ReceivingNotInRegisteredException(
                 ReceivingErrorCode.RECEIVING_NOT_IN_REGISTERED);
         }
         ReceivingEntity updateEntity = receivingService.changeStatus(receivingEntity,ReceivingStatus.CHECKING);
@@ -180,7 +182,7 @@ public class ReceivingBusiness {
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
 
         if (receivingEntity.getStatus() != ReceivingStatus.DELIVERY) {
-            throw new ReceivingNotInConfirmationException(
+            throw new ReceivingNotInDeliveryException(
                 ReceivingErrorCode.RECEIVING_NOT_IN_DELIVERY);
         }
 
