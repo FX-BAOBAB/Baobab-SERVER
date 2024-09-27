@@ -6,12 +6,10 @@ import db.domain.receiving.enums.ReceivingStatus;
 import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.receiving.ReceivingNotFoundException;
 import delivery.common.exception.receiving.ReceivingNotInTakingException;
-import delivery.domain.receiving.controller.model.ReceivingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -36,18 +34,6 @@ public class ReceivingService {
         return receivingRepository.findFirstById(requestId).orElseThrow(() -> new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
     }
 
-    public ReceivingEntity reservationConfirmed(Long requestId,Long userId) {
-
-        ReceivingEntity receivingEntity = receivingRepository.findFirstById(requestId).orElseThrow(
-            () -> new ReceivingNotFoundException(ReceivingErrorCode.RECEIVING_REQUEST_NOT_FOUND));
-        if (receivingEntity.getStatus() != ReceivingStatus.TAKING) {
-            throw new ReceivingNotInTakingException(ReceivingErrorCode.RECEIVING_NOT_IN_TAKING);
-        }
-        receivingEntity.setStatus(ReceivingStatus.CONFIRMATION);
-        receivingEntity.setDeliveryMan(userId);
-        return receivingRepository.save(receivingEntity);
-    }
-
     public List<ReceivingEntity> getRequestListByDate(LocalDateTime startDate,LocalDateTime dueDate) {
         List<ReceivingEntity> receivingEntityList = receivingRepository.findAllByStatusAndVisitDateBetweenOrderByUserId(
             ReceivingStatus.CONFIRMATION, startDate, dueDate);
@@ -69,13 +55,13 @@ public class ReceivingService {
         return receivingEntityList;
     }
 
-    public ReceivingEntity startDelivery(ReceivingEntity receivingEntity) {
-        receivingEntity.setStatus(ReceivingStatus.DELIVERY);
+    public ReceivingEntity changeStatus(ReceivingEntity receivingEntity,ReceivingStatus status) {
+        receivingEntity.setStatus(status);
         return receivingRepository.save(receivingEntity);
     }
 
-    public ReceivingEntity deliveryComplete(ReceivingEntity receivingEntity) {
-        receivingEntity.setStatus(ReceivingStatus.RECEIVING);
-        return receivingRepository.save(receivingEntity);
+    public ReceivingEntity updateDeliveryMan(ReceivingEntity updateEntity, Long userId) {
+        updateEntity.setDeliveryMan(userId);
+        return receivingRepository.save(updateEntity);
     }
 }

@@ -3,12 +3,14 @@ package delivery.domain.goods.business;
 import db.domain.goods.GoodsEntity;
 import db.domain.image.ImageEntity;
 import db.domain.image.ImageRepository;
+import db.domain.imagemapping.ImageMappingEntity;
 import delivery.domain.goods.controller.model.GoodsResponse;
 import delivery.domain.goods.controller.model.GoodsResponses;
 import delivery.domain.goods.controller.model.ImageSet;
 import delivery.domain.goods.converter.GoodsConverter;
 import delivery.domain.goods.service.GoodsService;
 import delivery.domain.image.converter.ImageConverter;
+import delivery.domain.image.service.ImageMappingService;
 import delivery.domain.image.service.ImageService;
 import global.annotation.Business;
 import java.util.List;
@@ -23,8 +25,6 @@ public class GoodsBusiness {
     private final GoodsService goodsService;
     private final GoodsConverter goodsConverter;
     private final ImageService imageService;
-    private final ImageConverter imageConverter;
-    private final ImageRepository imageRepository;
 
     public GoodsResponses getReceivingGoodsListBy(Long requestId) {
 
@@ -41,14 +41,11 @@ public class GoodsBusiness {
     }
 
     private GoodsResponses setImageSet(List<GoodsEntity> goodsEntityList) {
-        GoodsResponses responses = goodsConverter.toResponseList(goodsEntityList);
 
+        GoodsResponses responses = goodsConverter.toResponseList(goodsEntityList);
         responses.getGoodsResponseList().forEach(response -> {
-            log.info("goods id [{}] : goods Name [{}] ", response.getId(), response.getName());
-            // GoodsImage Set Setting
-            List<ImageEntity> imageEntityList = imageService.getImageListBy(response.getId());
-            List<ImageSet> imageSet = imageConverter.toImageSetList(imageEntityList);
-            response.setImages(imageSet);
+            response.setBasicImageUrlSet(imageService.getBasicImageUrlSetBy(response.getId()));
+            response.setFaultImageUrlSet(imageService.getFaultImageUrlSetBy(response.getId()));
         });
 
         return responses;
@@ -57,9 +54,8 @@ public class GoodsBusiness {
     public GoodsResponse getGoodsBy(Long goodsId) {
         GoodsEntity goodsEntity = goodsService.getGoodsBy(goodsId);
         GoodsResponse response = goodsConverter.toResponse(goodsEntity);
-        List<ImageEntity> imageEntityList = imageService.getImageListBy(response.getId());
-        List<ImageSet> imageSet = imageConverter.toImageSetList(imageEntityList);
-        response.setImages(imageSet);
+        response.setBasicImageUrlSet(imageService.getBasicImageUrlSetBy(response.getId()));
+        response.setFaultImageUrlSet(imageService.getFaultImageUrlSetBy(response.getId()));
         return response;
     }
 }

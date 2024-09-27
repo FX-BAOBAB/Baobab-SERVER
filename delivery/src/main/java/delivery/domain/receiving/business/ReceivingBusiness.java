@@ -8,7 +8,9 @@ import db.domain.users.UserEntity;
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ReceivingErrorCode;
 import delivery.common.exception.goods.GoodsNotInReceivingException;
+import delivery.common.exception.receiving.ReceivingNotFoundException;
 import delivery.common.exception.receiving.ReceivingNotInConfirmationException;
+import delivery.common.exception.receiving.ReceivingNotInTakingException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
 import delivery.domain.goods.converter.GoodsConverter;
@@ -54,16 +56,16 @@ public class ReceivingBusiness {
         return response;
     }
 
-    public ReceivingResponse reservationConfirmed(Long requestId, User user) {
+    public ReceivingResponse reservationConfirmed(Long requestId) {
 
-        Long userId = userService.getUserWithThrow(user.getUsername()).getId();
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+        if (receivingEntity.getStatus() != ReceivingStatus.CHECKING) {
+            throw new ReceivingNotInTakingException(ReceivingErrorCode.RECEIVING_NOT_IN_CHECKING);
+        }
 
-        ReceivingEntity receivingEntity = receivingService.reservationConfirmed(requestId,userId);
+        receivingService.changeStatus(receivingEntity,ReceivingStatus.CONFIRMATION);
 
-        ReceivingResponse receivingResponse = setGoodsIdAndUserNameReceivingResponse(
-            receivingEntity);
-
-        return receivingResponse;
+        return setGoodsIdAndUserNameReceivingResponse(receivingEntity);
     }
 
     private ReceivingResponse setGoodsIdAndUserNameReceivingResponse(
@@ -127,6 +129,29 @@ public class ReceivingBusiness {
         return responseList;
     }
 
+    public ReceivingResponse registerRequest(User user,Long requestId) {
+        Long userId = userService.getUserWithThrow(user.getUsername()).getId();
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+        if (receivingEntity.getStatus() != ReceivingStatus.TAKING) {
+            throw new ReceivingNotInConfirmationException(
+                ReceivingErrorCode.RECEIVING_NOT_IN_TAKING);
+        }
+
+        ReceivingEntity updateEntity = receivingService.updateDeliveryMan(
+            receivingService.changeStatus(receivingEntity, ReceivingStatus.REGISTERED), userId);
+        return setGoodsIdAndUserNameReceivingResponse(updateEntity);
+    }
+
+    public ReceivingResponse checkStartRequest(Long requestId) {
+        ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
+        if (receivingEntity.getStatus() != ReceivingStatus.REGISTERED) {
+            throw new ReceivingNotInConfirmationException(
+                ReceivingErrorCode.RECEIVING_NOT_IN_REGISTERED);
+        }
+        ReceivingEntity updateEntity = receivingService.changeStatus(receivingEntity,ReceivingStatus.CHECKING);
+        return setGoodsIdAndUserNameReceivingResponse(updateEntity);
+    }
+
     public ReceivingResponse deliveryStart(Long requestId) {
 
         ReceivingEntity receivingEntity = receivingService.getRequestBy(requestId);
@@ -136,7 +161,7 @@ public class ReceivingBusiness {
                 ReceivingErrorCode.RECEIVING_NOT_IN_CONFIRMATION);
         }
 
-        ReceivingEntity updateEntity = receivingService.startDelivery(receivingEntity);
+        ReceivingEntity updateEntity = receivingService.changeStatus(receivingEntity,ReceivingStatus.DELIVERY);
 
         ReceivingResponse receivingResponse = setGoodsIdAndUserNameReceivingResponse(updateEntity);
 
@@ -156,12 +181,13 @@ public class ReceivingBusiness {
 
         if (receivingEntity.getStatus() != ReceivingStatus.DELIVERY) {
             throw new ReceivingNotInConfirmationException(
-                ReceivingErrorCode.RECEIVING_NOT_IN_CONFIRMATION);
+                ReceivingErrorCode.RECEIVING_NOT_IN_DELIVERY);
         }
 
-        ReceivingEntity updateEntity = receivingService.deliveryComplete(receivingEntity);
+        ReceivingEntity updateEntity = receivingService.changeStatus(receivingEntity,ReceivingStatus.RECEIVING);
 
         return setGoodsIdAndUserNameReceivingResponse(updateEntity);
 
     }
+
 }
