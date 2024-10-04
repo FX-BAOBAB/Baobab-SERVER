@@ -54,13 +54,14 @@ public class ImageConverter {
         return imageEntityList.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    public ImageListResponse toImageListResponse(List<ImageEntity> basic, List<ImageEntity> fault) {
+    public ImageListResponse toImageListResponse(List<ImageEntity> basic, List<ImageEntity> fault, List<ImageEntity> ar) {
 
         List<ImageResponse> basicImageListResponse = toResponseList(basic);
         List<ImageResponse> faultImageListResponse = toResponseList(fault);
+        List<ImageResponse> arImageListResponse = toResponseList(ar);
 
         return ImageListResponse.builder().basicImageListResponse(basicImageListResponse)
-            .faultImageListResponse(faultImageListResponse).build();
+            .faultImageListResponse(faultImageListResponse).arImageListResponse(arImageListResponse).build();
     }
 
     public ImageListResponse toImageListResponse(GoodsEntity goodsEntity) {
@@ -71,12 +72,13 @@ public class ImageConverter {
             ImageKind.BASIC);
         List<Long> faultImageMappingIdList = getImageMappingIdByKind(imageMappingEntityList,
             ImageKind.FAULT);
+        List<Long> arImageMappingIdList = getImageMappingIdByKind(imageMappingEntityList,ImageKind.AR);
 
         List<ImageEntity> basicImageEntityList = imageService.getImageUrlList(
             basicImageMappingIdList);
-        List<ImageEntity> faultImageEntityList = imageService.getImageUrlList(
-            faultImageMappingIdList);
-        return toImageListResponse(basicImageEntityList, faultImageEntityList);
+        List<ImageEntity> faultImageEntityList = imageService.getImageUrlList(faultImageMappingIdList);
+        List<ImageEntity> arImageEntityList = imageService.getImageUrlList(arImageMappingIdList);
+        return toImageListResponse(basicImageEntityList, faultImageEntityList,arImageEntityList);
     }
 
     private List<Long> getImageMappingIdByKind(List<ImageMappingEntity> imageMappingEntityList,
@@ -114,7 +116,7 @@ public class ImageConverter {
                 Objects.requireNonNull(this.originalFileName));
             this.fileName = StringUtils.cleanPath(this.serverName + this.extension);
             this.imageUrl = ServletUriComponentsBuilder.fromHttpUrl("https://baobab.run")
-                .path("warehouse" + uploadDir + fileName)
+                .path("image" + uploadDir + fileName)
                 .toUriString();
         }
     }

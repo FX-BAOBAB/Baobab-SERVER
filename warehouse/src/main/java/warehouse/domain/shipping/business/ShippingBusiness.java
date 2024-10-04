@@ -40,6 +40,7 @@ public class ShippingBusiness {
         goodsService.checkGoodsStatusWithThrow(request.getGoodsIdList(),
             GoodsStatus.STORAGE);
         Long userId = getUserWithThrow(email).getId();
+        goodsService.checkOwner(request.getGoodsIdList(),userId);
         ShippingEntity shippingEntity = shippingConverter.toEntity(request, userId);
         ShippingEntity savedShippingEntity = shippingService.shippingRequest(shippingEntity);
         // goods 컬럼에 shipping_id 부여

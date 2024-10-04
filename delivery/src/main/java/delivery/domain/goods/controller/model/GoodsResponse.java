@@ -2,6 +2,7 @@ package delivery.domain.goods.controller.model;
 
 import db.domain.goods.enums.GoodsCategory;
 import db.domain.goods.enums.GoodsStatus;
+import delivery.domain.image.controller.model.ImageUrlSet;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,6 +33,7 @@ public class GoodsResponse {
 
     private GoodsStatus status;
 
-    private List<ImageSet> images;
+    private List<ImageUrlSet> basicImageUrlSet;
 
+    private List<ImageUrlSet> faultImageUrlSet;
 }

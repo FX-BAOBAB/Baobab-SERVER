@@ -8,6 +8,7 @@ import db.domain.users.UserEntity;
 import delivery.common.error.GoodsErrorCode;
 import delivery.common.error.ShippingErrorCode;
 import delivery.common.exception.goods.GoodsNotInShippingIngException;
+import delivery.common.exception.shipping.ShippingNotInReadyException;
 import delivery.common.exception.shipping.ShippingNotInRegisteredException;
 import delivery.common.utils.datetime.DateTimeUtils;
 import delivery.common.utils.datetime.DateTimeUtils.RequestDateTime;
@@ -23,6 +24,7 @@ import global.annotation.Business;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.User;
 
 @Slf4j
 @Business
@@ -32,9 +34,7 @@ public class ShippingBusiness {
     private final ShippingService shippingService;
     private final ShippingConverter shippingConverter;
     private final UsersService userService;
-    private final UserConverter userConverter;
     private final GoodsService goodsService;
-    private final GoodsConverter goodsConverter;
 
     public ShippingResponseList getReservationList() {
 
@@ -51,8 +51,11 @@ public class ShippingBusiness {
         return response;
     }
 
-    public ShippingResponse shippingReservation(Long requestId) {
-        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId);
+    public ShippingResponse shippingReservation(Long requestId, User user) {
+
+        Long deliveryManId = userService.getUserWithThrow(user.getUsername()).getId();
+
+        ShippingEntity shippingEntity = shippingService.reservationConfirmed(requestId,deliveryManId);
 
         ShippingResponse response = getShippingResponse(shippingEntity);
 
@@ -73,14 +76,22 @@ public class ShippingBusiness {
         response.setUserName(userEntity.getName());
         response.setGoodsIdList(goodsIdList);
 
+        Long deliveryManId = shippingEntity.getDeliveryMan();
+        if (deliveryManId != null) {
+            UserEntity deliveryMan = userService.getUserWithThrow(deliveryManId);
+            response.setDeliveryMan(deliveryMan.getName());
+        }
+
         return response;
     }
 
-    public ShippingResponseList showReservationByDate(String date) {
+    public ShippingResponseList showReservationByDate(String date, User user) {
+
+        Long deliveryManId = userService.getUserWithThrow(user.getUsername()).getId();
 
         RequestDateTime dateTime = DateTimeUtils.getStartAndDueDate(date);
 
-        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime());
+        List<ShippingEntity> shippingEntityList = shippingService.getRequestListByDate(dateTime.getStartDateTime(),dateTime.getDueDateTime(),deliveryManId);
 
         return getResponseList(shippingEntityList);
     }
@@ -101,6 +112,14 @@ public class ShippingBusiness {
             responseList.getReservationResponseList().forEach(reservationResponse -> {
                 reservationResponse.setGoodsIdList(goodsIdList);
                 reservationResponse.setUserName(userService.getUserWithThrow(shippingEntity.getUserId()).getName());
+
+                Long deliveryManId = shippingEntity.getDeliveryMan();
+
+                if (deliveryManId != null) {
+                    UserEntity deliveryMan = userService.getUserWithThrow(deliveryManId);
+                    reservationResponse.setDeliveryMan(deliveryMan.getName());
+                }
+
             });
 
         });
@@ -112,9 +131,9 @@ public class ShippingBusiness {
 
         ShippingEntity shippingEntity = shippingService.getRequest(requestId);
 
-        if (shippingEntity.getStatus() != ShippingStatus.REGISTERED) {
-            throw new ShippingNotInRegisteredException(
-                ShippingErrorCode.SHIPPING_NOT_IN_REGISTERED);
+        if (shippingEntity.getStatus() != ShippingStatus.READY) {
+            throw new ShippingNotInReadyException(
+                ShippingErrorCode.SHIPPING_NOT_IN_READY);
         }
 
         ShippingEntity updateEntity = shippingService.startDelivery(shippingEntity);

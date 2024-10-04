@@ -32,6 +32,7 @@ public class GoodsConverter {
             .category(goodsEntity.getCategory())
             .status(goodsEntity.getStatus())
             .quantity(goodsEntity.getQuantity())
+            .arImages(imageListResponse.getArImageListResponse())
             .build();
     }
 

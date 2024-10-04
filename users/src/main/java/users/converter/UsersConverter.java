@@ -21,7 +21,7 @@ public class UsersConverter {
             .name(request.getName())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
-            .role(UserRole.BASIC)
+            .role(request.getRole())
             .build();
     }
 

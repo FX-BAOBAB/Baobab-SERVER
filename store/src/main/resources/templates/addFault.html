@@ -19,9 +19,9 @@
         </a>
   
         <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="#" class="nav-link px-2 link-secondary">입고 관리</a></li>
-          <li><a href="#" class="nav-link px-2 link-secondary">출고 관리</a></li>
-          <li><a href="#" class="nav-link px-2 link-secondary">물품 관리</a></li>
+          <li><a href="#" th:href="|@{/api/receiving(status=RECEIVING)}|" class="nav-link px-2 link-secondary">입고 관리</a></li>
+          <li><a href="#" th:href="|@{/api/shipping(status=PENDING)}|" class="nav-link px-2 link-secondary">출고 관리</a></li>
+          <li><a href="#" th:href="|@{/api/goods(status=STORAGE)}|" class="nav-link px-2 link-primary">물품 관리</a></li>
         </ul>
   
         <div class="col-md-3 text-end">
@@ -39,15 +39,16 @@
         <p class="card-text">카테고리 : <span> 소형 가전 </span></p>
         <p class="card-text">수량 : <span> 1 </span></p>
         
-        <form id="fileForm" action="#" method="post" enctype="multipart/form-data">
+        <form id="fileForm" action="#" th:action="@{/api/fault}" method="post" enctype="multipart/form-data">
           <div id="fileScope">
             <div id="fileElement" class="mb-3">
               <div class="mb-3">
                 <label for="formFile" class="form-label">결함 사진 추가</label>
-                <input class="form-control" type="file" id="formFile" name="file">
+                <input class="form-control file" type="file" id="formFile" name="files">
               </div>  
-            <label for="exampleFormControlTextarea1" class="form-label">결함 내용 입력</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="caption"></textarea>
+            <label for="caption" class="form-label">결함 내용 입력</label>
+            <textarea class="form-control caption" id="caption" rows="3" name="caption"></textarea>
+              <input type="hidden" name="goodsId" th:feild="${goodsId}" th:value="${goodsId}">
           </div>
           </div>
           <div class="row">
@@ -59,7 +60,7 @@
               <button id="fileBtn" type="button" class="btn btn-secondary w-100">file 추가</button>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger mt-5 w-100">결함 등록</button>
+          <button id="submitBtn" type="submit" class="btn btn-danger mt-5 w-100">결함 등록</button>
         </form>
 
       </div>
@@ -70,6 +71,7 @@
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   const add_file = () => {
       const box = document.getElementById("fileScope");
@@ -77,10 +79,10 @@
       newP.innerHTML = "<div id='fileElement' class='mb-3'>" + 
         " <div class='mb-3'>" + 
           " <label for='formFile' class='form-label'>결함 사진 추가</label> " +
-          "<input class='form-control' type='file' id='formFile'>"+
+          "<input class='form-control' type='file' id='formFile' name='files' >"+
           "</div>" +
           "<label for='exampleFormControlTextarea1' class='form-label'>결함 내용 입력</label>" +
-          "<textarea class='form-control' id='exampleFormControlTextarea1' rows='3'></textarea>" +
+          "<textarea class='form-control' id='exampleFormControlTextarea1' rows='3' name='caption'></textarea>" +
           "</div> <input type='button' class='btn btn-danger mt-3' value='삭제' onclick='remove(this)'>";
       box.appendChild(newP);
   }

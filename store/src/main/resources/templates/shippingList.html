@@ -19,9 +19,9 @@
         </a>
   
         <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="#" th:href="@{|/api/store/receiving|}" class="nav-link px-2 link-secondary">입고 관리</a></li>
-          <li><a href="#" th:href="@{|/api/store/shipping|}" class="nav-link px-2 link-primary">출고 관리</a></li>
-          <li><a href="#" th:href="@{|/api/store/goods|}" class="nav-link px-2 link-secondary">물품 관리</a></li>
+          <li><a href="#" th:href="|@{/api/receiving(status=RECEIVING)}|" class="nav-link px-2 link-secondary">입고 관리</a></li>
+          <li><a href="#" th:href="|@{/api/shipping(status=PENDING)}|" class="nav-link px-2 link-primary">출고 관리</a></li>
+          <li><a href="#" th:href="|@{/api/goods(status=STORAGE)}|" class="nav-link px-2 link-secondary">물품 관리</a></li>
         </ul>
   
         <div class="col-md-3 text-end">
@@ -32,7 +32,7 @@
   
   <!-- shipping List -->
 
-    <form action="" th:action="@{/api/store/shipping}" method="get" class="row">
+    <form action="" th:action="@{/api/shipping}" method="get" class="row">
       <div class="col col-8">
         <select class="form-select" th:name="status" aria-label="Small select example">
           <option value="1" th:each="status: ${shippingStatusList}" th:value="${status.name()}" th:text="${status.status}">One</option>
@@ -43,7 +43,7 @@
       </div>
     </form>
 
-    <table id="receivingList" class="table">
+    <table id="list" class="table">
     <thead>
       <tr>
         <th scope="col">ID</th>
@@ -54,10 +54,10 @@
     </thead>
     <tbody>
       <tr th:each="shipping : ${shippingList}">
-        <th scope="row"><a href="#" th:href="@{|/api/receiving/${shipping.id}|}" th:text="${shipping.id}">1</a></th>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.status}">소형가구</a></td>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.deliveryAddress}">소형가구</a></td>
-        <td><a href="#" th:href="@{|/api/store/receiving/${shipping.id}|}" th:text="${shipping.deliveryDate}">소형가구</a></td>
+        <th scope="row"><a href="#" th:href="@{|/api/shipping/${shipping.id}|}" th:text="${shipping.id}">1</a></th>
+        <td><a href="#" th:href="@{|/api/shipping/${shipping.id}|}" th:text="${shipping.status}">소형가구</a></td>
+        <td><a href="#" th:href="@{|/api/shipping/${shipping.id}|}" th:text="${shipping.deliveryAddress}">소형가구</a></td>
+        <td><a href="#" th:href="@{|/api/shipping/${shipping.id}|}" th:text="${#temporals.format(shipping.deliveryDate, 'yyyy-MM-dd HH:mm:ss')}">소형가구</a></td>
       </tr>
     </tbody>
   </table>

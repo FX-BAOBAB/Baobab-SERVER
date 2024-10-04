@@ -1,5 +1,6 @@
 package warehouse.common.config.security;
 
+import jakarta.servlet.DispatcherType;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,8 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS)).authorizeHttpRequests(it -> {
                 it.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .requestMatchers("/api/**").hasRole("BASIC_USER")
+                    .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     .requestMatchers(WHITE_LIST.toArray(new String[0])).permitAll().anyRequest()
                     .authenticated()
                 ;

@@ -18,12 +18,6 @@ public class UsedGoodsOrderService {
         return usedGoodsOrderRepository.save(orderEntity);
     }
 
-    public List<UsedGoodsOrderEntity> getUsedGoodsOrderListBy(Long usedGoodsId) {
-        List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderRepository.findAllByUsedGoodsId(
-            usedGoodsId);
-        return getValidatedOrderList(orderEntityList);
-    }
-
     public List<UsedGoodsOrderEntity> getUsedGoodsOrderListByBuyerId(Long userId) {
         List<UsedGoodsOrderEntity> orderEntityList = usedGoodsOrderRepository.findAllByBuyerId(
             userId);
@@ -50,4 +44,9 @@ public class UsedGoodsOrderService {
             .isPresent();
     }
 
+    public UsedGoodsOrderEntity getUsedGoodsOrderBy(Long usedGoodsId) {
+        return usedGoodsOrderRepository.findFirstByUsedGoodsId(usedGoodsId).orElseThrow(
+            () -> new UsedGoodsOrderNotFoundException(
+                UsedGoodsErrorCode.USED_GOODS_ORDER_NOT_FOUND));
+    }
 }

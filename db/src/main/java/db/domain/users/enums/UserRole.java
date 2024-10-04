@@ -8,8 +8,10 @@ import lombok.Getter;
 public enum UserRole {
 
     MASTER("마스터"),
-    MANAGER("관리자"),
-    BASIC("일반사용자");
+    STORE_MANAGER("관리자"),
+    BASIC_USER("일반사용자"),
+    DELIVERY_MAN("배송자")
+    ;
 
     private final String description;
 
