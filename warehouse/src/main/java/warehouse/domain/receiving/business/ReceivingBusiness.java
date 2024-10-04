@@ -84,6 +84,14 @@ public class ReceivingBusiness {
                 List<ImageEntity> imageEntityList = imageService.getImagesByImageIdList(
                     goodsRequest.getImageIdList());
 
+                if (goodsRequest.getArImageId() != null) {
+                    ImageEntity arImage = imageService.getImageByImageId(
+                        goodsRequest.getArImageId());
+                    ImageMappingEntity arImageEntity = imageMappingService.getImageMappingBy(
+                        arImage.getImageMappingId());
+                    imageMappingService.receivingRequest(arImageEntity, goodsEntity);
+                }
+
                 imageEntityList.forEach(imageEntity -> {
                     ImageMappingEntity imageMappingEntity = imageMappingService.getImageMappingBy(
                         imageEntity.getImageMappingId());
@@ -143,11 +151,13 @@ public class ReceivingBusiness {
 
     public ReceivingListResponse getReceivingResponse(String username) {
         UserEntity userEntity = usersService.getUserWithThrow(username);
-        List<ReceivingEntity> receivingEntityList = receivingService.getReceivingListBy(userEntity.getId());
+        List<ReceivingEntity> receivingEntityList = receivingService.getReceivingListBy(
+            userEntity.getId());
 
-        List<ReceivingResponse> receivingResponseList = receivingEntityList.stream().map(receivingEntity -> {
-            return getReceivingResponse(receivingEntity);
-        }).toList();
+        List<ReceivingResponse> receivingResponseList = receivingEntityList.stream()
+            .map(receivingEntity -> {
+                return getReceivingResponse(receivingEntity);
+            }).toList();
 
         return receivingConverter.toListResponse(receivingResponseList);
     }

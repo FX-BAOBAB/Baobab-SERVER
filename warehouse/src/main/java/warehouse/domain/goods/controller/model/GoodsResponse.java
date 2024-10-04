@@ -29,4 +29,6 @@ public class GoodsResponse {
 
     private List<ImageResponse> faultImages;
 
+    private List<ImageResponse> arImages;
+
 }

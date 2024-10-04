@@ -37,4 +37,6 @@ public class GoodsRequest {
     @Size(min = 6)
     private List<Long> imageIdList;
 
+    private Long arImageId;
+
 }

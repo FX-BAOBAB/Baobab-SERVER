@@ -16,4 +16,6 @@ public class ImageListResponse {
 
     private List<ImageResponse> faultImageListResponse;
 
+    private List<ImageResponse> arImageListResponse;
+
 }

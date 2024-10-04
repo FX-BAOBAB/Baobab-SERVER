@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 70MB
+      max-request-size: 100MB
   jpa:
     show-sql: true
     hibernate:
@@ -12,6 +16,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
+
 file:
   upload-dir: /Users/yeongwoonshin/Desktop/Baobab-SERVER/image/src/main/resources/static/images/
   path: /images/
@@ -26,3 +31,10 @@ jwt:
 
 server:
   port: 8083
+
+
+  server:
+    port: 8080
+    jetty:
+      max-http-form-post-size: 100MB
+    max-http-request-header-size: 100MB
