@@ -24,7 +24,7 @@ public class TokenExceptionHandler {
 
     @ExceptionHandler(value = TokenExpiredException.class)
     public ResponseEntity<Api<Object>> tokenExpiredException(TokenExpiredException e) {
-        log.info("", e);
+        log.info("토큰 만료", e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Api.ERROR(TokenErrorCode.EXPIRED_TOKEN));
     }
