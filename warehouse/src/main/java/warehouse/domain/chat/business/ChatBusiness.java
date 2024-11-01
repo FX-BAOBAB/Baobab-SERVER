@@ -19,6 +19,7 @@ import warehouse.domain.chat.controller.model.response.MessageResponse;
 import warehouse.domain.chat.converter.ChatConverter;
 import warehouse.domain.chat.service.ChatService;
 import warehouse.domain.usedgoods.service.UsedGoodsService;
+import warehouse.domain.users.security.jwt.service.TokenService;
 import warehouse.domain.users.security.service.UsersService;
 
 @Business
@@ -29,6 +30,7 @@ public class ChatBusiness {
     private final ChatService chatService;
     private final UsedGoodsService usedGoodsService;
     private final UsersService usersService;
+    private final TokenService tokenService;
     private final ChatConverter chatConverter;
 
 
@@ -81,9 +83,10 @@ public class ChatBusiness {
      * 2. chatRoomId & userId 로 채팅방 접근 권한 체크
      * 3. 채팅 메시지 전송
      */
-    public void sendChatMessage(ChatMessageRequest message, String email) {
+    public void sendChatMessage(ChatMessageRequest message, String token) {
 
-        Long userId = usersService.getUserWithThrow(email).getId();
+        // 'Bearer ' 제거
+        Long userId = tokenService.validationToken(token.substring(7));
 
         ChatRoomEntity chatRoomEntity = chatService.getChatRoomBy(message.getChatRoomId());
 
