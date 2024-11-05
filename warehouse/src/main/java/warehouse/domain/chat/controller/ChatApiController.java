@@ -5,7 +5,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,11 +56,11 @@ public class ChatApiController {
         return Api.OK(response);
     }
 
-    @PostMapping("/message")
-    @Operation(summary = "[message 전송]", description = "/pub/chat")
-    public void sendMessage(@RequestBody ChatMessageRequest message, @AuthenticationPrincipal User user) {
+    @MessageMapping("/message")
+    @Operation(summary = "[message 전송]", description = "/pub")
+    public void sendMessage(@RequestBody ChatMessageRequest message, @Header("Authorization") String token) {
         log.info(message.toString());
-        chatBusiness.sendChatMessage(message, user.getUsername());
+        chatBusiness.sendChatMessage(message, token);
     }
 
     @GetMapping("/buy") // 구매 채팅방 조회
