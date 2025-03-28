@@ -26,6 +26,7 @@ import warehouse.domain.image.controller.model.ImageListResponse;
 import warehouse.domain.image.converter.ImageConverter;
 import warehouse.domain.image.service.ImageMappingService;
 import warehouse.domain.image.service.ImageService;
+import warehouse.domain.kafka.business.KafkaProducerBusiness;
 import warehouse.domain.receiving.controller.model.common.MessageResponse;
 import warehouse.domain.receiving.controller.model.guarantee.GuaranteeResponse;
 import warehouse.domain.receiving.controller.model.receiving.ReceivingListResponse;
@@ -53,6 +54,7 @@ public class ReceivingBusiness {
     private final GuaranteeConverter guaranteeConverter;
     private final MessageConverter messageConverter;
     private final UsersService usersService;
+    private final KafkaProducerBusiness kafkaProducerBusiness;
 
     @Transactional
     public ReceivingResponse receivingRequest(ReceivingRequest request, String email) {
@@ -74,6 +76,9 @@ public class ReceivingBusiness {
         // 6. goods 정보 저장
         List<GoodsEntity> savedGoodsList = saveGoodsList(goodsEntityList, registeredReceivingEntity,
             userId);
+
+        //TODO KAFKA
+        kafkaProducerBusiness.sendGoodsToKafka(receivingEntity);
 
         // 7.Goods <-> ImageMapping 연결
         savedGoodsList.forEach(goodsEntity -> {
